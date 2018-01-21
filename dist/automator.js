@@ -4,13 +4,11 @@ Object.defineProperty(exports, "__esModule", {
         value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _InstagramAPI = require('./InstagramAPI.js');
 
 var _InstagramAPI2 = _interopRequireDefault(_InstagramAPI);
-
-var _database = require('./database.js');
-
-var _database2 = _interopRequireDefault(_database);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -18,13 +16,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var config = require('../config.json');
 
-var Automater = function Automater(login, password) {
-        _classCallCheck(this, Automater);
+var Automater = function () {
+        function Automater(login, password) {
+                _classCallCheck(this, Automater);
 
-        this.login = login;
-        this.password = password;
-        this.dbase = _database2.default.init();
-        this.instagram = new _InstagramAPI2.default(login, password).init().logIn();
-};
+                this.login = login;
+                this.password = password;
+                this.instagram = new _InstagramAPI2.default(login, password).init().logIn();
+        }
+
+        _createClass(Automater, [{
+                key: 'getFollowings',
+                value: function getFollowings() {
+                        this.instagram.goToProfile().getFollowings();
+                        //click followings
+                }
+        }]);
+
+        return Automater;
+}();
 
 exports.default = Automater;

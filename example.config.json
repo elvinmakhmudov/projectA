@@ -1,0 +1,13 @@
+{
+        "instagram": {
+                "login": "login",
+                "password": "password"
+        },
+        "browser": "firefox",
+        "urls": {
+                "login": "https://www.instagram.com/accounts/login/"
+        },
+        "database": "automater",
+        "mongoDb": "mongodb://localhost:27017/",
+        "collections": []
+}
