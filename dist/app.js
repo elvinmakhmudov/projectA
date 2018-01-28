@@ -7,5 +7,5 @@ var _automator2 = _interopRequireDefault(_automator);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //   let automateFollowers = new automater().getFollowings();
-var automateFollowers2 = new _automator2.default().savePosts();
-// let automateFollowers3 = new automater().getNewUsers();
+// let automateFollowers2 = new automater().savePosts();
+var automateFollowers3 = new _automator2.default().getNewUsers();

@@ -281,8 +281,7 @@ var InstagramAPI = function () {
         key: 'goToProfile',
         value: function goToProfile() {
             return new Promise(function (resolve) {
-                this.driver.wait(until.elementLocated(By.className('coreSpriteDesktopNavProfile')), config.timeout);
-                this.driver.findElement(By.className('coreSpriteDesktopNavProfile')).click().then(function () {
+                this.driver.get(config.urls.main + config.instagram.login).then(function () {
                     return resolve();
                 });
             }.bind(this));
@@ -430,7 +429,7 @@ var InstagramAPI = function () {
                                     });
                                     _context6.next = 20;
                                     return _post2.default.insertMany(postsArr, function () {
-                                        return console.log(posts.length + ' items were added to collection');
+                                        return console.log(posts.length + ' posts were added');
                                     });
 
                                 case 20:
@@ -502,7 +501,7 @@ var InstagramAPI = function () {
 
                                                 case 12:
                                                     if (!(i < posts.length)) {
-                                                        _context9.next = 71;
+                                                        _context9.next = 65;
                                                         break;
                                                     }
 
@@ -521,80 +520,72 @@ var InstagramAPI = function () {
                                                         break;
                                                     }
 
-                                                    return _context9.abrupt('continue', 68);
+                                                    return _context9.abrupt('continue', 62);
 
                                                 case 20:
-                                                    _context9.t2 = console;
-                                                    _context9.next = 23;
-                                                    return _this.driver.findElements(By.className("error-container"));
-
-                                                case 23:
-                                                    _context9.t3 = _context9.sent;
-                                                    _context9.t4 = _context9.t3 != 0;
-
-                                                    _context9.t2.log.call(_context9.t2, _context9.t4);
-
                                                     console.log(i + 1 + ' of ' + posts.length + ' posts.');
-                                                    _context9.next = 29;
+                                                    _context9.next = 23;
                                                     return _this.driver.wait(until.elementLocated(By.className("_2g7d5")));
 
-                                                case 29:
-                                                    _context9.next = 31;
+                                                case 23:
+                                                    _context9.next = 25;
                                                     return _this.driver.findElements(By.className("_ezgzd"));
 
-                                                case 31:
+                                                case 25:
                                                     comments = _context9.sent;
-                                                    _context9.next = 34;
+                                                    _context9.next = 28;
                                                     return _this.driver.findElements(By.className("_nzn1h"));
 
-                                                case 34:
-                                                    _context9.t5 = _context9.sent;
+                                                case 28:
+                                                    _context9.t2 = _context9.sent;
 
-                                                    if (!(_context9.t5 != 0)) {
-                                                        _context9.next = 41;
+                                                    if (!(_context9.t2 != 0)) {
+                                                        _context9.next = 35;
                                                         break;
                                                     }
 
-                                                    _context9.next = 38;
-                                                    return _this.driver.findElement(By.css("._nzn1h span")).getText();
+                                                    _context9.next = 32;
+                                                    return _this.driver.findElement(By.css("._nzn1h span")).getText().then(function (likes) {
+                                                        return likes.replace(',', '');
+                                                    });
 
-                                                case 38:
-                                                    _context9.t6 = _context9.sent;
-                                                    _context9.next = 42;
+                                                case 32:
+                                                    _context9.t3 = _context9.sent;
+                                                    _context9.next = 36;
                                                     break;
 
-                                                case 41:
-                                                    _context9.t6 = 0;
+                                                case 35:
+                                                    _context9.t3 = 0;
 
-                                                case 42:
-                                                    likes = _context9.t6;
-                                                    _context9.next = 45;
+                                                case 36:
+                                                    likes = _context9.t3;
+                                                    _context9.next = 39;
                                                     return _this.driver.findElements(By.className("_p29ma"));
 
-                                                case 45:
-                                                    _context9.t7 = _context9.sent;
+                                                case 39:
+                                                    _context9.t4 = _context9.sent;
 
-                                                    if (!(_context9.t7 != 0)) {
-                                                        _context9.next = 52;
+                                                    if (!(_context9.t4 != 0)) {
+                                                        _context9.next = 46;
                                                         break;
                                                     }
 
-                                                    _context9.next = 49;
+                                                    _context9.next = 43;
                                                     return _this.driver.findElement(By.className("_p29ma")).getAttribute('datetime');
 
-                                                case 49:
-                                                    _context9.t8 = _context9.sent;
-                                                    _context9.next = 53;
+                                                case 43:
+                                                    _context9.t5 = _context9.sent;
+                                                    _context9.next = 47;
                                                     break;
 
-                                                case 52:
-                                                    _context9.t8 = 0;
+                                                case 46:
+                                                    _context9.t5 = 0;
 
-                                                case 53:
-                                                    dateattr = _context9.t8;
+                                                case 47:
+                                                    dateattr = _context9.t5;
                                                     datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
                                                     rating = Math.round(likes / datetime * 100) / 100;
-                                                    _context9.next = 58;
+                                                    _context9.next = 52;
                                                     return _post2.default.update({
                                                         url: posts[i].url
                                                     }, {
@@ -607,7 +598,7 @@ var InstagramAPI = function () {
                                                         }
                                                     });
 
-                                                case 58:
+                                                case 52:
                                                     _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop(j) {
                                                         var username;
                                                         return regeneratorRuntime.wrap(function _loop$(_context8) {
@@ -642,26 +633,26 @@ var InstagramAPI = function () {
                                                     });
                                                     j = 0;
 
-                                                case 60:
+                                                case 54:
                                                     if (!(j < comments.length)) {
-                                                        _context9.next = 65;
+                                                        _context9.next = 59;
                                                         break;
                                                     }
 
-                                                    return _context9.delegateYield(_loop(j), 't9', 62);
+                                                    return _context9.delegateYield(_loop(j), 't6', 56);
 
-                                                case 62:
+                                                case 56:
                                                     j++;
-                                                    _context9.next = 60;
+                                                    _context9.next = 54;
                                                     break;
 
-                                                case 65:
+                                                case 59:
                                                     if (!(newUsers.length > config.userRefreshRate)) {
-                                                        _context9.next = 68;
+                                                        _context9.next = 62;
                                                         break;
                                                     }
 
-                                                    _context9.next = 68;
+                                                    _context9.next = 62;
                                                     return _user2.default.insertMany(newUsers, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
                                                         return regeneratorRuntime.wrap(function _callee7$(_context7) {
                                                             while (1) {
@@ -694,12 +685,12 @@ var InstagramAPI = function () {
                                                         }, _callee7, this);
                                                     })));
 
-                                                case 68:
+                                                case 62:
                                                     i++;
                                                     _context9.next = 12;
                                                     break;
 
-                                                case 71:
+                                                case 65:
                                                 case 'end':
                                                     return _context9.stop();
                                             }

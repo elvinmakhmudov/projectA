@@ -84,8 +84,7 @@ class InstagramAPI {
 
     goToProfile() {
         return new Promise(function (resolve) {
-            this.driver.wait(until.elementLocated(By.className('coreSpriteDesktopNavProfile')), config.timeout);
-            this.driver.findElement(By.className('coreSpriteDesktopNavProfile')).click().then(() => resolve());
+            this.driver.get(config.urls.main + config.instagram.login).then(() => resolve());
         }.bind(this))
     }
 
@@ -181,7 +180,7 @@ class InstagramAPI {
                             reviewed_at: Date.now()
                         }
                     })
-                    await Post.insertMany(postsArr, () => console.log(posts.length + ' items were added to collection'));
+                    await Post.insertMany(postsArr, () => console.log(posts.length + ' posts were added'));
                     resolve();
                 }
             }
@@ -203,11 +202,10 @@ class InstagramAPI {
                 // postsToDelete.push(posts[i].url)
                 //if page has been removed then break
                 if (await this.driver.findElements(By.className("error-container")) != 0) continue;
-                console.log(await this.driver.findElements(By.className("error-container")) != 0);
                 console.log((i + 1) + ' of ' + posts.length + ' posts.')
                 await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
                 let comments = await this.driver.findElements(By.className("_ezgzd"));
-                let likes = await this.driver.findElements(By.className("_nzn1h")) != 0 ? await this.driver.findElement(By.css("._nzn1h span")).getText() : 0;
+                let likes = await this.driver.findElements(By.className("_nzn1h")) != 0 ? await this.driver.findElement(By.css("._nzn1h span")).getText().then(likes => likes.replace(',','')) : 0;
                 let dateattr = await this.driver.findElements(By.className("_p29ma")) != 0 ? await this.driver.findElement(By.className("_p29ma")).getAttribute('datetime') : 0;
                 let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
                 let rating = Math.round(likes / datetime * 100) / 100;
