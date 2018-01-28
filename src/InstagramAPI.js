@@ -83,8 +83,10 @@ class InstagramAPI {
     }
 
     goToProfile() {
-        return new Promise(function (resolve) {
-            this.driver.get(config.urls.main + config.instagram.login).then(() => resolve());
+        return new Promise(async function (resolve) {
+            await this.driver.get(config.urls.main);
+            await this.driver.wait(until.elementLocated(By.className('coreSpriteDesktopNavProfile')), config.timeout);
+            await this.driver.findElement(By.className('coreSpriteDesktopNavProfile')).click().then(()=>resolve());
         }.bind(this))
     }
 
