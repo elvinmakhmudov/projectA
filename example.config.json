@@ -9,10 +9,19 @@
             "main": "https://www.instagram.com/",
             "login": "https://www.instagram.com/accounts/login/"
     },
+    "comments": ["salam)", ":)", "chox gozel"],
     "database": "automater",
     "mongoDb": "mongodb://localhost:27017/",
     "timeout": 10000,
+    "maxCommentForPageInDay": 3,
+    "userPostsToLike": 3,
+    "usersToLikePerDay": 100, 
+    "usersToFollowPerDay": 100, 
+    "usersToUnfollowPerDay": 50, 
+    "pagesToCommentPerDay": 100, 
+    "batchUserLimitCount": 10,
+    "sleepEveryIteration": 10,
     "userRefreshRate": 5,
-    "oldestPageInDays": 3,
+    "oldestPageInDays": 1,
     "postsToReview": 3
 }

@@ -22,6 +22,8 @@ var config = require('../config.json');
 
 var async = require('async');
 
+var secondsInDay = 60 * 60 * 24;
+
 var Automater = function () {
     function Automater(login, password) {
         _classCallCheck(this, Automater);
@@ -77,35 +79,48 @@ var Automater = function () {
                                 return this.instagram.logIn();
 
                             case 2:
-                                _context2.next = 4;
+                                if (!true) {
+                                    _context2.next = 20;
+                                    break;
+                                }
+
+                                _context2.next = 5;
                                 return this.instagram.getPrivatePages();
 
-                            case 4:
+                            case 5:
                                 pages = _context2.sent;
                                 i = 0;
 
-                            case 6:
+                            case 7:
                                 if (!(i < pages.length)) {
-                                    _context2.next = 15;
+                                    _context2.next = 16;
                                     break;
                                 }
 
                                 username = pages[i].username;
                                 //go to the username page
 
-                                _context2.next = 10;
+                                _context2.next = 11;
                                 return this.instagram.goToUsername(username);
 
-                            case 10:
-                                _context2.next = 12;
-                                return this.instagram.savePostsToAnalyze(username);
+                            case 11:
+                                _context2.next = 13;
+                                return this.instagram.savePostsToAnalyze(pages[i]);
 
-                            case 12:
+                            case 13:
                                 i++;
-                                _context2.next = 6;
+                                _context2.next = 7;
                                 break;
 
-                            case 15:
+                            case 16:
+                                _context2.next = 18;
+                                return this.instagram.sleep(config.sleepEveryIteration);
+
+                            case 18:
+                                _context2.next = 2;
+                                break;
+
+                            case 20:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -131,10 +146,23 @@ var Automater = function () {
                                 return this.instagram.logIn();
 
                             case 2:
-                                _context3.next = 4;
+                                if (!true) {
+                                    _context3.next = 9;
+                                    break;
+                                }
+
+                                _context3.next = 5;
                                 return this.instagram.getNewUsers();
 
-                            case 4:
+                            case 5:
+                                _context3.next = 7;
+                                return this.instagram.sleep(config.sleepEveryIteration);
+
+                            case 7:
+                                _context3.next = 2;
+                                break;
+
+                            case 9:
                             case 'end':
                                 return _context3.stop();
                         }
@@ -160,10 +188,23 @@ var Automater = function () {
                                 return this.instagram.logIn();
 
                             case 2:
-                                _context4.next = 4;
+                                if (!true) {
+                                    _context4.next = 9;
+                                    break;
+                                }
+
+                                _context4.next = 5;
                                 return this.instagram.analyzeUsers();
 
-                            case 4:
+                            case 5:
+                                _context4.next = 7;
+                                return this.instagram.sleep(config.sleepEveryIteration);
+
+                            case 7:
+                                _context4.next = 2;
+                                break;
+
+                            case 9:
                             case 'end':
                                 return _context4.stop();
                         }
@@ -178,7 +219,7 @@ var Automater = function () {
             return analyzeUsers;
         }()
     }, {
-        key: 'sendUserRequests',
+        key: 'followUsers',
         value: function () {
             var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
                 return regeneratorRuntime.wrap(function _callee5$(_context5) {
@@ -189,10 +230,23 @@ var Automater = function () {
                                 return this.instagram.logIn();
 
                             case 2:
-                                _context5.next = 4;
-                                return this.instagram.sendUserRequests();
+                                if (!true) {
+                                    _context5.next = 9;
+                                    break;
+                                }
 
-                            case 4:
+                                _context5.next = 5;
+                                return this.instagram.followUsers();
+
+                            case 5:
+                                _context5.next = 7;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay);
+
+                            case 7:
+                                _context5.next = 2;
+                                break;
+
+                            case 9:
                             case 'end':
                                 return _context5.stop();
                         }
@@ -200,14 +254,14 @@ var Automater = function () {
                 }, _callee5, this);
             }));
 
-            function sendUserRequests() {
+            function followUsers() {
                 return _ref5.apply(this, arguments);
             }
 
-            return sendUserRequests;
+            return followUsers;
         }()
     }, {
-        key: 'likeUserPosts',
+        key: 'unfollowUsers',
         value: function () {
             var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
                 return regeneratorRuntime.wrap(function _callee6$(_context6) {
@@ -218,10 +272,23 @@ var Automater = function () {
                                 return this.instagram.logIn();
 
                             case 2:
-                                _context6.next = 4;
-                                return this.instagram.likeUserPosts();
+                                if (!true) {
+                                    _context6.next = 9;
+                                    break;
+                                }
 
-                            case 4:
+                                _context6.next = 5;
+                                return this.instagram.unfollowUsers();
+
+                            case 5:
+                                _context6.next = 7;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay);
+
+                            case 7:
+                                _context6.next = 2;
+                                break;
+
+                            case 9:
                             case 'end':
                                 return _context6.stop();
                         }
@@ -229,11 +296,153 @@ var Automater = function () {
                 }, _callee6, this);
             }));
 
-            function likeUserPosts() {
+            function unfollowUsers() {
                 return _ref6.apply(this, arguments);
             }
 
+            return unfollowUsers;
+        }()
+    }, {
+        key: 'likeUserPosts',
+        value: function () {
+            var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+                return regeneratorRuntime.wrap(function _callee7$(_context7) {
+                    while (1) {
+                        switch (_context7.prev = _context7.next) {
+                            case 0:
+                                _context7.next = 2;
+                                return this.instagram.logIn();
+
+                            case 2:
+                                if (!true) {
+                                    _context7.next = 9;
+                                    break;
+                                }
+
+                                _context7.next = 5;
+                                return this.instagram.likeUserPosts();
+
+                            case 5:
+                                _context7.next = 7;
+                                return this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / config.usersToLikePerDay);
+
+                            case 7:
+                                _context7.next = 2;
+                                break;
+
+                            case 9:
+                            case 'end':
+                                return _context7.stop();
+                        }
+                    }
+                }, _callee7, this);
+            }));
+
+            function likeUserPosts() {
+                return _ref7.apply(this, arguments);
+            }
+
             return likeUserPosts;
+        }()
+    }, {
+        key: 'commentPosts',
+        value: function () {
+            var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
+                return regeneratorRuntime.wrap(function _callee8$(_context8) {
+                    while (1) {
+                        switch (_context8.prev = _context8.next) {
+                            case 0:
+                                _context8.next = 2;
+                                return this.instagram.logIn();
+
+                            case 2:
+                                if (!true) {
+                                    _context8.next = 9;
+                                    break;
+                                }
+
+                                _context8.next = 5;
+                                return this.instagram.commentPosts();
+
+                            case 5:
+                                _context8.next = 7;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.pagesToCommentPerDay);
+
+                            case 7:
+                                _context8.next = 2;
+                                break;
+
+                            case 9:
+                            case 'end':
+                                return _context8.stop();
+                        }
+                    }
+                }, _callee8, this);
+            }));
+
+            function commentPosts() {
+                return _ref8.apply(this, arguments);
+            }
+
+            return commentPosts;
+        }()
+    }, {
+        key: 'tripleCombo',
+        value: function () {
+            var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
+                return regeneratorRuntime.wrap(function _callee9$(_context9) {
+                    while (1) {
+                        switch (_context9.prev = _context9.next) {
+                            case 0:
+                                _context9.next = 2;
+                                return this.instagram.logIn();
+
+                            case 2:
+                                if (!true) {
+                                    _context9.next = 17;
+                                    break;
+                                }
+
+                                _context9.next = 5;
+                                return this.instagram.likeUserPosts();
+
+                            case 5:
+                                _context9.next = 7;
+                                return this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / (config.usersToLikePerDay * 3));
+
+                            case 7:
+                                _context9.next = 9;
+                                return this.instagram.followUsers();
+
+                            case 9:
+                                _context9.next = 11;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 3));
+
+                            case 11:
+                                _context9.next = 13;
+                                return this.instagram.commentPosts();
+
+                            case 13:
+                                _context9.next = 15;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 3));
+
+                            case 15:
+                                _context9.next = 2;
+                                break;
+
+                            case 17:
+                            case 'end':
+                                return _context9.stop();
+                        }
+                    }
+                }, _callee9, this);
+            }));
+
+            function tripleCombo() {
+                return _ref9.apply(this, arguments);
+            }
+
+            return tripleCombo;
         }()
     }]);
 

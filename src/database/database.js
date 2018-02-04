@@ -1,42 +1,90 @@
 const config = require('../../config.json');
 import User from '../models/user';
+import Post from '../models/post';
+import Page from '../models/page';
+
 // var MongoClient = require('mongodb').MongoClient;
 import mongoose from 'mongoose';
 
 export default {
     init() {
-        // let connect = MongoClient.connect(config.mongoDb);
-        let connect = mongoose.connect(config.mongoDb+config.database);
-        connect.then(function(db) {
+        let connect = mongoose.connect(config.mongoDb + config.database);
+        connect.then(function (db) {
             this.db = db;
-            // this.dbase = db.db(config.database);
-            // for(let i=0;i<config.collections.length;++i) {
-            //     this.db.createCollection(config.collections[i], function(err, collection) {
-            //             if (err) throw err;
-            //             console.log(config.collections[i] + " collection created!");
-            //     });
-            // }
             console.log('Connected to the database');
         }.bind(this));
         return this;
     },
 
-    getUsersToFollow() {
-        return User.find({type:'follow', reviewed: false});
+    getUsersToFollow(limit) {
+        return User.find({
+            type: 'follow',
+            reviewed: false
+        }).limit(limit || config.batchUserLimitCount);
     },
 
-    getUsersToLike() {
-        return User.find({type:'like', reviewed: false});
+    async getUsersToUnfollow(limit) {
+        var d = new Date();
+        d.setDate(d.getDate() - 1);
+        let yesterdayInMseconds = Date.now() - d.getMilliseconds();
+        return await User.find({
+            type: 'followed',
+            reviewed: true,
+            followed_at: {
+                $lte: yesterdayInMseconds
+            }
+        }).limit(limit || config.batchUserLimitCount);
     },
 
-    getUsersToAnalyze() {
-        return User.find({type:'analyze', reviewed: false});
+    getUsersToLike(limit) {
+        return User.find({
+            type: 'like',
+            reviewed: false
+        }).limit(limit || config.batchUserLimitCount);
     },
 
-    insertMany(collectionName, documents){
-        this.db.collection(collectionName).insertMany(documents, function (err, res) {
-            console.log(err);
+    getUsersToAnalyze(limit) {
+        return User.find({
+            type: 'analyze',
+            reviewed: false
+        }).limit(limit || config.batchUserLimitCount);
+    },
+
+    async getPostsToComment(limit) {
+        var d = new Date();
+        d.setDate(d.getDate() - 1);
+        let yesterdayInMseconds = Date.now() - d.getMilliseconds();
+        let posts = await Post.find({
+            type: 'analyze',
+            reviewed: false
+        }).populate({
+            path: 'page',
+            match: {
+                $or: [{
+                    commented_times: {
+                        $lt: config.maxCommentForPageInDay
+                    }
+                }, {
+                    commented_at: {
+                        $lt: yesterdayInMseconds
+                    }
+                }]
+            }
+        }).sort({
+            rating: -1
+        }).limit(limit || config.batchUserLimitCount);
+        posts = await posts.filter(function (post) {
+            return post.page.length != [] ? true : false;
         });
-        return this;
-    }
+        return posts;
+    },
+
+    getPostsToAnalyze(limit) {
+        return Post.find({
+            type: 'analyze',
+            reviewed: false
+        }).sort({
+            rating: -1
+        }).limit(limit || config.batchUserLimitCount);
+    },
 }

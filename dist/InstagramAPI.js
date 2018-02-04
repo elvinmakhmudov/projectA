@@ -45,14 +45,16 @@ var config = require('../config.json');
 var _require = require('selenium-webdriver'),
     Builder = _require.Builder,
     By = _require.By,
-    until = _require.until;
+    until = _require.until,
+    Key = _require.Key;
 
 var InstagramAPI = function () {
-    function InstagramAPI(login, password) {
+    function InstagramAPI(login, password, comments) {
         _classCallCheck(this, InstagramAPI);
 
         this.login = login || config.instagram.login;
         this.password = password || config.instagram.password;
+        this.comments = comments || config.comments;
     }
 
     _createClass(InstagramAPI, [{
@@ -374,7 +376,6 @@ var InstagramAPI = function () {
             var d = new Date();
             d.setDate(d.getDate() - config.oldestPageInDays);
             var yesterdayInMseconds = Date.now() - d.getMilliseconds();
-            //IN PROD CHANGE $lt TO $gt
             return _page2.default.find({
                 reviewed: false,
                 reviewed_at: {
@@ -391,7 +392,7 @@ var InstagramAPI = function () {
         }
     }, {
         key: 'savePostsToAnalyze',
-        value: function savePostsToAnalyze(username) {
+        value: function savePostsToAnalyze(page) {
             return new Promise(function () {
                 var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(resolve, reject) {
                     var posts, postsArr, i, href;
@@ -424,7 +425,7 @@ var InstagramAPI = function () {
 
                                 case 11:
                                     if (!(i < posts.length)) {
-                                        _context7.next = 24;
+                                        _context7.next = 20;
                                         break;
                                     }
 
@@ -436,37 +437,29 @@ var InstagramAPI = function () {
 
                                     postsArr.push(new _post2.default({
                                         'url': href,
-                                        'username': username,
-                                        'type': 'analyze'
-                                    }));
-
-                                    if (!(postsArr.length === posts.length)) {
-                                        _context7.next = 21;
-                                        break;
+                                        'username': page.username,
+                                        'type': 'analyze',
+                                        'page': page._id
+                                    }).save());
+                                    if (postsArr.length === posts.length) {
+                                        _page2.default.update({
+                                            username: page.username
+                                        }, {
+                                            $set: {
+                                                reviewed: true,
+                                                reviewed_at: Date.now()
+                                            }
+                                        });
+                                        // await Post.insertMany(postsArr, () => console.log(posts.length + ' posts were added'));
+                                        resolve();
                                     }
 
-                                    _page2.default.update({
-                                        username: username
-                                    }, {
-                                        $set: {
-                                            reviewed: true,
-                                            reviewed_at: Date.now()
-                                        }
-                                    });
-                                    _context7.next = 20;
-                                    return _post2.default.insertMany(postsArr, function () {
-                                        return console.log(posts.length + ' posts were added');
-                                    });
-
-                                case 20:
-                                    resolve();
-
-                                case 21:
+                                case 17:
                                     i++;
                                     _context7.next = 11;
                                     break;
 
-                                case 24:
+                                case 20:
                                 case 'end':
                                     return _context7.stop();
                             }
@@ -498,16 +491,12 @@ var InstagramAPI = function () {
                                             switch (_context10.prev = _context10.next) {
                                                 case 0:
                                                     _context10.next = 2;
-                                                    return _post2.default.find({
-                                                        type: 'analyze'
-                                                    });
+                                                    return _this.dbase.getPostsToAnalyze();
 
                                                 case 2:
                                                     posts = _context10.sent;
                                                     _context10.next = 5;
-                                                    return _user2.default.find({
-                                                        type: 'analyze'
-                                                    });
+                                                    return _this.dbase.getUsersToAnalyze();
 
                                                 case 5:
                                                     _context10.t0 = _context10.sent;
@@ -526,7 +515,7 @@ var InstagramAPI = function () {
 
                                                 case 11:
                                                     if (!(i < posts.length)) {
-                                                        _context10.next = 64;
+                                                        _context10.next = 66;
                                                         break;
                                                     }
 
@@ -541,76 +530,78 @@ var InstagramAPI = function () {
                                                     _context10.t1 = _context10.sent;
 
                                                     if (!(_context10.t1 != 0)) {
-                                                        _context10.next = 19;
+                                                        _context10.next = 20;
                                                         break;
                                                     }
 
-                                                    return _context10.abrupt('continue', 61);
+                                                    _this.removePost(posts[i].url);
+                                                    return _context10.abrupt('continue', 63);
 
-                                                case 19:
+                                                case 20:
+                                                    ;
                                                     console.log(i + 1 + ' of ' + posts.length + ' posts.');
-                                                    _context10.next = 22;
+                                                    _context10.next = 24;
                                                     return _this.driver.wait(until.elementLocated(By.className("_2g7d5")));
 
-                                                case 22:
-                                                    _context10.next = 24;
+                                                case 24:
+                                                    _context10.next = 26;
                                                     return _this.driver.findElements(By.className("_ezgzd"));
 
-                                                case 24:
+                                                case 26:
                                                     comments = _context10.sent;
-                                                    _context10.next = 27;
+                                                    _context10.next = 29;
                                                     return _this.driver.findElements(By.className("_nzn1h"));
 
-                                                case 27:
+                                                case 29:
                                                     _context10.t2 = _context10.sent;
 
                                                     if (!(_context10.t2 != 0)) {
-                                                        _context10.next = 34;
+                                                        _context10.next = 36;
                                                         break;
                                                     }
 
-                                                    _context10.next = 31;
+                                                    _context10.next = 33;
                                                     return _this.driver.findElement(By.css("._nzn1h span")).getText().then(function (likes) {
                                                         return likes.replace(',', '');
                                                     });
 
-                                                case 31:
+                                                case 33:
                                                     _context10.t3 = _context10.sent;
-                                                    _context10.next = 35;
+                                                    _context10.next = 37;
                                                     break;
 
-                                                case 34:
+                                                case 36:
                                                     _context10.t3 = 0;
 
-                                                case 35:
+                                                case 37:
                                                     likes = _context10.t3;
-                                                    _context10.next = 38;
+                                                    _context10.next = 40;
                                                     return _this.driver.findElements(By.className("_p29ma"));
 
-                                                case 38:
+                                                case 40:
                                                     _context10.t4 = _context10.sent;
 
                                                     if (!(_context10.t4 != 0)) {
-                                                        _context10.next = 45;
+                                                        _context10.next = 47;
                                                         break;
                                                     }
 
-                                                    _context10.next = 42;
+                                                    _context10.next = 44;
                                                     return _this.driver.findElement(By.className("_p29ma")).getAttribute('datetime');
 
-                                                case 42:
+                                                case 44:
                                                     _context10.t5 = _context10.sent;
-                                                    _context10.next = 46;
+                                                    _context10.next = 48;
                                                     break;
 
-                                                case 45:
+                                                case 47:
                                                     _context10.t5 = 0;
 
-                                                case 46:
+                                                case 48:
                                                     dateattr = _context10.t5;
                                                     datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
                                                     rating = Math.round(likes / datetime * 100) / 100;
-                                                    _context10.next = 51;
+                                                    _context10.next = 53;
                                                     return _post2.default.update({
                                                         url: posts[i].url
                                                     }, {
@@ -623,7 +614,7 @@ var InstagramAPI = function () {
                                                         }
                                                     });
 
-                                                case 51:
+                                                case 53:
                                                     _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop(j) {
                                                         var username;
                                                         return regeneratorRuntime.wrap(function _loop$(_context9) {
@@ -658,26 +649,26 @@ var InstagramAPI = function () {
                                                     });
                                                     j = 0;
 
-                                                case 53:
+                                                case 55:
                                                     if (!(j < comments.length)) {
-                                                        _context10.next = 58;
+                                                        _context10.next = 60;
                                                         break;
                                                     }
 
-                                                    return _context10.delegateYield(_loop(j), 't6', 55);
+                                                    return _context10.delegateYield(_loop(j), 't6', 57);
 
-                                                case 55:
+                                                case 57:
                                                     j++;
-                                                    _context10.next = 53;
+                                                    _context10.next = 55;
                                                     break;
 
-                                                case 58:
+                                                case 60:
                                                     if (!(newUsers.length > config.userRefreshRate)) {
-                                                        _context10.next = 61;
+                                                        _context10.next = 63;
                                                         break;
                                                     }
 
-                                                    _context10.next = 61;
+                                                    _context10.next = 63;
                                                     return _user2.default.insertMany(newUsers, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
                                                         return regeneratorRuntime.wrap(function _callee8$(_context8) {
                                                             while (1) {
@@ -710,12 +701,12 @@ var InstagramAPI = function () {
                                                         }, _callee8, this);
                                                     })));
 
-                                                case 61:
+                                                case 63:
                                                     i++;
                                                     _context10.next = 11;
                                                     break;
 
-                                                case 64:
+                                                case 66:
                                                 case 'end':
                                                     return _context10.stop();
                                             }
@@ -763,7 +754,7 @@ var InstagramAPI = function () {
 
                             case 4:
                                 if (!(i < users.length)) {
-                                    _context12.next = 27;
+                                    _context12.next = 30;
                                     break;
                                 }
 
@@ -778,29 +769,32 @@ var InstagramAPI = function () {
                                 _context12.t0 = _context12.sent;
 
                                 if (!(_context12.t0 != 0)) {
-                                    _context12.next = 12;
+                                    _context12.next = 13;
                                     break;
                                 }
 
                                 this.removeUser(users[i].username);
+                                return _context12.abrupt('continue', 27);
 
-                            case 12:
-                                _context12.next = 14;
-                                return this.driver.wait(until.elementLocated(By.className("_rf3jb")));
+                            case 13:
+                                ;
+                                console.log('Analyzing ' + users[i].username);
+                                _context12.next = 17;
+                                return this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
 
-                            case 14:
-                                _context12.next = 16;
+                            case 17:
+                                _context12.next = 19;
                                 return this.driver.findElements(By.className("_kcrwx"));
 
-                            case 16:
+                            case 19:
                                 _context12.t1 = _context12.sent;
 
                                 if (!(_context12.t1 != 0)) {
-                                    _context12.next = 22;
+                                    _context12.next = 25;
                                     break;
                                 }
 
-                                _context12.next = 20;
+                                _context12.next = 23;
                                 return _user2.default.update({
                                     username: users[i].username
                                 }, {
@@ -809,12 +803,12 @@ var InstagramAPI = function () {
                                     }
                                 });
 
-                            case 20:
-                                _context12.next = 24;
+                            case 23:
+                                _context12.next = 27;
                                 break;
 
-                            case 22:
-                                _context12.next = 24;
+                            case 25:
+                                _context12.next = 27;
                                 return _user2.default.update({
                                     username: users[i].username
                                 }, {
@@ -823,12 +817,12 @@ var InstagramAPI = function () {
                                     }
                                 });
 
-                            case 24:
+                            case 27:
                                 i++;
                                 _context12.next = 4;
                                 break;
 
-                            case 27:
+                            case 30:
                             case 'end':
                                 return _context12.stop();
                         }
@@ -843,16 +837,27 @@ var InstagramAPI = function () {
             return analyzeUsers;
         }()
     }, {
+        key: 'removePost',
+        value: function removePost(url) {
+            return _post2.default.remove({
+                url: url
+            }, function (err) {
+                if (err) console.log(err);
+                console.log('Post was removed');
+            });
+        }
+    }, {
         key: 'removeUser',
         value: function removeUser(username) {
             return _user2.default.remove({
                 username: username
             }, function (err) {
                 if (err) console.log(err);
+                console.log(username + ' was removed');
             });
         }
     }, {
-        key: 'sendUserRequests',
+        key: 'followUsers',
         value: function () {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
                 var users, i;
@@ -869,7 +874,7 @@ var InstagramAPI = function () {
 
                             case 4:
                                 if (!(i < users.length)) {
-                                    _context13.next = 24;
+                                    _context13.next = 32;
                                     break;
                                 }
 
@@ -878,49 +883,67 @@ var InstagramAPI = function () {
 
                             case 7:
                                 _context13.next = 9;
-                                return this.driver.wait(until.elementLocated(By.className("_rf3jb")));
+                                return this.driver.findElements(By.className("error-container"));
 
                             case 9:
-                                _context13.next = 11;
-                                return this.driver.findElements(By.className("_kcrwx"));
-
-                            case 11:
                                 _context13.t0 = _context13.sent;
 
                                 if (!(_context13.t0 != 0)) {
-                                    _context13.next = 21;
+                                    _context13.next = 13;
                                     break;
                                 }
 
-                                _context13.next = 15;
-                                return this.driver.findElement(By.className('_r9b8f')).click();
+                                this.removeUser(users[i].username);
+                                return _context13.abrupt('continue', 29);
 
-                            case 15:
+                            case 13:
+                                ;
+                                console.log('Following ' + users[i].username);
                                 _context13.next = 17;
-                                return this.driver.wait(until.elementLocated(By.className("_t78yp")));
+                                return this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
 
                             case 17:
                                 _context13.next = 19;
+                                return this.driver.findElements(By.className("_kcrwx"));
+
+                            case 19:
+                                _context13.t1 = _context13.sent;
+
+                                if (!(_context13.t1 != 0)) {
+                                    _context13.next = 29;
+                                    break;
+                                }
+
+                                _context13.next = 23;
+                                return this.driver.findElement(By.className('_r9b8f')).click();
+
+                            case 23:
+                                _context13.next = 25;
+                                return this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+
+                            case 25:
+                                _context13.next = 27;
                                 return _user2.default.update({
                                     username: users[i].username
                                 }, {
                                     $set: {
                                         type: 'followed',
                                         reviewed: true,
-                                        reviewed_at: Date.now()
+                                        reviewed_at: Date.now(),
+                                        followed_at: Date.now()
                                     }
                                 });
 
-                            case 19:
-                                _context13.next = 21;
+                            case 27:
+                                _context13.next = 29;
                                 break;
 
-                            case 21:
+                            case 29:
                                 i++;
                                 _context13.next = 4;
                                 break;
 
-                            case 24:
+                            case 32:
                             case 'end':
                                 return _context13.stop();
                         }
@@ -928,23 +951,23 @@ var InstagramAPI = function () {
                 }, _callee12, this);
             }));
 
-            function sendUserRequests() {
+            function followUsers() {
                 return _ref11.apply(this, arguments);
             }
 
-            return sendUserRequests;
+            return followUsers;
         }()
     }, {
-        key: 'likeUserPosts',
+        key: 'unfollowUsers',
         value: function () {
             var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
-                var users, i, posts, postsArr, k, href, j;
+                var users, i;
                 return regeneratorRuntime.wrap(function _callee13$(_context14) {
                     while (1) {
                         switch (_context14.prev = _context14.next) {
                             case 0:
                                 _context14.next = 2;
-                                return this.dbase.getUsersToLike();
+                                return this.dbase.getUsersToUnfollow();
 
                             case 2:
                                 users = _context14.sent;
@@ -952,7 +975,7 @@ var InstagramAPI = function () {
 
                             case 4:
                                 if (!(i < users.length)) {
-                                    _context14.next = 52;
+                                    _context14.next = 28;
                                     break;
                                 }
 
@@ -961,51 +984,143 @@ var InstagramAPI = function () {
 
                             case 7:
                                 _context14.next = 9;
-                                return this.driver.wait(until.elementLocated(By.className("_rf3jb")));
+                                return this.driver.findElements(By.className("error-container"));
 
                             case 9:
-                                _context14.next = 11;
-                                return this.driver.findElements(By.className("_mck9w"));
-
-                            case 11:
                                 _context14.t0 = _context14.sent;
 
-                                if (!(_context14.t0 == 0)) {
-                                    _context14.next = 15;
+                                if (!(_context14.t0 != 0)) {
+                                    _context14.next = 13;
                                     break;
                                 }
 
                                 this.removeUser(users[i].username);
-                                return _context14.abrupt('continue', 49);
+                                return _context14.abrupt('continue', 25);
 
-                            case 15:
+                            case 13:
                                 ;
+                                _context14.next = 16;
+                                return this.driver.findElements(By.className("_t78yp"));
+
+                            case 16:
+                                _context14.t1 = _context14.sent;
+
+                                if (!(_context14.t1 != 0)) {
+                                    _context14.next = 22;
+                                    break;
+                                }
+
+                                _context14.next = 20;
+                                return this.driver.findElement(By.className('_t78yp')).click();
+
+                            case 20:
+                                _context14.next = 22;
+                                return this.sleep(1);
+
+                            case 22:
+                                console.log('Unfollowing ' + users[i].username);
+                                _context14.next = 25;
+                                return _user2.default.update({
+                                    username: users[i].username
+                                }, {
+                                    $set: {
+                                        type: 'unfollowed',
+                                        reviewed: true,
+                                        reviewed_at: Date.now()
+                                    }
+                                });
+
+                            case 25:
+                                i++;
+                                _context14.next = 4;
+                                break;
+
+                            case 28:
+                            case 'end':
+                                return _context14.stop();
+                        }
+                    }
+                }, _callee13, this);
+            }));
+
+            function unfollowUsers() {
+                return _ref12.apply(this, arguments);
+            }
+
+            return unfollowUsers;
+        }()
+    }, {
+        key: 'likeUserPosts',
+        value: function () {
+            var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14() {
+                var users, i, posts, postsArr, k, href, j;
+                return regeneratorRuntime.wrap(function _callee14$(_context15) {
+                    while (1) {
+                        switch (_context15.prev = _context15.next) {
+                            case 0:
+                                _context15.next = 2;
+                                return this.dbase.getUsersToLike();
+
+                            case 2:
+                                users = _context15.sent;
+                                i = 0;
+
+                            case 4:
+                                if (!(i < users.length)) {
+                                    _context15.next = 54;
+                                    break;
+                                }
+
+                                _context15.next = 7;
+                                return this.driver.get(config.urls.main + users[i].username);
+
+                            case 7:
+                                _context15.next = 9;
+                                return this.driver.findElements(By.className("_mck9w"));
+
+                            case 9:
+                                _context15.t0 = _context15.sent;
+
+                                if (!(_context15.t0 == 0)) {
+                                    _context15.next = 13;
+                                    break;
+                                }
+
+                                this.removeUser(users[i].username);
+                                return _context15.abrupt('continue', 51);
+
+                            case 13:
+                                ;
+                                _context15.next = 16;
+                                return this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+
+                            case 16:
                                 this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
-                                _context14.next = 19;
+                                _context15.next = 19;
                                 return this.driver.findElements(By.css('._mck9w a'));
 
                             case 19:
-                                posts = _context14.sent;
+                                posts = _context15.sent;
                                 postsArr = [];
                                 k = 0;
 
                             case 22:
                                 if (!(k < posts.length)) {
-                                    _context14.next = 30;
+                                    _context15.next = 30;
                                     break;
                                 }
 
-                                _context14.next = 25;
+                                _context15.next = 25;
                                 return posts[k].getAttribute('href');
 
                             case 25:
-                                href = _context14.sent;
+                                href = _context15.sent;
 
                                 postsArr.push(href);
 
                             case 27:
                                 k++;
-                                _context14.next = 22;
+                                _context15.next = 22;
                                 break;
 
                             case 30:
@@ -1013,43 +1128,44 @@ var InstagramAPI = function () {
 
                             case 31:
                                 if (!(j < config.userPostsToLike && j < postsArr.length)) {
-                                    _context14.next = 47;
+                                    _context15.next = 48;
                                     break;
                                 }
 
-                                _context14.next = 34;
+                                _context15.next = 34;
                                 return this.driver.get(postsArr[j]);
 
                             case 34:
-                                _context14.next = 36;
+                                _context15.next = 36;
                                 return this.driver.findElements(By.className("coreSpriteHeartFull"));
 
                             case 36:
-                                _context14.t1 = _context14.sent.length;
-                                _context14.t2 = [];
+                                _context15.t1 = _context15.sent.length;
+                                _context15.t2 = [];
 
-                                if (!(_context14.t1 != _context14.t2)) {
-                                    _context14.next = 40;
+                                if (!(_context15.t1 != _context15.t2)) {
+                                    _context15.next = 40;
                                     break;
                                 }
 
-                                return _context14.abrupt('continue', 44);
+                                return _context15.abrupt('continue', 45);
 
                             case 40:
                                 this.driver.wait(until.elementLocated(By.className('coreSpriteHeartOpen')), config.timeout);
-                                _context14.next = 43;
+                                _context15.next = 43;
                                 return this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
 
                             case 43:
-                                console.log('here');
+                                _context15.next = 45;
+                                return this.sleep(1);
 
-                            case 44:
+                            case 45:
                                 j++;
-                                _context14.next = 31;
+                                _context15.next = 31;
                                 break;
 
-                            case 47:
-                                _context14.next = 49;
+                            case 48:
+                                _context15.next = 50;
                                 return _user2.default.update({
                                     username: users[i].username
                                 }, {
@@ -1060,24 +1176,158 @@ var InstagramAPI = function () {
                                     }
                                 });
 
-                            case 49:
+                            case 50:
+                                console.log('liked posts of ' + users[i].username);
+
+                            case 51:
                                 i++;
-                                _context14.next = 4;
+                                _context15.next = 4;
                                 break;
 
-                            case 52:
+                            case 54:
                             case 'end':
-                                return _context14.stop();
+                                return _context15.stop();
                         }
                     }
-                }, _callee13, this);
+                }, _callee14, this);
             }));
 
             function likeUserPosts() {
-                return _ref12.apply(this, arguments);
+                return _ref13.apply(this, arguments);
             }
 
             return likeUserPosts;
+        }()
+    }, {
+        key: 'commentPosts',
+        value: function () {
+            var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
+                var posts, i, comment;
+                return regeneratorRuntime.wrap(function _callee15$(_context16) {
+                    while (1) {
+                        switch (_context16.prev = _context16.next) {
+                            case 0:
+                                _context16.next = 2;
+                                return this.dbase.getPostsToComment();
+
+                            case 2:
+                                posts = _context16.sent;
+                                i = 0;
+
+                            case 4:
+                                if (!(i < posts.length)) {
+                                    _context16.next = 31;
+                                    break;
+                                }
+
+                                _context16.next = 7;
+                                return this.driver.get(posts[i].url);
+
+                            case 7:
+                                _context16.next = 9;
+                                return this.driver.findElements(By.className("error-container"));
+
+                            case 9:
+                                _context16.t0 = _context16.sent;
+
+                                if (!(_context16.t0 != 0)) {
+                                    _context16.next = 13;
+                                    break;
+                                }
+
+                                this.removePost(posts[i].url);
+                                return _context16.abrupt('continue', 28);
+
+                            case 13:
+                                ;
+                                console.log(i + 1 + ' of ' + posts.length + ' posts.');
+                                _context16.next = 17;
+                                return this.driver.wait(until.elementLocated(By.className("_bilrf")), config.timeout);
+
+                            case 17:
+                                //comment post
+                                comment = this.comments[Math.floor(Math.random() * this.comments.length)];
+                                _context16.next = 20;
+                                return this.driver.findElement(By.className('_bilrf')).clear();
+
+                            case 20:
+                                _context16.next = 22;
+                                return this.driver.findElement(By.className('_bilrf')).sendKeys(comment);
+
+                            case 22:
+                                _context16.next = 24;
+                                return _post2.default.update({
+                                    url: posts[i].url
+                                }, {
+                                    $set: {
+                                        type: 'commented',
+                                        reviewed: true,
+                                        reviewed_at: Date.now()
+                                    }
+                                });
+
+                            case 24:
+                                _context16.next = 26;
+                                return _page2.default.update({
+                                    username: posts[i].username
+                                }, {
+                                    $set: {
+                                        type: 'commented',
+                                        reviewed: true,
+                                        reviewed_at: Date.now(),
+                                        commented_at: Date.now(),
+                                        commented_times: post.page.commented_times >= config.maxCommentForPageInDay ? 1 : post.page.commented_times + 1
+                                    }
+                                });
+
+                            case 26:
+                                _context16.next = 28;
+                                return this.sleep(1);
+
+                            case 28:
+                                i++;
+                                _context16.next = 4;
+                                break;
+
+                            case 31:
+                            case 'end':
+                                return _context16.stop();
+                        }
+                    }
+                }, _callee15, this);
+            }));
+
+            function commentPosts() {
+                return _ref14.apply(this, arguments);
+            }
+
+            return commentPosts;
+        }()
+    }, {
+        key: 'sleep',
+        value: function () {
+            var _ref15 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(seconds) {
+                return regeneratorRuntime.wrap(function _callee16$(_context17) {
+                    while (1) {
+                        switch (_context17.prev = _context17.next) {
+                            case 0:
+                                console.log('sleeping for ' + seconds + ' seconds.');
+                                _context17.next = 3;
+                                return this.driver.sleep(seconds * 1000);
+
+                            case 3:
+                            case 'end':
+                                return _context17.stop();
+                        }
+                    }
+                }, _callee16, this);
+            }));
+
+            function sleep(_x11) {
+                return _ref15.apply(this, arguments);
+            }
+
+            return sleep;
         }()
     }]);
 
