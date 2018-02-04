@@ -1,4 +1,5 @@
 const config = require('../../config.json');
+import User from '../models/user';
 // var MongoClient = require('mongodb').MongoClient;
 import mongoose from 'mongoose';
 
@@ -18,6 +19,18 @@ export default {
             console.log('Connected to the database');
         }.bind(this));
         return this;
+    },
+
+    getUsersToFollow() {
+        return User.find({type:'follow', reviewed: false});
+    },
+
+    getUsersToLike() {
+        return User.find({type:'like', reviewed: false});
+    },
+
+    getUsersToAnalyze() {
+        return User.find({type:'analyze', reviewed: false});
     },
 
     insertMany(collectionName, documents){

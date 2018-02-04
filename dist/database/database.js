@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _user = require('../models/user');
+
+var _user2 = _interopRequireDefault(_user);
+
 var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
@@ -28,6 +32,15 @@ exports.default = {
             console.log('Connected to the database');
         }.bind(this));
         return this;
+    },
+    getUsersToFollow: function getUsersToFollow() {
+        return _user2.default.find({ type: 'follow', reviewed: false });
+    },
+    getUsersToLike: function getUsersToLike() {
+        return _user2.default.find({ type: 'like', reviewed: false });
+    },
+    getUsersToAnalyze: function getUsersToAnalyze() {
+        return _user2.default.find({ type: 'analyze', reviewed: false });
     },
     insertMany: function insertMany(collectionName, documents) {
         this.db.collection(collectionName).insertMany(documents, function (err, res) {

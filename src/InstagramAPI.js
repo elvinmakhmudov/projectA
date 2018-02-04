@@ -86,7 +86,7 @@ class InstagramAPI {
         return new Promise(async function (resolve) {
             await this.driver.get(config.urls.main);
             await this.driver.wait(until.elementLocated(By.className('coreSpriteDesktopNavProfile')), config.timeout);
-            await this.driver.findElement(By.className('coreSpriteDesktopNavProfile')).click().then(()=>resolve());
+            await this.driver.findElement(By.className('coreSpriteDesktopNavProfile')).click().then(() => resolve());
         }.bind(this))
     }
 
@@ -194,20 +194,18 @@ class InstagramAPI {
             let posts = await Post.find({
                 type: 'analyze'
             });
-            let postsToDelete = [];
             let users = await User.find({
                 type: 'analyze'
             }) || [];
             let newUsers = [];
             for (let i = 0; i < posts.length; i++) {
                 await this.driver.get(posts[i].url);
-                // postsToDelete.push(posts[i].url)
                 //if page has been removed then break
                 if (await this.driver.findElements(By.className("error-container")) != 0) continue;
                 console.log((i + 1) + ' of ' + posts.length + ' posts.')
                 await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
                 let comments = await this.driver.findElements(By.className("_ezgzd"));
-                let likes = await this.driver.findElements(By.className("_nzn1h")) != 0 ? await this.driver.findElement(By.css("._nzn1h span")).getText().then(likes => likes.replace(',','')) : 0;
+                let likes = await this.driver.findElements(By.className("_nzn1h")) != 0 ? await this.driver.findElement(By.css("._nzn1h span")).getText().then(likes => likes.replace(',', '')) : 0;
                 let dateattr = await this.driver.findElements(By.className("_p29ma")) != 0 ? await this.driver.findElement(By.className("_p29ma")).getAttribute('datetime') : 0;
                 let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
                 let rating = Math.round(likes / datetime * 100) / 100;
@@ -235,17 +233,6 @@ class InstagramAPI {
                     }
                 }
                 if (newUsers.length > config.userRefreshRate) {
-                    // await Post.update({
-                    //     url: {
-                    //         $in: postsToDelete
-                    //     }
-                    // }, {
-                    //     $set: {
-                    //         type: 'reviewed',
-                    //         reviewed: true,
-                    //         reviewed_at: Date.now(),
-                    //     }
-                    // }, () => postsToDelete.length = 0)
                     await User.insertMany(newUsers, async function () {
                         console.log(newUsers.length + ' users were added to collection');
                         console.log(users.length + ' users found.');
@@ -257,6 +244,109 @@ class InstagramAPI {
         } catch (e) {
             // console.log(e)
         }
+    }
+
+
+    async analyzeUsers() {
+        let users = await this.dbase.getUsersToAnalyze();
+        for (let i = 0; i < users.length; i++) {
+            await this.driver.get(config.urls.main + users[i].username);
+            if (await this.driver.findElements(By.className("error-container")) != 0) this.removeUser(users[i].username);
+            await this.driver.wait(until.elementLocated(By.className("_rf3jb")));
+            //add to follow
+            if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
+                await User.update({
+                    username: users[i].username
+                }, {
+                    $set: {
+                        type: 'follow',
+                    }
+                });
+            } else {
+                //add to like
+                await User.update({
+                    username: users[i].username
+                }, {
+                    $set: {
+                        type: 'like',
+                    }
+                });
+            }
+        }
+    }
+
+    removeUser(username) {
+        return User.remove({
+            username
+        }, function (err) {
+            if (err) console.log(err);
+        })
+    }
+
+    async sendUserRequests() {
+        let users = await this.dbase.getUsersToFollow();
+        for (let i = 0; i < users.length; i++) {
+            await this.driver.get(config.urls.main + users[i].username);
+            await this.driver.wait(until.elementLocated(By.className("_rf3jb")));
+            //follow
+            if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
+                //click follow button
+                await this.driver.findElement(By.className('_r9b8f')).click();
+                //wait until requested text
+                await this.driver.wait(until.elementLocated(By.className("_t78yp")));
+
+                await User.update({
+                    username: users[i].username
+                }, {
+                    $set: {
+                        type: 'followed',
+                        reviewed: true,
+                        reviewed_at: Date.now()
+                    }
+                });
+            } else {
+                //like posts
+            }
+        }
+
+    }
+
+    async likeUserPosts() {
+        let users = await this.dbase.getUsersToLike();
+        for (let i = 0; i < users.length; i++) {
+            await this.driver.get(config.urls.main + users[i].username);
+            await this.driver.wait(until.elementLocated(By.className("_rf3jb")));
+            //follow
+            if (await this.driver.findElements(By.className("_mck9w")) == 0) {
+                this.removeUser(users[i].username)
+                continue
+            };
+            this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
+            let posts = await this.driver.findElements(By.css('._mck9w a'));
+            let postsArr = [];
+            for (let k = 0; k < posts.length; k++) {
+                let href = await posts[k].getAttribute('href');
+                postsArr.push(href);
+            }
+            for (let j = 0;
+                (j < config.userPostsToLike) && (j < postsArr.length); j++) {
+                await this.driver.get(postsArr[j]);
+                if ((await this.driver.findElements(By.className("coreSpriteHeartFull"))).length != [] ) continue;
+                this.driver.wait(until.elementLocated(By.className('coreSpriteHeartOpen')), config.timeout);
+                await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
+                console.log('here');
+            }
+            await User.update({
+                username: users[i].username
+            }, {
+                $set: {
+                    type: 'like',
+                    reviewed: true,
+                    reviewed_at: Date.now()
+                }
+            });
+        }
+
     }
 }
 

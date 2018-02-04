@@ -31,6 +31,21 @@ class Automater {
         await this.instagram.logIn();
         await this.instagram.getNewUsers();
     }
+
+    async analyzeUsers() {
+        await this.instagram.logIn();
+        await this.instagram.analyzeUsers();
+    }
+
+    async sendUserRequests(){
+        await this.instagram.logIn();
+        await this.instagram.sendUserRequests();
+    }
+
+    async likeUserPosts(){
+        await this.instagram.logIn();
+        await this.instagram.likeUserPosts();
+    }
 }
 
 export default Automater;

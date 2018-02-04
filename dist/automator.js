@@ -148,6 +148,93 @@ var Automater = function () {
 
             return getNewUsers;
         }()
+    }, {
+        key: 'analyzeUsers',
+        value: function () {
+            var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+                return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                    while (1) {
+                        switch (_context4.prev = _context4.next) {
+                            case 0:
+                                _context4.next = 2;
+                                return this.instagram.logIn();
+
+                            case 2:
+                                _context4.next = 4;
+                                return this.instagram.analyzeUsers();
+
+                            case 4:
+                            case 'end':
+                                return _context4.stop();
+                        }
+                    }
+                }, _callee4, this);
+            }));
+
+            function analyzeUsers() {
+                return _ref4.apply(this, arguments);
+            }
+
+            return analyzeUsers;
+        }()
+    }, {
+        key: 'sendUserRequests',
+        value: function () {
+            var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+                return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                    while (1) {
+                        switch (_context5.prev = _context5.next) {
+                            case 0:
+                                _context5.next = 2;
+                                return this.instagram.logIn();
+
+                            case 2:
+                                _context5.next = 4;
+                                return this.instagram.sendUserRequests();
+
+                            case 4:
+                            case 'end':
+                                return _context5.stop();
+                        }
+                    }
+                }, _callee5, this);
+            }));
+
+            function sendUserRequests() {
+                return _ref5.apply(this, arguments);
+            }
+
+            return sendUserRequests;
+        }()
+    }, {
+        key: 'likeUserPosts',
+        value: function () {
+            var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+                return regeneratorRuntime.wrap(function _callee6$(_context6) {
+                    while (1) {
+                        switch (_context6.prev = _context6.next) {
+                            case 0:
+                                _context6.next = 2;
+                                return this.instagram.logIn();
+
+                            case 2:
+                                _context6.next = 4;
+                                return this.instagram.likeUserPosts();
+
+                            case 4:
+                            case 'end':
+                                return _context6.stop();
+                        }
+                    }
+                }, _callee6, this);
+            }));
+
+            function likeUserPosts() {
+                return _ref6.apply(this, arguments);
+            }
+
+            return likeUserPosts;
+        }()
     }]);
 
     return Automater;
