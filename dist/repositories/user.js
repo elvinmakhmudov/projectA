@@ -50,7 +50,8 @@ exports.default = {
                 while (1) {
                     switch (_context2.prev = _context2.next) {
                         case 0:
-                            _context2.next = 2;
+                            console.log('in InsertMany : ' + newUsers);
+                            _context2.next = 3;
                             return _user2.default.insertMany(newUsers, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
                                 return regeneratorRuntime.wrap(function _callee$(_context) {
                                     while (1) {
@@ -66,7 +67,7 @@ exports.default = {
                                 }, _callee, this);
                             })));
 
-                        case 2:
+                        case 3:
                         case 'end':
                             return _context2.stop();
                     }
@@ -91,7 +92,9 @@ exports.default = {
                                 username: user.username
                             }, {
                                 $set: {
-                                    type: type
+                                    type: type,
+                                    reviewed: true,
+                                    reviewed_at: Date.now()
                                 }
                             });
 
@@ -111,5 +114,32 @@ exports.default = {
         }
 
         return setType;
+    }(),
+    remove: function () {
+        var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(user) {
+            return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                while (1) {
+                    switch (_context4.prev = _context4.next) {
+                        case 0:
+                            return _context4.abrupt('return', _user2.default.remove({
+                                username: user.username
+                            }, function (err) {
+                                if (err) console.log(err);
+                                console.log(user.username + ' was removed');
+                            }));
+
+                        case 1:
+                        case 'end':
+                            return _context4.stop();
+                    }
+                }
+            }, _callee4, this);
+        }));
+
+        function remove(_x4) {
+            return _ref4.apply(this, arguments);
+        }
+
+        return remove;
     }()
 };

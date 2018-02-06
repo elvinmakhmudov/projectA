@@ -164,30 +164,37 @@ class InstagramAPI {
         return new Promise(async function (resolve, reject) {
             //fetch posts
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) return resolve();
+            if (await this.driver.findElements(By.className("_mck9w")) == 0) {
+                throw "Error";
+                // this.removePost(post.url)
+                return false;
+            };
             this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
             let posts = await this.driver.findElements(By.css('._mck9w a'));
             let postsArr = [];
             for (let i = 0; i < posts.length; i++) {
-                let href = await posts[i].getAttribute('href');
-                postsArr.push(new Post({
-                    'url': href,
+                let url = await posts[i].getAttribute('href');
+                await postsArr.push(new Post({
+                    'url': url,
                     'username': page.username,
                     'type': 'analyze',
                     'page': page._id
                 }).save());
-                if (postsArr.length === posts.length) {
-                    Page.update({
-                        username: page.username
-                    }, {
-                            $set: {
-                                reviewed: true,
-                                reviewed_at: Date.now()
-                            }
-                        })
-                    // await Post.insertMany(postsArr, () => console.log(posts.length + ' posts were added'));
-                    resolve();
-                }
             }
+            // if (postsArr.length === posts.length) {
+            if ((postsArr.length > 0) ? !postsArr.some((post) => post.url === username) : true) {
+                await Page.update({
+                    username: page.username
+                }, {
+                    $set: {
+                        reviewed: true,
+                        reviewed_at: Date.now()
+                    }
+                });
+            }
+            // await Post.insertMany(postsArr, () => console.log(posts.length + ' posts were added'));
+            resolve();
+            // }
         }.bind(this));
     }
 
@@ -214,18 +221,18 @@ class InstagramAPI {
             await Post.update({
                 url: post.url
             }, {
-                    $set: {
-                        type: 'reviewed',
-                        reviewed: true,
-                        likes: likes,
-                        rating: rating,
-                        reviewed_at: Date.now()
-                    }
-                });
+                $set: {
+                    type: 'reviewed',
+                    reviewed: true,
+                    likes: likes,
+                    rating: rating,
+                    reviewed_at: Date.now()
+                }
+            });
             for (let j = 0; j < comments.length; j++) {
                 let username = await comments[j].findElement(By.tagName('a')).getText();
                 //get the users which are not author of post and which are not duplicate
-                if ((username !== posts[i].username) && ((users.length > 0) ? !users.some(user => user.username === username) : true) && ((newUsers.length > 0) ? !newUsers.some((user) => user.username === username) : true)) {
+                if ((username !== post.username) && ((users.length > 0) ? !users.some(user => user.username === username) : true) && ((newUsers.length > 0) ? !newUsers.some((user) => user.username === username) : true)) {
                     newUsers.push(await new User({
                         username: username,
                         type: 'analyze'
@@ -233,6 +240,7 @@ class InstagramAPI {
                     console.log('New username is:' + username);
                 }
             }
+            console.log('InstagramAPI newUsers: ' + newUsers.length);
             return newUsers;
             // if (newUsers.length > config.userRefreshRate) {
             //     await User.insertMany(newUsers, async function () {
@@ -345,25 +353,25 @@ class InstagramAPI {
     async unfollowUser(user) {
         // let users = await this.dbase.getUsersToUnfollow();
         // for (let i = 0; i < users.length; i++) {
-            await this.driver.get(config.urls.main + user.username);
-            if (await this.driver.findElements(By.className("error-container")) != 0) {
-                // this.removeUser(user.username)
-                return false;
-            };
-            if (await this.driver.findElements(By.className("_t78yp")) != 0) {
-                await this.driver.findElement(By.className('_t78yp')).click();
-                await this.sleep(1);
+        await this.driver.get(config.urls.main + user.username);
+        if (await this.driver.findElements(By.className("error-container")) != 0) {
+            // this.removeUser(user.username)
+            return false;
+        };
+        if (await this.driver.findElements(By.className("_t78yp")) != 0) {
+            await this.driver.findElement(By.className('_t78yp')).click();
+            await this.sleep(1);
+        }
+        console.log('Unfollowing ' + users[i].username);
+        await User.update({
+            username: users[i].username
+        }, {
+            $set: {
+                type: 'unfollowed',
+                reviewed: true,
+                reviewed_at: Date.now(),
             }
-            console.log('Unfollowing ' + users[i].username);
-            await User.update({
-                username: users[i].username
-            }, {
-                    $set: {
-                        type: 'unfollowed',
-                        reviewed: true,
-                        reviewed_at: Date.now(),
-                    }
-                });
+        });
         // }
     }
 
@@ -395,12 +403,12 @@ class InstagramAPI {
             await User.update({
                 username: users[i].username
             }, {
-                    $set: {
-                        type: 'like',
-                        reviewed: true,
-                        reviewed_at: Date.now()
-                    }
-                });
+                $set: {
+                    type: 'like',
+                    reviewed: true,
+                    reviewed_at: Date.now()
+                }
+            });
             console.log('liked posts of ' + users[i].username);
         }
     }
@@ -424,23 +432,23 @@ class InstagramAPI {
             await Post.update({
                 url: posts[i].url
             }, {
-                    $set: {
-                        type: 'commented',
-                        reviewed: true,
-                        reviewed_at: Date.now()
-                    }
-                });
+                $set: {
+                    type: 'commented',
+                    reviewed: true,
+                    reviewed_at: Date.now()
+                }
+            });
             await Page.update({
                 username: posts[i].username
             }, {
-                    $set: {
-                        type: 'commented',
-                        reviewed: true,
-                        reviewed_at: Date.now(),
-                        commented_at: Date.now(),
-                        commented_times: (post.page.commented_times >= config.maxCommentForPageInDay) ? 1 : (post.page.commented_times + 1)
-                    }
-                });
+                $set: {
+                    type: 'commented',
+                    reviewed: true,
+                    reviewed_at: Date.now(),
+                    commented_at: Date.now(),
+                    commented_times: (post.page.commented_times >= config.maxCommentForPageInDay) ? 1 : (post.page.commented_times + 1)
+                }
+            });
             await this.sleep(1);
         }
     }

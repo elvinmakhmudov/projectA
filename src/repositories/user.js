@@ -37,6 +37,7 @@ export default {
     },
 
     async insertMany(newUsers) {
+        console.log('in InsertMany : ' + newUsers);
         await User.insertMany(newUsers, async function () {
             console.log(newUsers.length + ' users were added to collection');
         });
@@ -59,7 +60,7 @@ export default {
             username: user.username
         }, function (err) {
             if (err) console.log(err);
-            console.log(username + ' was removed');
+            console.log(user.username + ' was removed');
         })
     }
 }

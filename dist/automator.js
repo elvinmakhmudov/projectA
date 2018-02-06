@@ -20,6 +20,10 @@ var _user = require('./repositories/user');
 
 var _user2 = _interopRequireDefault(_user);
 
+var _page = require('./repositories/page');
+
+var _page2 = _interopRequireDefault(_page);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -88,7 +92,7 @@ var Automater = function () {
 
                             case 2:
                                 if (!true) {
-                                    _context2.next = 20;
+                                    _context2.next = 28;
                                     break;
                                 }
 
@@ -101,39 +105,53 @@ var Automater = function () {
 
                             case 7:
                                 if (!(i < pages.length)) {
-                                    _context2.next = 16;
+                                    _context2.next = 24;
                                     break;
                                 }
 
                                 username = pages[i].username;
                                 //go to the username page
 
-                                _context2.next = 11;
+                                _context2.prev = 9;
+                                _context2.next = 12;
                                 return this.instagram.goToUsername(username);
 
-                            case 11:
-                                _context2.next = 13;
+                            case 12:
+                                _context2.next = 14;
                                 return this.instagram.savePostsToAnalyze(pages[i]);
 
-                            case 13:
+                            case 14:
+                                _context2.next = 21;
+                                break;
+
+                            case 16:
+                                _context2.prev = 16;
+                                _context2.t0 = _context2['catch'](9);
+                                _context2.next = 20;
+                                return _page2.default.remove(pages[i]);
+
+                            case 20:
+                                console.log(_context2.t0);
+
+                            case 21:
                                 i++;
                                 _context2.next = 7;
                                 break;
 
-                            case 16:
-                                _context2.next = 18;
+                            case 24:
+                                _context2.next = 26;
                                 return this.instagram.sleep(config.sleepEveryIteration);
 
-                            case 18:
+                            case 26:
                                 _context2.next = 2;
                                 break;
 
-                            case 20:
+                            case 28:
                             case 'end':
                                 return _context2.stop();
                         }
                     }
-                }, _callee2, this);
+                }, _callee2, this, [[9, 16]]);
             }));
 
             function savePosts() {
@@ -146,7 +164,7 @@ var Automater = function () {
         key: 'getNewUsers',
         value: function () {
             var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-                var posts, users, newUsers, i;
+                var posts, users, newUsers, tmpUsers, i;
                 return regeneratorRuntime.wrap(function _callee3$(_context3) {
                     while (1) {
                         switch (_context3.prev = _context3.next) {
@@ -156,7 +174,7 @@ var Automater = function () {
 
                             case 2:
                                 if (!true) {
-                                    _context3.next = 39;
+                                    _context3.next = 49;
                                     break;
                                 }
 
@@ -181,71 +199,73 @@ var Automater = function () {
                             case 11:
                                 users = _context3.t0;
                                 newUsers = [];
+                                tmpUsers = [];
+
+                                console.log('Analyzing posts.');
                                 i = 0;
 
-                            case 14:
+                            case 16:
                                 if (!(i < posts.length)) {
-                                    _context3.next = 35;
+                                    _context3.next = 39;
                                     break;
                                 }
 
-                                console.log(i + 1 + ' of ' + posts.length + ' posts.');
-                                _context3.t1 = newUsers;
-                                _context3.next = 19;
+                                _context3.prev = 17;
+                                _context3.next = 20;
                                 return this.instagram.getNewUsers(posts[i], users);
 
-                            case 19:
-                                _context3.t2 = _context3.sent;
+                            case 20:
+                                tmpUsers = _context3.sent;
+                                _context3.t1 = newUsers.push;
+                                _context3.t2 = newUsers;
+                                _context3.next = 25;
+                                return this.instagram.getNewUsers(posts[i], users);
 
-                                _context3.t1.concat.call(_context3.t1, _context3.t2);
-
-                                if (!(newUsers.length > config.userRefreshRate)) {
-                                    _context3.next = 32;
-                                    break;
-                                }
-
-                                _context3.next = 24;
-                                return _user2.default.insertMany(newUsers);
-
-                            case 24:
-                                console.log(users.length + ' users found.');
-                                _context3.next = 27;
-                                return _user2.default.analyze();
-
-                            case 27:
+                            case 25:
                                 _context3.t3 = _context3.sent;
 
-                                if (_context3.t3) {
-                                    _context3.next = 30;
-                                    break;
-                                }
+                                _context3.t1.apply.call(_context3.t1, _context3.t2, _context3.t3);
 
-                                _context3.t3 = [];
-
-                            case 30:
-                                users = _context3.t3;
-
-                                newUsers.length = 0;
-
-                            case 32:
-                                i++;
-                                _context3.next = 14;
+                                console.log('tmpUsers: ' + tmpUsers.length);
+                                console.log(newUsers.length);
+                                _context3.next = 36;
                                 break;
 
-                            case 35:
-                                _context3.next = 37;
-                                return this.instagram.sleep(config.sleepEveryIteration);
+                            case 31:
+                                _context3.prev = 31;
+                                _context3.t4 = _context3['catch'](17);
 
-                            case 37:
-                                _context3.next = 2;
+                                console.log(_context3.t4);
+                                _context3.next = 36;
+                                return _post2.default.remove(posts[i]);
+
+                            case 36:
+                                i++;
+                                _context3.next = 16;
                                 break;
 
                             case 39:
+                                console.log(newUsers);
+                                _context3.next = 42;
+                                return _user2.default.insertMany(newUsers);
+
+                            case 42:
+                                console.log(users.length + ' users found.');
+                                newUsers.length = 0;
+                                users.length = 0;
+                                _context3.next = 47;
+                                return this.instagram.sleep(config.sleepEveryIteration);
+
+                            case 47:
+                                _context3.next = 2;
+                                break;
+
+                            case 49:
                             case 'end':
                                 return _context3.stop();
                         }
                     }
-                }, _callee3, this);
+                }, _callee3, this, [[17, 31]]);
             }));
 
             function getNewUsers() {
@@ -271,7 +291,7 @@ var Automater = function () {
 
                             case 3:
                                 if (!true) {
-                                    _context4.next = 24;
+                                    _context4.next = 32;
                                     break;
                                 }
 
@@ -294,37 +314,50 @@ var Automater = function () {
 
                             case 11:
                                 if (!(i < users.length)) {
-                                    _context4.next = 20;
+                                    _context4.next = 28;
                                     break;
                                 }
 
-                                _context4.next = 14;
+                                _context4.prev = 12;
+                                _context4.next = 15;
                                 return this.instagram.getUserType(users[i]);
 
-                            case 14:
+                            case 15:
                                 type = _context4.sent;
-                                _context4.next = 17;
+                                _context4.next = 18;
                                 return _user2.default.setType(users[i], type);
 
-                            case 17:
+                            case 18:
+                                _context4.next = 25;
+                                break;
+
+                            case 20:
+                                _context4.prev = 20;
+                                _context4.t1 = _context4['catch'](12);
+
+                                console.log(_context4.t1);
+                                _context4.next = 25;
+                                return _user2.default.remove(users[i]);
+
+                            case 25:
                                 i++;
                                 _context4.next = 11;
                                 break;
 
-                            case 20:
-                                _context4.next = 22;
+                            case 28:
+                                _context4.next = 30;
                                 return this.instagram.sleep(config.sleepEveryIteration);
 
-                            case 22:
+                            case 30:
                                 _context4.next = 3;
                                 break;
 
-                            case 24:
+                            case 32:
                             case 'end':
                                 return _context4.stop();
                         }
                     }
-                }, _callee4, this);
+                }, _callee4, this, [[12, 20]]);
             }));
 
             function analyzeUsers() {
@@ -337,6 +370,7 @@ var Automater = function () {
         key: 'followUsers',
         value: function () {
             var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+                var users, i, followed;
                 return regeneratorRuntime.wrap(function _callee5$(_context5) {
                     while (1) {
                         switch (_context5.prev = _context5.next) {
@@ -346,22 +380,45 @@ var Automater = function () {
 
                             case 2:
                                 if (!true) {
-                                    _context5.next = 9;
+                                    _context5.next = 20;
                                     break;
                                 }
 
                                 _context5.next = 5;
-                                return this.instagram.followUsers();
+                                return _user2.default.follow();
 
                             case 5:
-                                _context5.next = 7;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay);
+                                users = _context5.sent;
+                                i = 0;
 
                             case 7:
+                                if (!(i < users.length)) {
+                                    _context5.next = 16;
+                                    break;
+                                }
+
+                                _context5.next = 10;
+                                return this.instagram.followUser(users[i]);
+
+                            case 10:
+                                followed = _context5.sent;
+                                _context5.next = 13;
+                                return _user2.default.setType(users[i], followed ? 'followed' : 'error');
+
+                            case 13:
+                                i++;
+                                _context5.next = 7;
+                                break;
+
+                            case 16:
+                                _context5.next = 18;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay);
+
+                            case 18:
                                 _context5.next = 2;
                                 break;
 
-                            case 9:
+                            case 20:
                             case 'end':
                                 return _context5.stop();
                         }
@@ -379,6 +436,7 @@ var Automater = function () {
         key: 'unfollowUsers',
         value: function () {
             var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+                var users, i, unfollowed;
                 return regeneratorRuntime.wrap(function _callee6$(_context6) {
                     while (1) {
                         switch (_context6.prev = _context6.next) {
@@ -388,22 +446,45 @@ var Automater = function () {
 
                             case 2:
                                 if (!true) {
-                                    _context6.next = 9;
+                                    _context6.next = 20;
                                     break;
                                 }
 
                                 _context6.next = 5;
-                                return this.instagram.unfollowUsers();
+                                return _user2.default.unfollow();
 
                             case 5:
-                                _context6.next = 7;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay);
+                                users = _context6.sent;
+                                i = 0;
 
                             case 7:
+                                if (!(i < users.length)) {
+                                    _context6.next = 16;
+                                    break;
+                                }
+
+                                _context6.next = 10;
+                                return this.instagram.unfollowUser(users[i]);
+
+                            case 10:
+                                unfollowed = _context6.sent;
+                                _context6.next = 13;
+                                return _user2.default.setType(users[i], unfollowed ? 'unfollowed' : 'error');
+
+                            case 13:
+                                i++;
+                                _context6.next = 7;
+                                break;
+
+                            case 16:
+                                _context6.next = 18;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay);
+
+                            case 18:
                                 _context6.next = 2;
                                 break;
 
-                            case 9:
+                            case 20:
                             case 'end':
                                 return _context6.stop();
                         }

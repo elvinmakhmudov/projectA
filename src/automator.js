@@ -3,6 +3,7 @@ let config = require('../config.json');
 import api from './InstagramAPI.js';
 import postrepo from './repositories/post';
 import userrepo from './repositories/user';
+import pagerepo from './repositories/page';
 const async = require('async');
 
 let secondsInDay = 60 * 60 * config.workingHours;
@@ -27,8 +28,13 @@ class Automater {
             for (let i = 0; i < pages.length; i++) {
                 let username = pages[i].username;
                 //go to the username page
-                await this.instagram.goToUsername(username);
-                await this.instagram.savePostsToAnalyze(pages[i]);
+                try {
+                    await this.instagram.goToUsername(username);
+                    await this.instagram.savePostsToAnalyze(pages[i]);
+                } catch (e) {
+                    await pagerepo.remove(pages[i])
+                    console.log(e);
+                }
             }
             await this.instagram.sleep(config.sleepEveryIteration);
         }
@@ -40,21 +46,24 @@ class Automater {
             let posts = await postrepo.analyze();
             let users = await userrepo.analyze() || [];
             let newUsers = [];
+            let tmpUsers = [];
+            console.log('Analyzing posts.');
             for (let i = 0; i < posts.length; i++) {
-                console.log((i + 1) + ' of ' + posts.length + ' posts.')
                 try {
-                    newUsers.concat(await this.instagram.getNewUsers(posts[i], users));
-                    if (newUsers.length > config.userRefreshRate) {
-                        await userrepo.insertMany(newUsers);
-                        console.log(users.length + ' users found.');
-                        users = await userrepo.analyze() || [];
-                        newUsers.length = 0;
-                    }
+                    tmpUsers = await this.instagram.getNewUsers(posts[i], users);
+                    newUsers.push.apply(newUsers, await this.instagram.getNewUsers(posts[i], users));
+                    console.log('tmpUsers: ' + tmpUsers.length);
+                    console.log(newUsers.length);
                 } catch (e) {
                     console.log(e);
                     await postrepo.remove(posts[i]);
                 }
             }
+            console.log(newUsers);
+            await userrepo.insertMany(newUsers);
+            console.log(users.length + ' users found.');
+            newUsers.length = 0;
+            users.length = 0;
             await this.instagram.sleep(config.sleepEveryIteration);
         }
     }

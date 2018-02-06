@@ -71,12 +71,66 @@ exports.default = {
 
         return comment;
     }(),
-    analyze: function analyze(limit) {
-        return _post2.default.find({
-            type: 'analyze',
-            reviewed: false
-        }).sort({
-            rating: -1
-        }).limit(limit || config.batchUserLimitCount);
-    }
+    analyze: function () {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(limit) {
+            return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                while (1) {
+                    switch (_context2.prev = _context2.next) {
+                        case 0:
+                            _context2.next = 2;
+                            return _post2.default.find({
+                                type: 'analyze',
+                                reviewed: false
+                            }).sort({
+                                rating: -1
+                            }).limit(limit || config.batchUserLimitCount);
+
+                        case 2:
+                            return _context2.abrupt('return', _context2.sent);
+
+                        case 3:
+                        case 'end':
+                            return _context2.stop();
+                    }
+                }
+            }, _callee2, this);
+        }));
+
+        function analyze(_x2) {
+            return _ref2.apply(this, arguments);
+        }
+
+        return analyze;
+    }(),
+    remove: function () {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(post) {
+            return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                while (1) {
+                    switch (_context3.prev = _context3.next) {
+                        case 0:
+                            _context3.next = 2;
+                            return _post2.default.remove({
+                                url: post.url
+                            }, function (err) {
+                                if (err) console.log(err);
+                                console.log('Post was removed');
+                            });
+
+                        case 2:
+                            return _context3.abrupt('return', _context3.sent);
+
+                        case 3:
+                        case 'end':
+                            return _context3.stop();
+                    }
+                }
+            }, _callee3, this);
+        }));
+
+        function remove(_x3) {
+            return _ref3.apply(this, arguments);
+        }
+
+        return remove;
+    }()
 };
