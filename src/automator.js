@@ -3,7 +3,7 @@ let config = require('../config.json');
 import api from './InstagramAPI.js';
 const async = require('async');
 
-let secondsInDay = 60 * 60 * 24;
+let secondsInDay = 60 * 60 * config.workingHours;
 class Automater {
     constructor(login, password) {
         this.login = login;

@@ -22,7 +22,7 @@ var config = require('../config.json');
 
 var async = require('async');
 
-var secondsInDay = 60 * 60 * 24;
+var secondsInDay = 60 * 60 * config.workingHours;
 
 var Automater = function () {
     function Automater(login, password) {
