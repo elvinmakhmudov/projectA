@@ -179,11 +179,11 @@ class InstagramAPI {
                     Page.update({
                         username: page.username
                     }, {
-                        $set: {
-                            reviewed: true,
-                            reviewed_at: Date.now()
-                        }
-                    })
+                            $set: {
+                                reviewed: true,
+                                reviewed_at: Date.now()
+                            }
+                        })
                     // await Post.insertMany(postsArr, () => console.log(posts.length + ' posts were added'));
                     resolve();
                 }
@@ -191,29 +191,29 @@ class InstagramAPI {
         }.bind(this));
     }
 
-    async getNewUsers() {
+    async getNewUsers(post, users) {
         try {
-            let posts = await this.dbase.getPostsToAnalyze();
-            let users = await this.dbase.getUsersToAnalyze() || [];
+            // let posts = await this.dbase.getPostsToAnalyze();
+            // let users = await this.dbase.getUsersToAnalyze() || [];
             let newUsers = [];
-            for (let i = 0; i < posts.length; i++) {
-                await this.driver.get(posts[i].url);
-                //if page has been removed then break
-                if (await this.driver.findElements(By.className("error-container")) != 0) {
-                    this.removePost(posts[i].url)
-                    continue
-                };
-                console.log((i + 1) + ' of ' + posts.length + ' posts.')
-                await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
-                let comments = await this.driver.findElements(By.className("_ezgzd"));
-                let likes = await this.driver.findElements(By.className("_nzn1h")) != 0 ? await this.driver.findElement(By.css("._nzn1h span")).getText().then(likes => likes.replace(',', '')) : 0;
-                let dateattr = await this.driver.findElements(By.className("_p29ma")) != 0 ? await this.driver.findElement(By.className("_p29ma")).getAttribute('datetime') : 0;
-                let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
-                let rating = Math.round(likes / datetime * 100) / 100;
+            // for (let i = 0; i < posts.length; i++) {
+            await this.driver.get(post.url);
+            //if page has been removed then break
+            if (await this.driver.findElements(By.className("error-container")) != 0) {
+                throw "Error";
+                // this.removePost(post.url)
+                return [];
+            };
+            await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
+            let comments = await this.driver.findElements(By.className("_ezgzd"));
+            let likes = await this.driver.findElements(By.className("_nzn1h")) != 0 ? await this.driver.findElement(By.css("._nzn1h span")).getText().then(likes => likes.replace(',', '')) : 0;
+            let dateattr = await this.driver.findElements(By.className("_p29ma")) != 0 ? await this.driver.findElement(By.className("_p29ma")).getAttribute('datetime') : 0;
+            let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
+            let rating = Math.round(likes / datetime * 100) / 100;
 
-                await Post.update({
-                    url: posts[i].url
-                }, {
+            await Post.update({
+                url: post.url
+            }, {
                     $set: {
                         type: 'reviewed',
                         reviewed: true,
@@ -222,62 +222,71 @@ class InstagramAPI {
                         reviewed_at: Date.now()
                     }
                 });
-                for (let j = 0; j < comments.length; j++) {
-                    let username = await comments[j].findElement(By.tagName('a')).getText();
-                    //get the users which are not author of post and which are not duplicate
-                    if ((username !== posts[i].username) && ((users.length > 0) ? !users.some(user => user.username === username) : true) && ((newUsers.length > 0) ? !newUsers.some((user) => user.username === username) : true)) {
-                        newUsers.push(new User({
-                            username: username,
-                            type: 'analyze'
-                        }));
-                        console.log('New username is:' + username);
-                    }
-                }
-                if (newUsers.length > config.userRefreshRate) {
-                    await User.insertMany(newUsers, async function () {
-                        console.log(newUsers.length + ' users were added to collection');
-                        console.log(users.length + ' users found.');
-                        newUsers.length = 0;
-                        users = await User.find({}) || [];
-                    });
+            for (let j = 0; j < comments.length; j++) {
+                let username = await comments[j].findElement(By.tagName('a')).getText();
+                //get the users which are not author of post and which are not duplicate
+                if ((username !== posts[i].username) && ((users.length > 0) ? !users.some(user => user.username === username) : true) && ((newUsers.length > 0) ? !newUsers.some((user) => user.username === username) : true)) {
+                    newUsers.push(await new User({
+                        username: username,
+                        type: 'analyze'
+                    }));
+                    console.log('New username is:' + username);
                 }
             }
+            return newUsers;
+            // if (newUsers.length > config.userRefreshRate) {
+            //     await User.insertMany(newUsers, async function () {
+            //         console.log(newUsers.length + ' users were added to collection');
+            //         console.log(users.length + ' users found.');
+            //         newUsers.length = 0;
+            //         users = await User.find({}) || [];
+            //     });
+            // }
+            // }
         } catch (e) {
-            // console.log(e)
+            console.log(e)
         }
     }
 
 
-    async analyzeUsers() {
-        let users = await this.dbase.getUsersToAnalyze();
-        for (let i = 0; i < users.length; i++) {
-            await this.driver.get(config.urls.main + users[i].username);
-            if (await this.driver.findElements(By.className("error-container")) != 0) {
-                this.removeUser(users[i].username)
-                continue
-            };
-            console.log('Analyzing ' + users[i].username);
-            await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
-            //add to follow
-            if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
-                await User.update({
-                    username: users[i].username
-                }, {
-                    $set: {
-                        type: 'follow',
-                    }
-                });
-            } else {
-                //add to like
-                await User.update({
-                    username: users[i].username
-                }, {
-                    $set: {
-                        type: 'like',
-                    }
-                });
-            }
+    /**
+     * Analyzes user and returns user type 
+     * 
+     * @param {*} user 
+     */
+    async getUserType(user) {
+        // let users = await this.dbase.getUsersToAnalyze();
+        // for (let i = 0; i < users.length; i++) {
+        await this.driver.get(config.urls.main + user.username);
+        if (await this.driver.findElements(By.className("error-container")) != 0) {
+            // this.removeUser(user.username)
+            throw 'Error';
+            return [];
+        };
+        console.log('Analyzing ' + user.username);
+        await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+        //add to follow
+        if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
+            return 'follow';
+            // await User.update({
+            //     username: user.username
+            // }, {
+            //         $set: {
+            //             type: 'follow',
+            //         }
+            //     });
+        } else {
+            return 'like';
+            //add to like
+            // await User.update({
+            //     username: user.username
+            // }, {
+            //         $set: {
+            //             type: 'like',
+            //         }
+            //     });
         }
+        // }
     }
 
     removePost(url) {
@@ -298,47 +307,48 @@ class InstagramAPI {
         })
     }
 
-    async followUsers() {
-        let users = await this.dbase.getUsersToFollow();
-        for (let i = 0; i < users.length; i++) {
-            await this.driver.get(config.urls.main + users[i].username);
-            if (await this.driver.findElements(By.className("error-container")) != 0) {
-                this.removeUser(users[i].username)
-                continue
-            };
-            console.log('Following ' + users[i].username);
-            await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
-            //follow
-            if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
-                //click follow button
-                await this.driver.findElement(By.className('_r9b8f')).click();
-                //wait until requested text
-                await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+    async followUser(user) {
+        // let users = await this.dbase.getUsersToFollow();
+        // for (let i = 0; i < users.length; i++) {
+        await this.driver.get(config.urls.main + user.username);
+        if (await this.driver.findElements(By.className("error-container")) != 0) {
+            // this.removeUser(user.username)
+            return false;
+        };
+        console.log('Following ' + user.username);
+        await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+        //follow
+        if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
+            //click follow button
+            await this.driver.findElement(By.className('_r9b8f')).click();
+            //wait until requested text
+            await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+            return true;
 
-                await User.update({
-                    username: users[i].username
-                }, {
-                    $set: {
-                        type: 'followed',
-                        reviewed: true,
-                        reviewed_at: Date.now(),
-                        followed_at: Date.now()
-                    }
-                });
-            } else {
-                //like posts
-            }
+            // await User.update({
+            //     username: user.username
+            // }, {
+            //         $set: {
+            //             type: 'followed',
+            //             reviewed: true,
+            //             reviewed_at: Date.now(),
+            //             followed_at: Date.now()
+            //         }
+            //     });
+        } else {
+            return false;
         }
+        // }
 
     }
 
-    async unfollowUsers() {
-        let users = await this.dbase.getUsersToUnfollow();
-        for (let i = 0; i < users.length; i++) {
-            await this.driver.get(config.urls.main + users[i].username);
+    async unfollowUser(user) {
+        // let users = await this.dbase.getUsersToUnfollow();
+        // for (let i = 0; i < users.length; i++) {
+            await this.driver.get(config.urls.main + user.username);
             if (await this.driver.findElements(By.className("error-container")) != 0) {
-                this.removeUser(users[i].username)
-                continue
+                // this.removeUser(user.username)
+                return false;
             };
             if (await this.driver.findElements(By.className("_t78yp")) != 0) {
                 await this.driver.findElement(By.className('_t78yp')).click();
@@ -348,13 +358,13 @@ class InstagramAPI {
             await User.update({
                 username: users[i].username
             }, {
-                $set: {
-                    type: 'unfollowed',
-                    reviewed: true,
-                    reviewed_at: Date.now(),
-                }
-            });
-        }
+                    $set: {
+                        type: 'unfollowed',
+                        reviewed: true,
+                        reviewed_at: Date.now(),
+                    }
+                });
+        // }
     }
 
     async likeUserPosts() {
@@ -385,12 +395,12 @@ class InstagramAPI {
             await User.update({
                 username: users[i].username
             }, {
-                $set: {
-                    type: 'like',
-                    reviewed: true,
-                    reviewed_at: Date.now()
-                }
-            });
+                    $set: {
+                        type: 'like',
+                        reviewed: true,
+                        reviewed_at: Date.now()
+                    }
+                });
             console.log('liked posts of ' + users[i].username);
         }
     }
@@ -414,23 +424,23 @@ class InstagramAPI {
             await Post.update({
                 url: posts[i].url
             }, {
-                $set: {
-                    type: 'commented',
-                    reviewed: true,
-                    reviewed_at: Date.now()
-                }
-            });
+                    $set: {
+                        type: 'commented',
+                        reviewed: true,
+                        reviewed_at: Date.now()
+                    }
+                });
             await Page.update({
                 username: posts[i].username
             }, {
-                $set: {
-                    type: 'commented',
-                    reviewed: true,
-                    reviewed_at: Date.now(),
-                    commented_at: Date.now(),
-                    commented_times: (post.page.commented_times >= config.maxCommentForPageInDay) ? 1 : (post.page.commented_times + 1)
-                }
-            });
+                    $set: {
+                        type: 'commented',
+                        reviewed: true,
+                        reviewed_at: Date.now(),
+                        commented_at: Date.now(),
+                        commented_times: (post.page.commented_times >= config.maxCommentForPageInDay) ? 1 : (post.page.commented_times + 1)
+                    }
+                });
             await this.sleep(1);
         }
     }
