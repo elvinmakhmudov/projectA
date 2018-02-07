@@ -160,46 +160,33 @@ class InstagramAPI {
         return this.driver.get(config.urls.main + username);
     }
 
-    savePostsToAnalyze(page) {
+    getNewPosts(page, postsReviewed) {
         return new Promise(async function (resolve, reject) {
             //fetch posts
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) return resolve();
             if (await this.driver.findElements(By.className("_mck9w")) == 0) {
-                throw "Error";
-                // this.removePost(post.url)
-                return false;
+                reject();
             };
             this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
             let posts = await this.driver.findElements(By.css('._mck9w a'));
             let postsArr = [];
             for (let i = 0; i < posts.length; i++) {
                 let url = await posts[i].getAttribute('href');
-                await postsArr.push(new Post({
-                    'url': url,
-                    'username': page.username,
-                    'type': 'analyze',
-                    'page': page._id
-                }).save());
+                if ((postsReviewed.length > 0) ? !postsReviewed.some(post => post.url === url) : false) {
+                    await postsArr.push(new Post({
+                        'url': url,
+                        'username': page.username,
+                        'type': 'analyze',
+                        'page': page._id
+                    }));
+                }
             }
-            // if (postsArr.length === posts.length) {
-            if ((postsArr.length > 0) ? !postsArr.some((post) => post.url === username) : true) {
-                await Page.update({
-                    username: page.username
-                }, {
-                    $set: {
-                        reviewed: true,
-                        reviewed_at: Date.now()
-                    }
-                });
-            }
-            // await Post.insertMany(postsArr, () => console.log(posts.length + ' posts were added'));
-            resolve();
-            // }
+            resolve(postsArr);
         }.bind(this));
     }
 
-    async getNewUsers(post, users) {
-        try {
+    getNewUsers(post, users) {
+        return new Promise(async function (resolve, reject) {
             // let posts = await this.dbase.getPostsToAnalyze();
             // let users = await this.dbase.getUsersToAnalyze() || [];
             let newUsers = [];
@@ -207,9 +194,7 @@ class InstagramAPI {
             await this.driver.get(post.url);
             //if page has been removed then break
             if (await this.driver.findElements(By.className("error-container")) != 0) {
-                throw "Error";
-                // this.removePost(post.url)
-                return [];
+                reject();
             };
             await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
             let comments = await this.driver.findElements(By.className("_ezgzd"));
@@ -234,26 +219,14 @@ class InstagramAPI {
                 //get the users which are not author of post and which are not duplicate
                 if ((username !== post.username) && ((users.length > 0) ? !users.some(user => user.username === username) : true) && ((newUsers.length > 0) ? !newUsers.some((user) => user.username === username) : true)) {
                     newUsers.push(await new User({
-                        username: username,
+                        username,
                         type: 'analyze'
                     }));
                     console.log('New username is:' + username);
                 }
             }
-            console.log('InstagramAPI newUsers: ' + newUsers.length);
-            return newUsers;
-            // if (newUsers.length > config.userRefreshRate) {
-            //     await User.insertMany(newUsers, async function () {
-            //         console.log(newUsers.length + ' users were added to collection');
-            //         console.log(users.length + ' users found.');
-            //         newUsers.length = 0;
-            //         users = await User.find({}) || [];
-            //     });
-            // }
-            // }
-        } catch (e) {
-            console.log(e)
-        }
+            resolve(newUsers);
+        }.bind(this))
     }
 
 
@@ -263,38 +236,19 @@ class InstagramAPI {
      * @param {*} user 
      */
     async getUserType(user) {
-        // let users = await this.dbase.getUsersToAnalyze();
-        // for (let i = 0; i < users.length; i++) {
-        await this.driver.get(config.urls.main + user.username);
-        if (await this.driver.findElements(By.className("error-container")) != 0) {
-            // this.removeUser(user.username)
-            throw 'Error';
-            return [];
-        };
-        console.log('Analyzing ' + user.username);
-        await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
-        //add to follow
-        if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
-            return 'follow';
-            // await User.update({
-            //     username: user.username
-            // }, {
-            //         $set: {
-            //             type: 'follow',
-            //         }
-            //     });
-        } else {
-            return 'like';
-            //add to like
-            // await User.update({
-            //     username: user.username
-            // }, {
-            //         $set: {
-            //             type: 'like',
-            //         }
-            //     });
-        }
-        // }
+        return new Promise(async function (resolve, reject) {
+            await this.driver.get(config.urls.main + user.username);
+            if (await this.driver.findElements(By.className("error-container")) != 0) {
+                reject();
+            };
+            console.log('Analyzing ' + user.username);
+            await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+            if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
+                resolve('follow');
+            } else {
+                resolve('like');
+            }
+        }.bind(this));
     }
 
     removePost(url) {
@@ -316,38 +270,25 @@ class InstagramAPI {
     }
 
     async followUser(user) {
-        // let users = await this.dbase.getUsersToFollow();
-        // for (let i = 0; i < users.length; i++) {
-        await this.driver.get(config.urls.main + user.username);
-        if (await this.driver.findElements(By.className("error-container")) != 0) {
-            // this.removeUser(user.username)
-            return false;
-        };
-        console.log('Following ' + user.username);
-        await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
-        //follow
-        if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
-            //click follow button
-            await this.driver.findElement(By.className('_r9b8f')).click();
-            //wait until requested text
-            await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
-            return true;
-
-            // await User.update({
-            //     username: user.username
-            // }, {
-            //         $set: {
-            //             type: 'followed',
-            //             reviewed: true,
-            //             reviewed_at: Date.now(),
-            //             followed_at: Date.now()
-            //         }
-            //     });
-        } else {
-            return false;
-        }
-        // }
-
+        return new Promise(async function (resolve, reject) {
+            await this.driver.get(config.urls.main + user.username);
+            if ((await this.driver.findElements(By.className("error-container")) != 0) || (await this.driver.findElements(By.className("_rf3jb")) == 0)) {
+                reject();
+            };
+            console.log('Following ' + user.username);
+            await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+            //follow
+            if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
+                //click follow button
+                await this.driver.findElement(By.className('_r9b8f')).click();
+                //wait until requested text
+                await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+                resolve(true);
+            } else {
+                reject();
+                return false;
+            }
+        }.bind(this));
     }
 
     async unfollowUser(user) {

@@ -393,93 +393,109 @@ var InstagramAPI = function () {
             return this.driver.get(config.urls.main + username);
         }
     }, {
-        key: 'savePostsToAnalyze',
-        value: function savePostsToAnalyze(page) {
+        key: 'getNewPosts',
+        value: function getNewPosts(page, postsReviewed) {
             return new Promise(function () {
                 var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(resolve, reject) {
-                    var posts, postsArr, _i4, href;
+                    var _this = this;
 
-                    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+                    var posts, postsArr, _loop, _i4;
+
+                    return regeneratorRuntime.wrap(function _callee7$(_context8) {
                         while (1) {
-                            switch (_context7.prev = _context7.next) {
+                            switch (_context8.prev = _context8.next) {
                                 case 0:
-                                    _context7.next = 2;
+                                    _context8.next = 2;
                                     return this.driver.findElements(By.className("_kcrwx"));
 
                                 case 2:
-                                    _context7.t0 = _context7.sent;
+                                    _context8.t0 = _context8.sent;
 
-                                    if (!(_context7.t0 != 0)) {
-                                        _context7.next = 5;
+                                    if (!(_context8.t0 != 0)) {
+                                        _context8.next = 5;
                                         break;
                                     }
 
-                                    return _context7.abrupt('return', resolve());
+                                    return _context8.abrupt('return', resolve());
 
                                 case 5:
-                                    _context7.next = 7;
+                                    _context8.next = 7;
                                     return this.driver.findElements(By.className("_mck9w"));
 
                                 case 7:
-                                    _context7.t1 = _context7.sent;
+                                    _context8.t1 = _context8.sent;
 
-                                    if (!(_context7.t1 == 0)) {
-                                        _context7.next = 11;
+                                    if (!(_context8.t1 == 0)) {
+                                        _context8.next = 10;
                                         break;
                                     }
 
-                                    throw "Error";
+                                    reject();
 
-                                case 11:
+                                case 10:
                                     ;
                                     this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
-                                    _context7.next = 15;
+                                    _context8.next = 14;
                                     return this.driver.findElements(By.css('._mck9w a'));
 
-                                case 15:
-                                    posts = _context7.sent;
+                                case 14:
+                                    posts = _context8.sent;
                                     postsArr = [];
+                                    _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop(_i4) {
+                                        var url;
+                                        return regeneratorRuntime.wrap(function _loop$(_context7) {
+                                            while (1) {
+                                                switch (_context7.prev = _context7.next) {
+                                                    case 0:
+                                                        _context7.next = 2;
+                                                        return posts[_i4].getAttribute('href');
+
+                                                    case 2:
+                                                        url = _context7.sent;
+
+                                                        if (!(postsReviewed.length > 0 ? !postsReviewed.some(function (post) {
+                                                            return post.url === url;
+                                                        }) : false)) {
+                                                            _context7.next = 6;
+                                                            break;
+                                                        }
+
+                                                        _context7.next = 6;
+                                                        return postsArr.push(new _post2.default({
+                                                            'url': url,
+                                                            'username': page.username,
+                                                            'type': 'analyze',
+                                                            'page': page._id
+                                                        }));
+
+                                                    case 6:
+                                                    case 'end':
+                                                        return _context7.stop();
+                                                }
+                                            }
+                                        }, _loop, _this);
+                                    });
                                     _i4 = 0;
 
                                 case 18:
                                     if (!(_i4 < posts.length)) {
-                                        _context7.next = 27;
+                                        _context8.next = 23;
                                         break;
                                     }
 
-                                    _context7.next = 21;
-                                    return posts[_i4].getAttribute('href');
+                                    return _context8.delegateYield(_loop(_i4), 't2', 20);
 
-                                case 21:
-                                    href = _context7.sent;
-
-                                    postsArr.push(new _post2.default({
-                                        'url': href,
-                                        'username': page.username,
-                                        'type': 'analyze',
-                                        'page': page._id
-                                    }).save());
-                                    if (postsArr.length === posts.length) {
-                                        _page2.default.update({
-                                            username: page.username
-                                        }, {
-                                            $set: {
-                                                reviewed: true,
-                                                reviewed_at: Date.now()
-                                            }
-                                        });
-                                        // await Post.insertMany(postsArr, () => console.log(posts.length + ' posts were added'));
-                                        resolve();
-                                    }
-
-                                case 24:
+                                case 20:
                                     _i4++;
-                                    _context7.next = 18;
+                                    _context8.next = 18;
                                     break;
 
-                                case 27:
+                                case 23:
+                                    resolve(postsArr);
+
+                                case 24:
                                 case 'end':
-                                    return _context7.stop();
+                                    return _context8.stop();
                             }
                         }
                     }, _callee7, this);
@@ -492,198 +508,189 @@ var InstagramAPI = function () {
         }
     }, {
         key: 'getNewUsers',
-        value: function () {
-            var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(post, users) {
-                var _this = this;
+        value: function getNewUsers(post, users) {
+            return new Promise(function () {
+                var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(resolve, reject) {
+                    var _this2 = this;
 
-                var newUsers, comments, likes, dateattr, datetime, rating, _loop, j;
+                    var newUsers, comments, likes, dateattr, datetime, rating, _loop2, j;
 
-                return regeneratorRuntime.wrap(function _callee8$(_context9) {
-                    while (1) {
-                        switch (_context9.prev = _context9.next) {
-                            case 0:
-                                _context9.prev = 0;
+                    return regeneratorRuntime.wrap(function _callee8$(_context10) {
+                        while (1) {
+                            switch (_context10.prev = _context10.next) {
+                                case 0:
+                                    // let posts = await this.dbase.getPostsToAnalyze();
+                                    // let users = await this.dbase.getUsersToAnalyze() || [];
+                                    newUsers = [];
+                                    // for (let i = 0; i < posts.length; i++) {
 
-                                // let posts = await this.dbase.getPostsToAnalyze();
-                                // let users = await this.dbase.getUsersToAnalyze() || [];
-                                newUsers = [];
-                                // for (let i = 0; i < posts.length; i++) {
+                                    _context10.next = 3;
+                                    return this.driver.get(post.url);
 
-                                _context9.next = 4;
-                                return this.driver.get(post.url);
+                                case 3:
+                                    _context10.next = 5;
+                                    return this.driver.findElements(By.className("error-container"));
 
-                            case 4:
-                                _context9.next = 6;
-                                return this.driver.findElements(By.className("error-container"));
+                                case 5:
+                                    _context10.t0 = _context10.sent;
 
-                            case 6:
-                                _context9.t0 = _context9.sent;
-
-                                if (!(_context9.t0 != 0)) {
-                                    _context9.next = 10;
-                                    break;
-                                }
-
-                                throw "Error";
-
-                            case 10:
-                                ;
-                                _context9.next = 13;
-                                return this.driver.wait(until.elementLocated(By.className("_2g7d5")));
-
-                            case 13:
-                                _context9.next = 15;
-                                return this.driver.findElements(By.className("_ezgzd"));
-
-                            case 15:
-                                comments = _context9.sent;
-                                _context9.next = 18;
-                                return this.driver.findElements(By.className("_nzn1h"));
-
-                            case 18:
-                                _context9.t1 = _context9.sent;
-
-                                if (!(_context9.t1 != 0)) {
-                                    _context9.next = 25;
-                                    break;
-                                }
-
-                                _context9.next = 22;
-                                return this.driver.findElement(By.css("._nzn1h span")).getText().then(function (likes) {
-                                    return likes.replace(',', '');
-                                });
-
-                            case 22:
-                                _context9.t2 = _context9.sent;
-                                _context9.next = 26;
-                                break;
-
-                            case 25:
-                                _context9.t2 = 0;
-
-                            case 26:
-                                likes = _context9.t2;
-                                _context9.next = 29;
-                                return this.driver.findElements(By.className("_p29ma"));
-
-                            case 29:
-                                _context9.t3 = _context9.sent;
-
-                                if (!(_context9.t3 != 0)) {
-                                    _context9.next = 36;
-                                    break;
-                                }
-
-                                _context9.next = 33;
-                                return this.driver.findElement(By.className("_p29ma")).getAttribute('datetime');
-
-                            case 33:
-                                _context9.t4 = _context9.sent;
-                                _context9.next = 37;
-                                break;
-
-                            case 36:
-                                _context9.t4 = 0;
-
-                            case 37:
-                                dateattr = _context9.t4;
-                                datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
-                                rating = Math.round(likes / datetime * 100) / 100;
-                                _context9.next = 42;
-                                return _post2.default.update({
-                                    url: post.url
-                                }, {
-                                    $set: {
-                                        type: 'reviewed',
-                                        reviewed: true,
-                                        likes: likes,
-                                        rating: rating,
-                                        reviewed_at: Date.now()
+                                    if (!(_context10.t0 != 0)) {
+                                        _context10.next = 8;
+                                        break;
                                     }
-                                });
 
-                            case 42:
-                                _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop(j) {
-                                    var username;
-                                    return regeneratorRuntime.wrap(function _loop$(_context8) {
-                                        while (1) {
-                                            switch (_context8.prev = _context8.next) {
-                                                case 0:
-                                                    _context8.next = 2;
-                                                    return comments[j].findElement(By.tagName('a')).getText();
+                                    reject();
 
-                                                case 2:
-                                                    username = _context8.sent;
+                                case 8:
+                                    ;
+                                    _context10.next = 11;
+                                    return this.driver.wait(until.elementLocated(By.className("_2g7d5")));
 
-                                                    if (!(username !== post.username && (users.length > 0 ? !users.some(function (user) {
-                                                        return user.username === username;
-                                                    }) : true) && (newUsers.length > 0 ? !newUsers.some(function (user) {
-                                                        return user.username === username;
-                                                    }) : true))) {
-                                                        _context8.next = 10;
-                                                        break;
-                                                    }
+                                case 11:
+                                    _context10.next = 13;
+                                    return this.driver.findElements(By.className("_ezgzd"));
 
-                                                    _context8.t0 = newUsers;
-                                                    _context8.next = 7;
-                                                    return new _user2.default({
-                                                        username: username,
-                                                        type: 'analyze'
-                                                    });
+                                case 13:
+                                    comments = _context10.sent;
+                                    _context10.next = 16;
+                                    return this.driver.findElements(By.className("_nzn1h"));
 
-                                                case 7:
-                                                    _context8.t1 = _context8.sent;
+                                case 16:
+                                    _context10.t1 = _context10.sent;
 
-                                                    _context8.t0.push.call(_context8.t0, _context8.t1);
+                                    if (!(_context10.t1 != 0)) {
+                                        _context10.next = 23;
+                                        break;
+                                    }
 
-                                                    console.log('New username is:' + username);
+                                    _context10.next = 20;
+                                    return this.driver.findElement(By.css("._nzn1h span")).getText().then(function (likes) {
+                                        return likes.replace(',', '');
+                                    });
 
-                                                case 10:
-                                                case 'end':
-                                                    return _context8.stop();
-                                            }
-                                        }
-                                    }, _loop, _this);
-                                });
-                                j = 0;
-
-                            case 44:
-                                if (!(j < comments.length)) {
-                                    _context9.next = 49;
+                                case 20:
+                                    _context10.t2 = _context10.sent;
+                                    _context10.next = 24;
                                     break;
-                                }
 
-                                return _context9.delegateYield(_loop(j), 't5', 46);
+                                case 23:
+                                    _context10.t2 = 0;
 
-                            case 46:
-                                j++;
-                                _context9.next = 44;
-                                break;
+                                case 24:
+                                    likes = _context10.t2;
+                                    _context10.next = 27;
+                                    return this.driver.findElements(By.className("_p29ma"));
 
-                            case 49:
-                                console.log('InstagramAPI newUsers: ' + newUsers.length);
-                                return _context9.abrupt('return', newUsers);
+                                case 27:
+                                    _context10.t3 = _context10.sent;
 
-                            case 53:
-                                _context9.prev = 53;
-                                _context9.t6 = _context9['catch'](0);
+                                    if (!(_context10.t3 != 0)) {
+                                        _context10.next = 34;
+                                        break;
+                                    }
 
-                                console.log(_context9.t6);
+                                    _context10.next = 31;
+                                    return this.driver.findElement(By.className("_p29ma")).getAttribute('datetime');
 
-                            case 56:
-                            case 'end':
-                                return _context9.stop();
+                                case 31:
+                                    _context10.t4 = _context10.sent;
+                                    _context10.next = 35;
+                                    break;
+
+                                case 34:
+                                    _context10.t4 = 0;
+
+                                case 35:
+                                    dateattr = _context10.t4;
+                                    datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
+                                    rating = Math.round(likes / datetime * 100) / 100;
+                                    _context10.next = 40;
+                                    return _post2.default.update({
+                                        url: post.url
+                                    }, {
+                                        $set: {
+                                            type: 'reviewed',
+                                            reviewed: true,
+                                            likes: likes,
+                                            rating: rating,
+                                            reviewed_at: Date.now()
+                                        }
+                                    });
+
+                                case 40:
+                                    _loop2 = /*#__PURE__*/regeneratorRuntime.mark(function _loop2(j) {
+                                        var username;
+                                        return regeneratorRuntime.wrap(function _loop2$(_context9) {
+                                            while (1) {
+                                                switch (_context9.prev = _context9.next) {
+                                                    case 0:
+                                                        _context9.next = 2;
+                                                        return comments[j].findElement(By.tagName('a')).getText();
+
+                                                    case 2:
+                                                        username = _context9.sent;
+
+                                                        if (!(username !== post.username && (users.length > 0 ? !users.some(function (user) {
+                                                            return user.username === username;
+                                                        }) : true) && (newUsers.length > 0 ? !newUsers.some(function (user) {
+                                                            return user.username === username;
+                                                        }) : true))) {
+                                                            _context9.next = 10;
+                                                            break;
+                                                        }
+
+                                                        _context9.t0 = newUsers;
+                                                        _context9.next = 7;
+                                                        return new _user2.default({
+                                                            username: username,
+                                                            type: 'analyze'
+                                                        });
+
+                                                    case 7:
+                                                        _context9.t1 = _context9.sent;
+
+                                                        _context9.t0.push.call(_context9.t0, _context9.t1);
+
+                                                        console.log('New username is:' + username);
+
+                                                    case 10:
+                                                    case 'end':
+                                                        return _context9.stop();
+                                                }
+                                            }
+                                        }, _loop2, _this2);
+                                    });
+                                    j = 0;
+
+                                case 42:
+                                    if (!(j < comments.length)) {
+                                        _context10.next = 47;
+                                        break;
+                                    }
+
+                                    return _context10.delegateYield(_loop2(j), 't5', 44);
+
+                                case 44:
+                                    j++;
+                                    _context10.next = 42;
+                                    break;
+
+                                case 47:
+                                    resolve(newUsers);
+
+                                case 48:
+                                case 'end':
+                                    return _context10.stop();
+                            }
                         }
-                    }
-                }, _callee8, this, [[0, 53]]);
-            }));
+                    }, _callee8, this);
+                }));
 
-            function getNewUsers(_x11, _x12) {
-                return _ref8.apply(this, arguments);
-            }
-
-            return getNewUsers;
-        }()
+                return function (_x11, _x12) {
+                    return _ref8.apply(this, arguments);
+                };
+            }().bind(this));
+        }
 
         /**
          * Analyzes user and returns user type 
@@ -694,57 +701,78 @@ var InstagramAPI = function () {
     }, {
         key: 'getUserType',
         value: function () {
-            var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(user) {
-                return regeneratorRuntime.wrap(function _callee9$(_context10) {
+            var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(user) {
+                return regeneratorRuntime.wrap(function _callee10$(_context12) {
                     while (1) {
-                        switch (_context10.prev = _context10.next) {
+                        switch (_context12.prev = _context12.next) {
                             case 0:
-                                _context10.next = 2;
-                                return this.driver.get(config.urls.main + user.username);
+                                return _context12.abrupt('return', new Promise(function () {
+                                    var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(resolve, reject) {
+                                        return regeneratorRuntime.wrap(function _callee9$(_context11) {
+                                            while (1) {
+                                                switch (_context11.prev = _context11.next) {
+                                                    case 0:
+                                                        _context11.next = 2;
+                                                        return this.driver.get(config.urls.main + user.username);
 
-                            case 2:
-                                _context10.next = 4;
-                                return this.driver.findElements(By.className("error-container"));
+                                                    case 2:
+                                                        _context11.next = 4;
+                                                        return this.driver.findElements(By.className("error-container"));
 
-                            case 4:
-                                _context10.t0 = _context10.sent;
+                                                    case 4:
+                                                        _context11.t0 = _context11.sent;
 
-                                if (!(_context10.t0 != 0)) {
-                                    _context10.next = 8;
-                                    break;
-                                }
+                                                        if (!(_context11.t0 != 0)) {
+                                                            _context11.next = 7;
+                                                            break;
+                                                        }
 
-                                throw 'Error';
+                                                        reject();
 
-                            case 8:
-                                ;
-                                console.log('Analyzing ' + user.username);
-                                _context10.next = 12;
-                                return this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+                                                    case 7:
+                                                        ;
+                                                        console.log('Analyzing ' + user.username);
+                                                        _context11.next = 11;
+                                                        return this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
 
-                            case 12:
-                                _context10.next = 14;
-                                return this.driver.findElements(By.className("_kcrwx"));
+                                                    case 11:
+                                                        _context11.next = 13;
+                                                        return this.driver.findElements(By.className("_kcrwx"));
 
-                            case 14:
-                                _context10.t1 = _context10.sent;
+                                                    case 13:
+                                                        _context11.t1 = _context11.sent;
 
-                                if (!(_context10.t1 != 0)) {
-                                    _context10.next = 19;
-                                    break;
-                                }
+                                                        if (!(_context11.t1 != 0)) {
+                                                            _context11.next = 18;
+                                                            break;
+                                                        }
 
-                                return _context10.abrupt('return', 'follow');
+                                                        resolve('follow');
+                                                        _context11.next = 19;
+                                                        break;
 
-                            case 19:
-                                return _context10.abrupt('return', 'like');
+                                                    case 18:
+                                                        resolve('like');
 
-                            case 20:
+                                                    case 19:
+                                                    case 'end':
+                                                        return _context11.stop();
+                                                }
+                                            }
+                                        }, _callee9, this);
+                                    }));
+
+                                    return function (_x14, _x15) {
+                                        return _ref10.apply(this, arguments);
+                                    };
+                                }().bind(this)));
+
+                            case 1:
                             case 'end':
-                                return _context10.stop();
+                                return _context12.stop();
                         }
                     }
-                }, _callee9, this);
+                }, _callee10, this);
             }));
 
             function getUserType(_x13) {
@@ -776,69 +804,105 @@ var InstagramAPI = function () {
     }, {
         key: 'followUser',
         value: function () {
-            var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(user) {
-                return regeneratorRuntime.wrap(function _callee10$(_context11) {
+            var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(user) {
+                return regeneratorRuntime.wrap(function _callee12$(_context14) {
                     while (1) {
-                        switch (_context11.prev = _context11.next) {
+                        switch (_context14.prev = _context14.next) {
                             case 0:
-                                _context11.next = 2;
-                                return this.driver.get(config.urls.main + user.username);
+                                return _context14.abrupt('return', new Promise(function () {
+                                    var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(resolve, reject) {
+                                        return regeneratorRuntime.wrap(function _callee11$(_context13) {
+                                            while (1) {
+                                                switch (_context13.prev = _context13.next) {
+                                                    case 0:
+                                                        _context13.next = 2;
+                                                        return this.driver.get(config.urls.main + user.username);
 
-                            case 2:
-                                _context11.next = 4;
-                                return this.driver.findElements(By.className("error-container"));
+                                                    case 2:
+                                                        _context13.next = 4;
+                                                        return this.driver.findElements(By.className("error-container"));
 
-                            case 4:
-                                _context11.t0 = _context11.sent;
+                                                    case 4:
+                                                        _context13.t1 = _context13.sent;
+                                                        _context13.t0 = _context13.t1 != 0;
 
-                                if (!(_context11.t0 != 0)) {
-                                    _context11.next = 7;
-                                    break;
-                                }
+                                                        if (_context13.t0) {
+                                                            _context13.next = 11;
+                                                            break;
+                                                        }
 
-                                return _context11.abrupt('return', false);
+                                                        _context13.next = 9;
+                                                        return this.driver.findElements(By.className("_rf3jb"));
 
-                            case 7:
-                                ;
-                                console.log('Following ' + user.username);
-                                _context11.next = 11;
-                                return this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+                                                    case 9:
+                                                        _context13.t2 = _context13.sent;
+                                                        _context13.t0 = _context13.t2 == 0;
 
-                            case 11:
-                                _context11.next = 13;
-                                return this.driver.findElements(By.className("_kcrwx"));
+                                                    case 11:
+                                                        if (!_context13.t0) {
+                                                            _context13.next = 13;
+                                                            break;
+                                                        }
 
-                            case 13:
-                                _context11.t1 = _context11.sent;
+                                                        reject();
 
-                                if (!(_context11.t1 != 0)) {
-                                    _context11.next = 22;
-                                    break;
-                                }
+                                                    case 13:
+                                                        ;
+                                                        console.log('Following ' + user.username);
+                                                        _context13.next = 17;
+                                                        return this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
 
-                                _context11.next = 17;
-                                return this.driver.findElement(By.className('_r9b8f')).click();
+                                                    case 17:
+                                                        _context13.next = 19;
+                                                        return this.driver.findElements(By.className("_kcrwx"));
 
-                            case 17:
-                                _context11.next = 19;
-                                return this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+                                                    case 19:
+                                                        _context13.t3 = _context13.sent;
 
-                            case 19:
-                                return _context11.abrupt('return', true);
+                                                        if (!(_context13.t3 != 0)) {
+                                                            _context13.next = 28;
+                                                            break;
+                                                        }
 
-                            case 22:
-                                return _context11.abrupt('return', false);
+                                                        _context13.next = 23;
+                                                        return this.driver.findElement(By.className('_r9b8f')).click();
 
-                            case 23:
+                                                    case 23:
+                                                        _context13.next = 25;
+                                                        return this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+
+                                                    case 25:
+                                                        resolve(true);
+                                                        _context13.next = 30;
+                                                        break;
+
+                                                    case 28:
+                                                        reject();
+                                                        return _context13.abrupt('return', false);
+
+                                                    case 30:
+                                                    case 'end':
+                                                        return _context13.stop();
+                                                }
+                                            }
+                                        }, _callee11, this);
+                                    }));
+
+                                    return function (_x17, _x18) {
+                                        return _ref12.apply(this, arguments);
+                                    };
+                                }().bind(this)));
+
+                            case 1:
                             case 'end':
-                                return _context11.stop();
+                                return _context14.stop();
                         }
                     }
-                }, _callee10, this);
+                }, _callee12, this);
             }));
 
-            function followUser(_x14) {
-                return _ref10.apply(this, arguments);
+            function followUser(_x16) {
+                return _ref11.apply(this, arguments);
             }
 
             return followUser;
@@ -846,51 +910,51 @@ var InstagramAPI = function () {
     }, {
         key: 'unfollowUser',
         value: function () {
-            var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(user) {
-                return regeneratorRuntime.wrap(function _callee11$(_context12) {
+            var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(user) {
+                return regeneratorRuntime.wrap(function _callee13$(_context15) {
                     while (1) {
-                        switch (_context12.prev = _context12.next) {
+                        switch (_context15.prev = _context15.next) {
                             case 0:
-                                _context12.next = 2;
+                                _context15.next = 2;
                                 return this.driver.get(config.urls.main + user.username);
 
                             case 2:
-                                _context12.next = 4;
+                                _context15.next = 4;
                                 return this.driver.findElements(By.className("error-container"));
 
                             case 4:
-                                _context12.t0 = _context12.sent;
+                                _context15.t0 = _context15.sent;
 
-                                if (!(_context12.t0 != 0)) {
-                                    _context12.next = 7;
+                                if (!(_context15.t0 != 0)) {
+                                    _context15.next = 7;
                                     break;
                                 }
 
-                                return _context12.abrupt('return', false);
+                                return _context15.abrupt('return', false);
 
                             case 7:
                                 ;
-                                _context12.next = 10;
+                                _context15.next = 10;
                                 return this.driver.findElements(By.className("_t78yp"));
 
                             case 10:
-                                _context12.t1 = _context12.sent;
+                                _context15.t1 = _context15.sent;
 
-                                if (!(_context12.t1 != 0)) {
-                                    _context12.next = 16;
+                                if (!(_context15.t1 != 0)) {
+                                    _context15.next = 16;
                                     break;
                                 }
 
-                                _context12.next = 14;
+                                _context15.next = 14;
                                 return this.driver.findElement(By.className('_t78yp')).click();
 
                             case 14:
-                                _context12.next = 16;
+                                _context15.next = 16;
                                 return this.sleep(1);
 
                             case 16:
                                 console.log('Unfollowing ' + users[i].username);
-                                _context12.next = 19;
+                                _context15.next = 19;
                                 return _user2.default.update({
                                     username: users[i].username
                                 }, {
@@ -903,14 +967,14 @@ var InstagramAPI = function () {
 
                             case 19:
                             case 'end':
-                                return _context12.stop();
+                                return _context15.stop();
                         }
                     }
-                }, _callee11, this);
+                }, _callee13, this);
             }));
 
-            function unfollowUser(_x15) {
-                return _ref11.apply(this, arguments);
+            function unfollowUser(_x19) {
+                return _ref13.apply(this, arguments);
             }
 
             return unfollowUser;
@@ -918,76 +982,76 @@ var InstagramAPI = function () {
     }, {
         key: 'likeUserPosts',
         value: function () {
-            var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
+            var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14() {
                 var users, _i5, posts, postsArr, k, href, j;
 
-                return regeneratorRuntime.wrap(function _callee12$(_context13) {
+                return regeneratorRuntime.wrap(function _callee14$(_context16) {
                     while (1) {
-                        switch (_context13.prev = _context13.next) {
+                        switch (_context16.prev = _context16.next) {
                             case 0:
-                                _context13.next = 2;
+                                _context16.next = 2;
                                 return this.dbase.getUsersToLike();
 
                             case 2:
-                                users = _context13.sent;
+                                users = _context16.sent;
                                 _i5 = 0;
 
                             case 4:
                                 if (!(_i5 < users.length)) {
-                                    _context13.next = 54;
+                                    _context16.next = 54;
                                     break;
                                 }
 
-                                _context13.next = 7;
+                                _context16.next = 7;
                                 return this.driver.get(config.urls.main + users[_i5].username);
 
                             case 7:
-                                _context13.next = 9;
+                                _context16.next = 9;
                                 return this.driver.findElements(By.className("_mck9w"));
 
                             case 9:
-                                _context13.t0 = _context13.sent;
+                                _context16.t0 = _context16.sent;
 
-                                if (!(_context13.t0 == 0)) {
-                                    _context13.next = 13;
+                                if (!(_context16.t0 == 0)) {
+                                    _context16.next = 13;
                                     break;
                                 }
 
                                 this.removeUser(users[_i5].username);
-                                return _context13.abrupt('continue', 51);
+                                return _context16.abrupt('continue', 51);
 
                             case 13:
                                 ;
-                                _context13.next = 16;
+                                _context16.next = 16;
                                 return this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
 
                             case 16:
                                 this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
-                                _context13.next = 19;
+                                _context16.next = 19;
                                 return this.driver.findElements(By.css('._mck9w a'));
 
                             case 19:
-                                posts = _context13.sent;
+                                posts = _context16.sent;
                                 postsArr = [];
                                 k = 0;
 
                             case 22:
                                 if (!(k < posts.length)) {
-                                    _context13.next = 30;
+                                    _context16.next = 30;
                                     break;
                                 }
 
-                                _context13.next = 25;
+                                _context16.next = 25;
                                 return posts[k].getAttribute('href');
 
                             case 25:
-                                href = _context13.sent;
+                                href = _context16.sent;
 
                                 postsArr.push(href);
 
                             case 27:
                                 k++;
-                                _context13.next = 22;
+                                _context16.next = 22;
                                 break;
 
                             case 30:
@@ -995,44 +1059,44 @@ var InstagramAPI = function () {
 
                             case 31:
                                 if (!(j < config.userPostsToLike && j < postsArr.length)) {
-                                    _context13.next = 48;
+                                    _context16.next = 48;
                                     break;
                                 }
 
-                                _context13.next = 34;
+                                _context16.next = 34;
                                 return this.driver.get(postsArr[j]);
 
                             case 34:
-                                _context13.next = 36;
+                                _context16.next = 36;
                                 return this.driver.findElements(By.className("coreSpriteHeartFull"));
 
                             case 36:
-                                _context13.t1 = _context13.sent.length;
-                                _context13.t2 = [];
+                                _context16.t1 = _context16.sent.length;
+                                _context16.t2 = [];
 
-                                if (!(_context13.t1 != _context13.t2)) {
-                                    _context13.next = 40;
+                                if (!(_context16.t1 != _context16.t2)) {
+                                    _context16.next = 40;
                                     break;
                                 }
 
-                                return _context13.abrupt('continue', 45);
+                                return _context16.abrupt('continue', 45);
 
                             case 40:
                                 this.driver.wait(until.elementLocated(By.className('coreSpriteHeartOpen')), config.timeout);
-                                _context13.next = 43;
+                                _context16.next = 43;
                                 return this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
 
                             case 43:
-                                _context13.next = 45;
+                                _context16.next = 45;
                                 return this.sleep(1);
 
                             case 45:
                                 j++;
-                                _context13.next = 31;
+                                _context16.next = 31;
                                 break;
 
                             case 48:
-                                _context13.next = 50;
+                                _context16.next = 50;
                                 return _user2.default.update({
                                     username: users[_i5].username
                                 }, {
@@ -1048,19 +1112,19 @@ var InstagramAPI = function () {
 
                             case 51:
                                 _i5++;
-                                _context13.next = 4;
+                                _context16.next = 4;
                                 break;
 
                             case 54:
                             case 'end':
-                                return _context13.stop();
+                                return _context16.stop();
                         }
                     }
-                }, _callee12, this);
+                }, _callee14, this);
             }));
 
             function likeUserPosts() {
-                return _ref12.apply(this, arguments);
+                return _ref14.apply(this, arguments);
             }
 
             return likeUserPosts;
@@ -1068,62 +1132,62 @@ var InstagramAPI = function () {
     }, {
         key: 'commentPosts',
         value: function () {
-            var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
+            var _ref15 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
                 var posts, _i6, comment;
 
-                return regeneratorRuntime.wrap(function _callee13$(_context14) {
+                return regeneratorRuntime.wrap(function _callee15$(_context17) {
                     while (1) {
-                        switch (_context14.prev = _context14.next) {
+                        switch (_context17.prev = _context17.next) {
                             case 0:
-                                _context14.next = 2;
+                                _context17.next = 2;
                                 return this.dbase.getPostsToComment();
 
                             case 2:
-                                posts = _context14.sent;
+                                posts = _context17.sent;
                                 _i6 = 0;
 
                             case 4:
                                 if (!(_i6 < posts.length)) {
-                                    _context14.next = 31;
+                                    _context17.next = 31;
                                     break;
                                 }
 
-                                _context14.next = 7;
+                                _context17.next = 7;
                                 return this.driver.get(posts[_i6].url);
 
                             case 7:
-                                _context14.next = 9;
+                                _context17.next = 9;
                                 return this.driver.findElements(By.className("error-container"));
 
                             case 9:
-                                _context14.t0 = _context14.sent;
+                                _context17.t0 = _context17.sent;
 
-                                if (!(_context14.t0 != 0)) {
-                                    _context14.next = 13;
+                                if (!(_context17.t0 != 0)) {
+                                    _context17.next = 13;
                                     break;
                                 }
 
                                 this.removePost(posts[_i6].url);
-                                return _context14.abrupt('continue', 28);
+                                return _context17.abrupt('continue', 28);
 
                             case 13:
                                 ;
                                 console.log(_i6 + 1 + ' of ' + posts.length + ' posts.');
-                                _context14.next = 17;
+                                _context17.next = 17;
                                 return this.driver.wait(until.elementLocated(By.className("_bilrf")), config.timeout);
 
                             case 17:
                                 //comment post
                                 comment = this.comments[Math.floor(Math.random() * this.comments.length)];
-                                _context14.next = 20;
+                                _context17.next = 20;
                                 return this.driver.findElement(By.className('_bilrf')).clear();
 
                             case 20:
-                                _context14.next = 22;
+                                _context17.next = 22;
                                 return this.driver.findElement(By.className('_bilrf')).sendKeys(comment);
 
                             case 22:
-                                _context14.next = 24;
+                                _context17.next = 24;
                                 return _post2.default.update({
                                     url: posts[_i6].url
                                 }, {
@@ -1135,7 +1199,7 @@ var InstagramAPI = function () {
                                 });
 
                             case 24:
-                                _context14.next = 26;
+                                _context17.next = 26;
                                 return _page2.default.update({
                                     username: posts[_i6].username
                                 }, {
@@ -1149,24 +1213,24 @@ var InstagramAPI = function () {
                                 });
 
                             case 26:
-                                _context14.next = 28;
+                                _context17.next = 28;
                                 return this.sleep(1);
 
                             case 28:
                                 _i6++;
-                                _context14.next = 4;
+                                _context17.next = 4;
                                 break;
 
                             case 31:
                             case 'end':
-                                return _context14.stop();
+                                return _context17.stop();
                         }
                     }
-                }, _callee13, this);
+                }, _callee15, this);
             }));
 
             function commentPosts() {
-                return _ref13.apply(this, arguments);
+                return _ref15.apply(this, arguments);
             }
 
             return commentPosts;
@@ -1174,25 +1238,25 @@ var InstagramAPI = function () {
     }, {
         key: 'sleep',
         value: function () {
-            var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(seconds) {
-                return regeneratorRuntime.wrap(function _callee14$(_context15) {
+            var _ref16 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(seconds) {
+                return regeneratorRuntime.wrap(function _callee16$(_context18) {
                     while (1) {
-                        switch (_context15.prev = _context15.next) {
+                        switch (_context18.prev = _context18.next) {
                             case 0:
                                 console.log('sleeping for ' + seconds + ' seconds.');
-                                _context15.next = 3;
+                                _context18.next = 3;
                                 return this.driver.sleep(seconds * 1000);
 
                             case 3:
                             case 'end':
-                                return _context15.stop();
+                                return _context18.stop();
                         }
                     }
-                }, _callee14, this);
+                }, _callee16, this);
             }));
 
-            function sleep(_x16) {
-                return _ref14.apply(this, arguments);
+            function sleep(_x20) {
+                return _ref16.apply(this, arguments);
             }
 
             return sleep;

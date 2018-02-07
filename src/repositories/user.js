@@ -12,7 +12,7 @@ export default {
     follow(limit) {
         return User.find({
             type: 'follow',
-            reviewed: false
+            reviewed: true
         }).limit(limit || config.batchUserLimitCount);
     },
 
@@ -37,9 +37,13 @@ export default {
     },
 
     async insertMany(newUsers) {
-        console.log('in InsertMany : ' + newUsers);
-        await User.insertMany(newUsers, async function () {
-            console.log(newUsers.length + ' users were added to collection');
+        return new Promise(function (resolve, reject) {
+            console.log('in insertmany :' + newUsers.length);
+            User.insertMany(newUsers, function (err, users) {
+                if(err) reject();
+                resolve();
+                console.log(newUsers.length + ' users were added to collection');
+            });
         });
     },
 
@@ -47,12 +51,12 @@ export default {
         return await User.update({
             username: user.username
         }, {
-                $set: {
-                    type,
-                    reviewed: true,
-                    reviewed_at: Date.now(),
-                }
-            });
+            $set: {
+                type,
+                reviewed: true,
+                reviewed_at: Date.now(),
+            }
+        });
     },
 
     async remove(user) {

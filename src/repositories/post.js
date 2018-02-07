@@ -40,6 +40,12 @@ export default {
         }).limit(limit || config.batchUserLimitCount);
     },
 
+    async reviewed() {
+        return await Post.find({
+            reviewed: true
+        });
+    },
+
     async remove(post) {
         return await Post.remove({
             url: post.url
@@ -47,5 +53,15 @@ export default {
             if (err) console.log(err);
             console.log('Post was removed');
         })
+    },
+
+    async insertMany(postsArr) {
+        return new Promise(async function (resolve, reject) {
+            return await Post.insertMany(postsArr, function (err) {
+                if (err) reject();
+                console.log(postsArr.length + ' posts were added');
+                resolve();
+            });
+        });
     }
 }

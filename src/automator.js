@@ -4,6 +4,7 @@ import api from './InstagramAPI.js';
 import postrepo from './repositories/post';
 import userrepo from './repositories/user';
 import pagerepo from './repositories/page';
+import User from './models/user';
 const async = require('async');
 
 let secondsInDay = 60 * 60 * config.workingHours;
@@ -23,14 +24,18 @@ class Automater {
     async savePosts() {
         await this.instagram.logIn();
         while (true) {
-            let pages = await this.instagram.getPrivatePages();
+            let pages = await pagerepo.private();
+            let postsReviewed = await postrepo.reviewed();
+            let posts;
             //get new usernames
             for (let i = 0; i < pages.length; i++) {
                 let username = pages[i].username;
                 //go to the username page
                 try {
                     await this.instagram.goToUsername(username);
-                    await this.instagram.savePostsToAnalyze(pages[i]);
+                    posts = await this.instagram.getNewPosts(pages[i], postsReviewed);
+                    await postrepo.insertMany(posts);
+                    await pagerepo.setReviewed(pages[i])
                 } catch (e) {
                     await pagerepo.remove(pages[i])
                     console.log(e);
@@ -46,20 +51,15 @@ class Automater {
             let posts = await postrepo.analyze();
             let users = await userrepo.analyze() || [];
             let newUsers = [];
-            let tmpUsers = [];
             console.log('Analyzing posts.');
             for (let i = 0; i < posts.length; i++) {
                 try {
-                    tmpUsers = await this.instagram.getNewUsers(posts[i], users);
                     newUsers.push.apply(newUsers, await this.instagram.getNewUsers(posts[i], users));
-                    console.log('tmpUsers: ' + tmpUsers.length);
-                    console.log(newUsers.length);
                 } catch (e) {
                     console.log(e);
                     await postrepo.remove(posts[i]);
                 }
             }
-            console.log(newUsers);
             await userrepo.insertMany(newUsers);
             console.log(users.length + ' users found.');
             newUsers.length = 0;
@@ -76,6 +76,7 @@ class Automater {
             for (let i = 0; i < users.length; i++) {
                 try {
                     type = await this.instagram.getUserType(users[i]);
+                    console.log('to ' + type);
                     await userrepo.setType(users[i], type);
                 } catch (e) {
                     console.log(e);
@@ -91,8 +92,14 @@ class Automater {
         while (true) {
             let users = await userrepo.follow();
             for (let i = 0; i < users.length; i++) {
-                let followed = await this.instagram.followUser(users[i]);
-                await userrepo.setType(users[i], followed ? 'followed' : 'error');
+                try {
+                    let followed = await this.instagram.followUser(users[i]);
+                    await userrepo.setType(users[i], 'followed');
+                    console.log('followed');
+                } catch (e) {
+                    await userrepo.setType(users[i], 'error');
+                    console.log('error');
+                }
             }
             await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay);
         }
