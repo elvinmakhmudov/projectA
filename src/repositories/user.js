@@ -32,17 +32,16 @@ export default {
     like(limit) {
         return User.find({
             type: 'like',
-            reviewed: false
+            reviewed: true
         }).limit(limit || config.batchUserLimitCount);
     },
 
     async insertMany(newUsers) {
-        return new Promise(function (resolve, reject) {
-            console.log('in insertmany :' + newUsers.length);
-            User.insertMany(newUsers, function (err, users) {
+        return new Promise(async function (resolve, reject) {
+            await User.insertMany(newUsers, function (err, users) {
                 if(err) reject();
-                resolve();
                 console.log(newUsers.length + ' users were added to collection');
+                resolve();
             });
         });
     },
@@ -66,5 +65,9 @@ export default {
             if (err) console.log(err);
             console.log(user.username + ' was removed');
         })
+    },
+
+    async softDelete(user) {
+        return this.setType(user, 'removed');
     }
 }

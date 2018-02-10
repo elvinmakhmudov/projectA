@@ -63,5 +63,43 @@ export default {
                 resolve();
             });
         });
+    },
+
+    async setReviewed(post, postData) {
+        return new Promise(async function (resolve, reject) {
+            await Post.update({
+                url: post.url
+            }, {
+                $set: {
+                    type: 'reviewed',
+                    reviewed: true,
+                    likes: postData.likes,
+                    rating: postData.rating,
+                    reviewed_at: Date.now()
+                }
+            }, function (err, post) {
+                if (err) reject();
+                console.log('Post was reviewed');
+                resolve();
+            });
+        });
+    },
+
+    async setType(post, type) {
+        return new Promise(async function (resolve, reject) {
+            await Post.update({
+                url: post.url
+            }, {
+                $set: {
+                    type,
+                    reviewed: true,
+                    reviewed_at: Date.now()
+                }
+            }, function (err, post) {
+                if (err) reject();
+                console.log('Post was ' + type);
+                resolve();
+            });
+        });
     }
 }

@@ -87,5 +87,61 @@ exports.default = {
         }
 
         return setReviewed;
+    }(),
+    setCommented: function () {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(page) {
+            return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                while (1) {
+                    switch (_context4.prev = _context4.next) {
+                        case 0:
+                            return _context4.abrupt('return', new Promise(function () {
+                                var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                                        while (1) {
+                                            switch (_context3.prev = _context3.next) {
+                                                case 0:
+                                                    _context3.next = 2;
+                                                    return _page2.default.update({
+                                                        username: page.username
+                                                    }, {
+                                                        $set: {
+                                                            type: 'commented',
+                                                            reviewed: true,
+                                                            reviewed_at: Date.now(),
+                                                            commented_at: Date.now(),
+                                                            commented_times: Number(Number(page.commented_times) >= Number(config.maxCommentForPageInDay)) ? 1 : Number(page.commented_times) + 1
+                                                        }
+                                                    }, function (err, page) {
+                                                        if (err) reject();
+                                                        console.log('Page was commented');
+                                                        resolve();
+                                                    });
+
+                                                case 2:
+                                                case 'end':
+                                                    return _context3.stop();
+                                            }
+                                        }
+                                    }, _callee3, this);
+                                }));
+
+                                return function (_x3, _x4) {
+                                    return _ref4.apply(this, arguments);
+                                };
+                            }().bind(this)));
+
+                        case 1:
+                        case 'end':
+                            return _context4.stop();
+                    }
+                }
+            }, _callee4, this);
+        }));
+
+        function setCommented(_x2) {
+            return _ref3.apply(this, arguments);
+        }
+
+        return setCommented;
     }()
 };

@@ -185,7 +185,7 @@ class InstagramAPI {
         }.bind(this));
     }
 
-    getNewUsers(post, users) {
+    getPostData(post, users) {
         return new Promise(async function (resolve, reject) {
             // let posts = await this.dbase.getPostsToAnalyze();
             // let users = await this.dbase.getUsersToAnalyze() || [];
@@ -193,7 +193,7 @@ class InstagramAPI {
             // for (let i = 0; i < posts.length; i++) {
             await this.driver.get(post.url);
             //if page has been removed then break
-            if (await this.driver.findElements(By.className("error-container")) != 0) {
+            if (await this.driver.findElements(By.className("error-container")) != 0 || await this.driver.findElements(By.className("_ezgzd")) == 0) {
                 reject();
             };
             await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
@@ -203,17 +203,6 @@ class InstagramAPI {
             let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
             let rating = Math.round(likes / datetime * 100) / 100;
 
-            await Post.update({
-                url: post.url
-            }, {
-                $set: {
-                    type: 'reviewed',
-                    reviewed: true,
-                    likes: likes,
-                    rating: rating,
-                    reviewed_at: Date.now()
-                }
-            });
             for (let j = 0; j < comments.length; j++) {
                 let username = await comments[j].findElement(By.tagName('a')).getText();
                 //get the users which are not author of post and which are not duplicate
@@ -225,9 +214,14 @@ class InstagramAPI {
                     console.log('New username is:' + username);
                 }
             }
-            resolve(newUsers);
+            resolve({
+                newUsers,
+                likes,
+                rating
+            });
         }.bind(this))
     }
+
 
 
     /**
@@ -249,24 +243,6 @@ class InstagramAPI {
                 resolve('like');
             }
         }.bind(this));
-    }
-
-    removePost(url) {
-        return Post.remove({
-            url
-        }, function (err) {
-            if (err) console.log(err);
-            console.log('Post was removed');
-        })
-    }
-
-    removeUser(username) {
-        return User.remove({
-            username
-        }, function (err) {
-            if (err) console.log(err);
-            console.log(username + ' was removed');
-        })
     }
 
     async followUser(user) {
@@ -292,38 +268,28 @@ class InstagramAPI {
     }
 
     async unfollowUser(user) {
-        // let users = await this.dbase.getUsersToUnfollow();
-        // for (let i = 0; i < users.length; i++) {
-        await this.driver.get(config.urls.main + user.username);
-        if (await this.driver.findElements(By.className("error-container")) != 0) {
-            // this.removeUser(user.username)
-            return false;
-        };
-        if (await this.driver.findElements(By.className("_t78yp")) != 0) {
-            await this.driver.findElement(By.className('_t78yp')).click();
-            await this.sleep(1);
-        }
-        console.log('Unfollowing ' + users[i].username);
-        await User.update({
-            username: users[i].username
-        }, {
-            $set: {
-                type: 'unfollowed',
-                reviewed: true,
-                reviewed_at: Date.now(),
+        return new Promise(async function (resolve, reject) {
+            await this.driver.get(config.urls.main + user.username);
+            if (await this.driver.findElements(By.className("error-container")) != 0) {
+                // this.removeUser(user.username)
+                reject();
+            };
+            if (await this.driver.findElements(By.className("_t78yp")) != 0) {
+                console.log('Unfollowing ' + user.username);
+                await this.driver.findElement(By.className('_t78yp')).click();
+                resolve();
+                await this.sleep(1);
             }
-        });
-        // }
+            reject();
+        }.bind(this))
     }
 
-    async likeUserPosts() {
-        let users = await this.dbase.getUsersToLike();
-        for (let i = 0; i < users.length; i++) {
-            await this.driver.get(config.urls.main + users[i].username);
+    async likeUserPosts(user) {
+        return new Promise(async function (resolve, reject) {
+            await this.driver.get(config.urls.main + user.username);
             //follow
             if (await this.driver.findElements(By.className("_mck9w")) == 0) {
-                this.removeUser(users[i].username)
-                continue
+                reject();
             };
             await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
             this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
@@ -339,64 +305,37 @@ class InstagramAPI {
                 if ((await this.driver.findElements(By.className("coreSpriteHeartFull"))).length != []) continue;
                 this.driver.wait(until.elementLocated(By.className('coreSpriteHeartOpen')), config.timeout);
                 await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
-                await this.sleep(1);
+                await this.sleep(2);
             }
-            await User.update({
-                username: users[i].username
-            }, {
-                $set: {
-                    type: 'like',
-                    reviewed: true,
-                    reviewed_at: Date.now()
-                }
-            });
-            console.log('liked posts of ' + users[i].username);
-        }
+            console.log('liked posts of ' + user.username);
+            resolve()
+        }.bind(this));
     }
 
-    async commentPosts() {
-        let posts = await this.dbase.getPostsToComment();
-        for (let i = 0; i < posts.length; i++) {
-            await this.driver.get(posts[i].url);
+    async commentPosts(post) {
+        return new Promise(async function (resolve, reject) {
+            await this.driver.get(post.url);
             //if page has been removed then break
             if (await this.driver.findElements(By.className("error-container")) != 0) {
-                this.removePost(posts[i].url)
-                continue
+                reject();
             };
-            console.log((i + 1) + ' of ' + posts.length + ' posts.')
             await this.driver.wait(until.elementLocated(By.className("_bilrf")), config.timeout);
             //comment post
             let comment = this.comments[Math.floor(Math.random() * this.comments.length)];
             await this.driver.findElement(By.className('_bilrf')).clear();
             await this.driver.findElement(By.className('_bilrf')).sendKeys(comment);
-            // await this.driver.findElement(By.className('_bilrf')).sendKeys(Key.ENTER);
-            await Post.update({
-                url: posts[i].url
-            }, {
-                $set: {
-                    type: 'commented',
-                    reviewed: true,
-                    reviewed_at: Date.now()
-                }
-            });
-            await Page.update({
-                username: posts[i].username
-            }, {
-                $set: {
-                    type: 'commented',
-                    reviewed: true,
-                    reviewed_at: Date.now(),
-                    commented_at: Date.now(),
-                    commented_times: (post.page.commented_times >= config.maxCommentForPageInDay) ? 1 : (post.page.commented_times + 1)
-                }
-            });
-            await this.sleep(1);
-        }
+            await this.sleep(2);
+            resolve();
+        }.bind(this));
     }
 
     async sleep(seconds) {
-        console.log('sleeping for ' + seconds + ' seconds.')
-        await this.driver.sleep(seconds * 1000)
+        try {
+            console.log('sleeping for ' + seconds + ' seconds.')
+            await this.driver.sleep(seconds * 1000)
+        } catch (e) {
+            console.log(e);
+        }
     }
 }
 

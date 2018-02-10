@@ -8,10 +8,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // let automateFollowers = new automater().getFollowings();
 //  let automateFollowers2 = new automater().savePosts();
-// let automateFollowers3 = new automater().getNewUsers();
-var automateFollowers3 = new _automator2.default().followUsers();
+// let automateFollowers3 = new automater().analyzePosts();
+//  let automateFollowers3 = new automater().followUsers();
 //  let automateFollowers3 = new automater().analyzeUsers();
 //  let automateFollowers4 = new automater().likeUserPosts();
 // new automater().tripleCombo();
-// new automater().commentPosts();
+new _automator2.default().commentPosts();
 // new automater().unfollowUsers();

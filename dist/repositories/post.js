@@ -209,5 +209,115 @@ exports.default = {
         }
 
         return insertMany;
+    }(),
+    setReviewed: function () {
+        var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(post, postData) {
+            return regeneratorRuntime.wrap(function _callee8$(_context8) {
+                while (1) {
+                    switch (_context8.prev = _context8.next) {
+                        case 0:
+                            return _context8.abrupt('return', new Promise(function () {
+                                var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+                                        while (1) {
+                                            switch (_context7.prev = _context7.next) {
+                                                case 0:
+                                                    _context7.next = 2;
+                                                    return _post2.default.update({
+                                                        url: post.url
+                                                    }, {
+                                                        $set: {
+                                                            type: 'reviewed',
+                                                            reviewed: true,
+                                                            likes: postData.likes,
+                                                            rating: postData.rating,
+                                                            reviewed_at: Date.now()
+                                                        }
+                                                    }, function (err, post) {
+                                                        if (err) reject();
+                                                        console.log('Post was reviewed');
+                                                        resolve();
+                                                    });
+
+                                                case 2:
+                                                case 'end':
+                                                    return _context7.stop();
+                                            }
+                                        }
+                                    }, _callee7, this);
+                                }));
+
+                                return function (_x9, _x10) {
+                                    return _ref8.apply(this, arguments);
+                                };
+                            }()));
+
+                        case 1:
+                        case 'end':
+                            return _context8.stop();
+                    }
+                }
+            }, _callee8, this);
+        }));
+
+        function setReviewed(_x7, _x8) {
+            return _ref7.apply(this, arguments);
+        }
+
+        return setReviewed;
+    }(),
+    setType: function () {
+        var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(post, type) {
+            return regeneratorRuntime.wrap(function _callee10$(_context10) {
+                while (1) {
+                    switch (_context10.prev = _context10.next) {
+                        case 0:
+                            return _context10.abrupt('return', new Promise(function () {
+                                var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+                                        while (1) {
+                                            switch (_context9.prev = _context9.next) {
+                                                case 0:
+                                                    _context9.next = 2;
+                                                    return _post2.default.update({
+                                                        url: post.url
+                                                    }, {
+                                                        $set: {
+                                                            type: type,
+                                                            reviewed: true,
+                                                            reviewed_at: Date.now()
+                                                        }
+                                                    }, function (err, post) {
+                                                        if (err) reject();
+                                                        console.log('Post was ' + type);
+                                                        resolve();
+                                                    });
+
+                                                case 2:
+                                                case 'end':
+                                                    return _context9.stop();
+                                            }
+                                        }
+                                    }, _callee9, this);
+                                }));
+
+                                return function (_x13, _x14) {
+                                    return _ref10.apply(this, arguments);
+                                };
+                            }()));
+
+                        case 1:
+                        case 'end':
+                            return _context10.stop();
+                    }
+                }
+            }, _callee10, this);
+        }));
+
+        function setType(_x11, _x12) {
+            return _ref9.apply(this, arguments);
+        }
+
+        return setType;
     }()
 };

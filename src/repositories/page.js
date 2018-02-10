@@ -33,5 +33,25 @@ export default {
                 reviewed_at: Date.now()
             }
         });
+    },
+
+    async setCommented(page) {
+        return new Promise(async function (resolve, reject) {
+            await Page.update({
+                username: page.username
+            }, {
+                $set: {
+                    type: 'commented',
+                    reviewed: true,
+                    reviewed_at: Date.now(),
+                    commented_at: Date.now(),
+                    commented_times: Number(Number(page.commented_times) >= Number(config.maxCommentForPageInDay)) ? 1 : (Number(page.commented_times) + 1)
+                }
+            }, function (err, page) {
+                if (err) reject();
+                console.log('Page was commented');
+                resolve();
+            });
+        }.bind(this));
     }
 }
