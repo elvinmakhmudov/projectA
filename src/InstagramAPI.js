@@ -11,7 +11,6 @@ import Page from './models/page';
 import Post from './models/post';
 import User from './models/user';
 import Cookie from './models/cookie';
-import analyzator from './analyzator.js';
 
 class InstagramAPI {
     constructor(login, password, comments) {
@@ -35,24 +34,24 @@ class InstagramAPI {
             let driver = this.driver;
             await driver.get(config.urls.login);
             let cookies = await Cookie.find({
-                username: config.instagram.login
+                username: this.login || config.instagram.login
             });
             if (cookies.length !== 0) {
                 await this.cookieLogIn(cookies).then(function () {
-                    console.log('Logged in with Cookies');
+                    console.log(this.login + ' : Logged in with Cookies');
                     resolve();
-                })
+                }.bind(this))
             } else {
                 await driver.wait(until.elementLocated(By.name("username")), config.timeout);
                 await driver.findElement(By.name('username')).sendKeys(this.login);
                 await driver.findElement(By.name('password')).sendKeys(this.password);
                 await driver.findElement(By.className('_qv64e _gexxb _4tgw8 _njrw0')).click();
                 await driver.sleep(2000).then(() => resolve());
-                console.log('Logged in');
+                console.log(this.login + ' : Logged in');
                 //set cookies 
                 await this.setCookies(this.login)
             }
-        }.bind(this))
+        }.bind(this));
     }
 
     async cookieLogIn(cookies) {
@@ -98,7 +97,7 @@ class InstagramAPI {
             this.driver.sleep(2000);
             this.driver.findElement(By.partialLinkText('following')).click();
             this.driver.sleep(2000);
-            console.log('Getting followings');
+            console.log(this.login + ' : Getting followings');
             let scrollElement = this.driver.wait(until.elementLocated(By.className('_2g7d5 notranslate _o5iw8')), config.timeout);
             scrollElement.then(function () {
                 this.scrollFollowings(0).then(function () {
@@ -142,46 +141,54 @@ class InstagramAPI {
         }.bind(this))
     }
 
-    getPrivatePages() {
-        var d = new Date();
-        d.setDate(d.getDate() - config.oldestPageInDays);
-        let yesterdayInMseconds = Date.now() - d.getMilliseconds();
-        return Page.find({
-            reviewed: false,
-            reviewed_at: {
-                $lt: yesterdayInMseconds
-            },
-            type: 'private'
-        })
-    }
-
     goToUsername(username) {
-        console.log('Reviewing ' + username);
+        console.log(this.login+ ' : Reviewing ' + username);
         return this.driver.get(config.urls.main + username);
     }
 
-    getNewPosts(page, postsReviewed) {
+    getNewPosts(page, postsAnalyze, type) {
         return new Promise(async function (resolve, reject) {
             //fetch posts
-            if (await this.driver.findElements(By.className("_kcrwx")) != 0) return resolve();
+            if (await this.driver.findElements(By.className("_kcrwx")) != 0) return reject();
             if (await this.driver.findElements(By.className("_mck9w")) == 0) {
                 reject();
             };
             this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
             let posts = await this.driver.findElements(By.css('._mck9w a'));
             let postsArr = [];
-            for (let i = 0; i < posts.length; i++) {
+            for (let i = 0; i < posts.length && i < config.postsToReview; i++) {
                 let url = await posts[i].getAttribute('href');
-                if ((postsReviewed.length > 0) ? !postsReviewed.some(post => post.url === url) : false) {
+                if ((postsAnalyze.length > 0) ? !postsAnalyze.some(post => post.url === url) : true) {
                     await postsArr.push(new Post({
                         'url': url,
                         'username': page.username,
-                        'type': 'analyze',
+                        'type': type,
                         'page': page._id
                     }));
                 }
             }
             resolve(postsArr);
+        }.bind(this));
+    }
+
+    getRating(post) {
+        return new Promise(async function (resolve, reject) {
+            // let posts = await this.dbase.getPostsToAnalyze();
+            // let users = await this.dbase.getUsersToAnalyze() || [];
+            let newUsers = [];
+            // for (let i = 0; i < posts.length; i++) {
+            await this.driver.get(post.url);
+            //if page has been removed then break
+            if (await this.driver.findElements(By.className("error-container")) != 0 || await this.driver.findElements(By.className("_ezgzd")) == 0) {
+                reject();
+            };
+            await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
+            let comments = await this.driver.findElements(By.className("_ezgzd"));
+            let likes = await this.driver.findElements(By.className("_nzn1h")) != 0 ? await this.driver.findElement(By.css("._nzn1h span")).getText().then(likes => likes.replace(',', '')) : 0;
+            let dateattr = await this.driver.findElements(By.className("_p29ma")) != 0 ? await this.driver.findElement(By.className("_p29ma")).getAttribute('datetime') : 0;
+            let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 ));
+            let rating = Math.round(likes / datetime * 100) / 100;
+            resolve(rating);
         }.bind(this));
     }
 
@@ -211,7 +218,7 @@ class InstagramAPI {
                         username,
                         type: 'analyze'
                     }));
-                    console.log('New username is:' + username);
+                    console.log(this.login+ ' : New username is:' + username);
                 }
             }
             resolve({
@@ -235,7 +242,7 @@ class InstagramAPI {
             if (await this.driver.findElements(By.className("error-container")) != 0) {
                 reject();
             };
-            console.log('Analyzing ' + user.username);
+            console.log(this.login+ ' : Analyzing ' + user.username);
             await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
                 resolve('follow');
@@ -251,14 +258,15 @@ class InstagramAPI {
             if ((await this.driver.findElements(By.className("error-container")) != 0) || (await this.driver.findElements(By.className("_rf3jb")) == 0)) {
                 reject();
             };
-            console.log('Following ' + user.username);
-            await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+            console.log(this.login+ ' : Following ' + user.username);
+            await this.driver.wait(until.elementLocated(By.className("_r9b8f")), config.timeout);
             //follow
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
                 //click follow button
                 await this.driver.findElement(By.className('_r9b8f')).click();
+                await this.sleep(2);
                 //wait until requested text
-                await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+                // await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
                 resolve(true);
             } else {
                 reject();
@@ -275,7 +283,7 @@ class InstagramAPI {
                 reject();
             };
             if (await this.driver.findElements(By.className("_t78yp")) != 0) {
-                console.log('Unfollowing ' + user.username);
+                console.log(this.login+ ' : Unfollowing ' + user.username);
                 await this.driver.findElement(By.className('_t78yp')).click();
                 resolve();
                 await this.sleep(1);
@@ -307,7 +315,7 @@ class InstagramAPI {
                 await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
                 await this.sleep(2);
             }
-            console.log('liked posts of ' + user.username);
+            console.log(this.login+ ' : liked posts of ' + user.username);
             resolve()
         }.bind(this));
     }
@@ -316,7 +324,7 @@ class InstagramAPI {
         return new Promise(async function (resolve, reject) {
             await this.driver.get(post.url);
             //if page has been removed then break
-            if (await this.driver.findElements(By.className("error-container")) != 0) {
+            if (await this.driver.findElements(By.className("error-container")) != 0 || await this.driver.findElements(By.className("_bilrf")) == 0) {
                 reject();
             };
             await this.driver.wait(until.elementLocated(By.className("_bilrf")), config.timeout);
@@ -324,17 +332,74 @@ class InstagramAPI {
             let comment = this.comments[Math.floor(Math.random() * this.comments.length)];
             await this.driver.findElement(By.className('_bilrf')).clear();
             await this.driver.findElement(By.className('_bilrf')).sendKeys(comment);
-            await this.sleep(2);
+            await this.driver.findElement(By.className('_bilrf')).sendKeys(Key.ENTER);
+            await this.sleep(5);
             resolve();
+        }.bind(this));
+    }
+
+    async explorePage(explorePages) {
+        return new Promise(async function (resolve, reject) {
+            do {
+                // await this.driver.wait(until.elementLocated(By.className("_4tgw8")), config.timeout);
+                if (await this.driver.findElements(By.className("_4tgw8")) == 0) {
+                    //follow
+                    if (await this.driver.findElements(By.className("_t78yp")) == 0) {
+                        //click follow button
+                        // await this.driver.findElement(By.className('_gexxb')).click();
+                        //wait until requested text
+                        // await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+                        await this.driver.navigate().refresh();
+                        await this.sleep(2);
+                    } else {
+                        await this.driver.navigate().refresh();
+                        await this.sleep(2);
+                    }
+                } else {
+                    break;
+                };
+            } while (true);
+            await this.driver.findElement(By.className('_4tgw8')).click();
+            await this.sleep(1);
+            let pages = [];
+            let next = true;
+            do {
+                next = (await this.driver.findElements(By.className("_r48jm")) != 0) ? true : false;
+                await this.sleep(2);
+                let newPages = await this.driver.findElements(By.className('_2g7d5'));
+                for (let i = 0; i < newPages.length; i++) {
+                    let username = await newPages[i].getText() || false;
+                    if (username && ((explorePages.length > 0) ? !explorePages.some(page => page.username === username) : true)) {
+                        try {
+                            let newPage = await new Page({
+                                username,
+                                type: 'explore',
+                                reviewed: false
+                            }).save();
+                            pages.push(newPage);
+                        } catch (e) {
+                            continue;
+                        }
+                        console.log(await newPages[i].getText());
+                    }
+                }
+                console.log(this.login+ ' : new pages length: ' + pages.length);
+                try {
+                    if (next) await this.driver.findElement(By.className('_r48jm')).click();
+                } catch (e) {
+                    reject(e);
+                }
+            } while (next && pages.length < 40);
+            resolve(pages);
         }.bind(this));
     }
 
     async sleep(seconds) {
         try {
-            console.log('sleeping for ' + seconds + ' seconds.')
+            console.log(this.login + ' : Sleeping for ' + seconds + ' seconds.')
             await this.driver.sleep(seconds * 1000)
         } catch (e) {
-            console.log(e);
+            // console.log(e);
         }
     }
 }

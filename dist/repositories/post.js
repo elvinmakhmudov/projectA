@@ -27,7 +27,7 @@ exports.default = {
                             yesterdayInMseconds = Date.now() - d.getMilliseconds();
                             _context.next = 5;
                             return _post2.default.find({
-                                type: 'analyze',
+                                type: 'comment',
                                 reviewed: false
                             }).populate({
                                 path: 'page',
@@ -102,15 +102,18 @@ exports.default = {
 
         return analyze;
     }(),
-    reviewed: function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+    postsFor: function () {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(page) {
             return regeneratorRuntime.wrap(function _callee3$(_context3) {
                 while (1) {
                     switch (_context3.prev = _context3.next) {
                         case 0:
                             _context3.next = 2;
                             return _post2.default.find({
-                                reviewed: true
+                                reviewed: false,
+                                username: page.username
+                            }).sort({
+                                rating: -1
                             });
 
                         case 2:
@@ -124,24 +127,21 @@ exports.default = {
             }, _callee3, this);
         }));
 
-        function reviewed() {
+        function postsFor(_x3) {
             return _ref3.apply(this, arguments);
         }
 
-        return reviewed;
+        return postsFor;
     }(),
-    remove: function () {
-        var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(post) {
+    reviewed: function () {
+        var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(limit) {
             return regeneratorRuntime.wrap(function _callee4$(_context4) {
                 while (1) {
                     switch (_context4.prev = _context4.next) {
                         case 0:
                             _context4.next = 2;
-                            return _post2.default.remove({
-                                url: post.url
-                            }, function (err) {
-                                if (err) console.log(err);
-                                console.log('Post was removed');
+                            return _post2.default.find({
+                                reviewed: true
                             });
 
                         case 2:
@@ -155,74 +155,106 @@ exports.default = {
             }, _callee4, this);
         }));
 
-        function remove(_x3) {
+        function reviewed(_x4) {
             return _ref4.apply(this, arguments);
+        }
+
+        return reviewed;
+    }(),
+    remove: function () {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(post) {
+            return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                while (1) {
+                    switch (_context5.prev = _context5.next) {
+                        case 0:
+                            _context5.next = 2;
+                            return _post2.default.remove({
+                                url: post.url
+                            }, function (err) {
+                                // if (err) console.log(err);
+                                console.log('Post was removed');
+                            });
+
+                        case 2:
+                            return _context5.abrupt('return', _context5.sent);
+
+                        case 3:
+                        case 'end':
+                            return _context5.stop();
+                    }
+                }
+            }, _callee5, this);
+        }));
+
+        function remove(_x5) {
+            return _ref5.apply(this, arguments);
         }
 
         return remove;
     }(),
     insertMany: function () {
-        var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(postsArr) {
-            return regeneratorRuntime.wrap(function _callee6$(_context6) {
+        var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(postsArr) {
+            return regeneratorRuntime.wrap(function _callee7$(_context7) {
                 while (1) {
-                    switch (_context6.prev = _context6.next) {
+                    switch (_context7.prev = _context7.next) {
                         case 0:
-                            return _context6.abrupt('return', new Promise(function () {
-                                var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(resolve, reject) {
-                                    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                            return _context7.abrupt('return', new Promise(function () {
+                                var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee6$(_context6) {
                                         while (1) {
-                                            switch (_context5.prev = _context5.next) {
+                                            switch (_context6.prev = _context6.next) {
                                                 case 0:
-                                                    _context5.next = 2;
-                                                    return _post2.default.insertMany(postsArr, function (err) {
-                                                        if (err) reject();
-                                                        console.log(postsArr.length + ' posts were added');
+                                                    _context6.next = 2;
+                                                    return _post2.default.insertMany(postsArr, {
+                                                        ordered: false
+                                                    }, function (err) {
+                                                        if (err) reject(err);
                                                         resolve();
                                                     });
 
                                                 case 2:
-                                                    return _context5.abrupt('return', _context5.sent);
+                                                    return _context6.abrupt('return', _context6.sent);
 
                                                 case 3:
                                                 case 'end':
-                                                    return _context5.stop();
+                                                    return _context6.stop();
                                             }
                                         }
-                                    }, _callee5, this);
+                                    }, _callee6, this);
                                 }));
 
-                                return function (_x5, _x6) {
-                                    return _ref6.apply(this, arguments);
+                                return function (_x7, _x8) {
+                                    return _ref7.apply(this, arguments);
                                 };
                             }()));
 
                         case 1:
                         case 'end':
-                            return _context6.stop();
+                            return _context7.stop();
                     }
                 }
-            }, _callee6, this);
+            }, _callee7, this);
         }));
 
-        function insertMany(_x4) {
-            return _ref5.apply(this, arguments);
+        function insertMany(_x6) {
+            return _ref6.apply(this, arguments);
         }
 
         return insertMany;
     }(),
     setReviewed: function () {
-        var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(post, postData) {
-            return regeneratorRuntime.wrap(function _callee8$(_context8) {
+        var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(post, postData) {
+            return regeneratorRuntime.wrap(function _callee9$(_context9) {
                 while (1) {
-                    switch (_context8.prev = _context8.next) {
+                    switch (_context9.prev = _context9.next) {
                         case 0:
-                            return _context8.abrupt('return', new Promise(function () {
-                                var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(resolve, reject) {
-                                    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+                            return _context9.abrupt('return', new Promise(function () {
+                                var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee8$(_context8) {
                                         while (1) {
-                                            switch (_context7.prev = _context7.next) {
+                                            switch (_context8.prev = _context8.next) {
                                                 case 0:
-                                                    _context7.next = 2;
+                                                    _context8.next = 2;
                                                     return _post2.default.update({
                                                         url: post.url
                                                     }, {
@@ -241,44 +273,44 @@ exports.default = {
 
                                                 case 2:
                                                 case 'end':
-                                                    return _context7.stop();
+                                                    return _context8.stop();
                                             }
                                         }
-                                    }, _callee7, this);
+                                    }, _callee8, this);
                                 }));
 
-                                return function (_x9, _x10) {
-                                    return _ref8.apply(this, arguments);
+                                return function (_x11, _x12) {
+                                    return _ref9.apply(this, arguments);
                                 };
                             }()));
 
                         case 1:
                         case 'end':
-                            return _context8.stop();
+                            return _context9.stop();
                     }
                 }
-            }, _callee8, this);
+            }, _callee9, this);
         }));
 
-        function setReviewed(_x7, _x8) {
-            return _ref7.apply(this, arguments);
+        function setReviewed(_x9, _x10) {
+            return _ref8.apply(this, arguments);
         }
 
         return setReviewed;
     }(),
     setType: function () {
-        var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(post, type) {
-            return regeneratorRuntime.wrap(function _callee10$(_context10) {
+        var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(post, type) {
+            return regeneratorRuntime.wrap(function _callee11$(_context11) {
                 while (1) {
-                    switch (_context10.prev = _context10.next) {
+                    switch (_context11.prev = _context11.next) {
                         case 0:
-                            return _context10.abrupt('return', new Promise(function () {
-                                var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(resolve, reject) {
-                                    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+                            return _context11.abrupt('return', new Promise(function () {
+                                var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee10$(_context10) {
                                         while (1) {
-                                            switch (_context9.prev = _context9.next) {
+                                            switch (_context10.prev = _context10.next) {
                                                 case 0:
-                                                    _context9.next = 2;
+                                                    _context10.next = 2;
                                                     return _post2.default.update({
                                                         url: post.url
                                                     }, {
@@ -289,35 +321,87 @@ exports.default = {
                                                         }
                                                     }, function (err, post) {
                                                         if (err) reject();
-                                                        console.log('Post was ' + type);
+                                                        console.log('Post type was set to ' + type);
                                                         resolve();
                                                     });
 
                                                 case 2:
                                                 case 'end':
-                                                    return _context9.stop();
+                                                    return _context10.stop();
                                             }
                                         }
-                                    }, _callee9, this);
+                                    }, _callee10, this);
                                 }));
 
-                                return function (_x13, _x14) {
-                                    return _ref10.apply(this, arguments);
+                                return function (_x15, _x16) {
+                                    return _ref11.apply(this, arguments);
                                 };
                             }()));
 
                         case 1:
                         case 'end':
-                            return _context10.stop();
+                            return _context11.stop();
                     }
                 }
-            }, _callee10, this);
+            }, _callee11, this);
         }));
 
-        function setType(_x11, _x12) {
-            return _ref9.apply(this, arguments);
+        function setType(_x13, _x14) {
+            return _ref10.apply(this, arguments);
         }
 
         return setType;
+    }(),
+    setRating: function () {
+        var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(post, rating) {
+            return regeneratorRuntime.wrap(function _callee13$(_context13) {
+                while (1) {
+                    switch (_context13.prev = _context13.next) {
+                        case 0:
+                            return _context13.abrupt('return', new Promise(function () {
+                                var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee12$(_context12) {
+                                        while (1) {
+                                            switch (_context12.prev = _context12.next) {
+                                                case 0:
+                                                    _context12.next = 2;
+                                                    return _post2.default.update({
+                                                        url: post.url
+                                                    }, {
+                                                        $set: {
+                                                            rating: rating
+                                                        }
+                                                    }, function (err, post) {
+                                                        if (err) reject();
+                                                        console.log('Post rating was set to ' + rating);
+                                                        resolve();
+                                                    });
+
+                                                case 2:
+                                                case 'end':
+                                                    return _context12.stop();
+                                            }
+                                        }
+                                    }, _callee12, this);
+                                }));
+
+                                return function (_x19, _x20) {
+                                    return _ref13.apply(this, arguments);
+                                };
+                            }()));
+
+                        case 1:
+                        case 'end':
+                            return _context13.stop();
+                    }
+                }
+            }, _callee13, this);
+        }));
+
+        function setRating(_x17, _x18) {
+            return _ref12.apply(this, arguments);
+        }
+
+        return setRating;
     }()
 };

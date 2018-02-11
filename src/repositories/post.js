@@ -7,7 +7,7 @@ export default {
         d.setDate(d.getDate() - 1);
         let yesterdayInMseconds = Date.now() - d.getMilliseconds();
         let posts = await Post.find({
-            type: 'analyze',
+            type: 'comment',
             reviewed: false
         }).populate({
             path: 'page',
@@ -40,7 +40,16 @@ export default {
         }).limit(limit || config.batchUserLimitCount);
     },
 
-    async reviewed() {
+    async postsFor(page) {
+        return await Post.find({
+            reviewed: false,
+            username: page.username
+        }).sort({
+            rating: -1
+        });
+    },
+
+    async reviewed(limit) {
         return await Post.find({
             reviewed: true
         });
@@ -50,16 +59,17 @@ export default {
         return await Post.remove({
             url: post.url
         }, function (err) {
-            if (err) console.log(err);
+            // if (err) console.log(err);
             console.log('Post was removed');
         })
     },
 
     async insertMany(postsArr) {
         return new Promise(async function (resolve, reject) {
-            return await Post.insertMany(postsArr, function (err) {
-                if (err) reject();
-                console.log(postsArr.length + ' posts were added');
+            return await Post.insertMany(postsArr, {
+                ordered: false
+            }, function (err) {
+                if (err) reject(err);
                 resolve();
             });
         });
@@ -79,7 +89,6 @@ export default {
                 }
             }, function (err, post) {
                 if (err) reject();
-                console.log('Post was reviewed');
                 resolve();
             });
         });
@@ -97,9 +106,26 @@ export default {
                 }
             }, function (err, post) {
                 if (err) reject();
-                console.log('Post was ' + type);
+                console.log('Post type was set to ' + type);
                 resolve();
             });
         });
+    },
+
+    async setRating(post, rating) {
+        return new Promise(async function (resolve, reject) {
+            await Post.update({
+                url: post.url
+            }, {
+                $set: {
+                    rating
+                }
+            }, function (err, post) {
+                if (err) reject();
+                console.log('Post rating was set to ' + rating);
+                resolve();
+            });
+        });
+
     }
 }

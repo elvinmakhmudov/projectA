@@ -3,15 +3,18 @@ import Page from '../models/page';
 
 export default {
     remove(page) {
-        return Page.remove({
-            username: page.username
-        }, function (err) {
-            if (err) console.log(err);
-            console.log(page.username + ' was removed.');
-        })
+        return new Promise(async function (resolve, reject) {
+            await Page.remove({
+                username: page.username
+            }, function (err) {
+                if (err) reject();
+                console.log(page.username + ' was removed.');
+                resolve();
+            });
+        });
     },
 
-    async private() {
+    async private(limit) {
         var d = new Date();
         d.setDate(d.getDate() - config.oldestPageInDays);
         let yesterdayInMseconds = Date.now() - d.getMilliseconds();
@@ -21,17 +24,39 @@ export default {
                 $lt: yesterdayInMseconds
             },
             type: 'private'
-        })
+        }).limit(limit || config.batchUserLimitCount);
+    },
+
+    async explore(limit) {
+        return Page.find({
+            reviewed: false,
+            type: 'explore'
+        }).limit(limit || config.batchUserLimitCount);
+    },
+
+    async insertMany(pageArr) {
+        return new Promise(async function (resolve, reject) {
+            return await Page.insertMany(pageArr, function (err) {
+                if (err) reject();
+                console.log(pageArr.length + ' pages were added');
+                resolve();
+            });
+        });
     },
 
     async setReviewed(page) {
-        return await Page.update({
-            username: page.username
-        }, {
-            $set: {
-                reviewed: true,
-                reviewed_at: Date.now()
-            }
+        return new Promise(async function (resolve, reject) {
+            await Page.update({
+                username: page.username
+            }, {
+                $set: {
+                    reviewed: true,
+                    reviewed_at: Date.now()
+                }
+            }, function (err, page) {
+                if (err) reject();
+                resolve();
+            });
         });
     },
 

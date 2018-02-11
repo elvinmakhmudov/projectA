@@ -18,7 +18,7 @@ exports.default = {
         return _user2.default.find({
             type: 'analyze',
             reviewed: false
-        }).limit(limit || config.batchUserLimitCount);
+        });
     },
     follow: function follow(limit) {
         return _user2.default.find({
@@ -90,52 +90,45 @@ exports.default = {
 
         return insertMany;
     }(),
-    setType: function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(user, type) {
-            return regeneratorRuntime.wrap(function _callee3$(_context3) {
-                while (1) {
-                    switch (_context3.prev = _context3.next) {
-                        case 0:
-                            _context3.next = 2;
-                            return _user2.default.update({
-                                username: user.username
-                            }, {
-                                $set: {
-                                    type: type,
-                                    reviewed: true,
-                                    reviewed_at: Date.now()
-                                }
-                            });
-
-                        case 2:
-                            return _context3.abrupt('return', _context3.sent);
-
-                        case 3:
-                        case 'end':
-                            return _context3.stop();
-                    }
-                }
-            }, _callee3, this);
-        }));
-
-        function setType(_x4, _x5) {
-            return _ref3.apply(this, arguments);
-        }
-
-        return setType;
-    }(),
-    remove: function () {
-        var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(user) {
+    setFollowed: function () {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(user, by) {
             return regeneratorRuntime.wrap(function _callee4$(_context4) {
                 while (1) {
                     switch (_context4.prev = _context4.next) {
                         case 0:
-                            return _context4.abrupt('return', _user2.default.remove({
-                                username: user.username
-                            }, function (err) {
-                                if (err) console.log(err);
-                                console.log(user.username + ' was removed');
-                            }));
+                            return _context4.abrupt('return', new Promise(function () {
+                                var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                                        while (1) {
+                                            switch (_context3.prev = _context3.next) {
+                                                case 0:
+                                                    _context3.next = 2;
+                                                    return _user2.default.update({
+                                                        username: user.username
+                                                    }, {
+                                                        $set: {
+                                                            type: 'followed',
+                                                            reviewed: true,
+                                                            reviewed_at: Date.now(),
+                                                            followed_by: by
+                                                        }
+                                                    }, function (err, users) {
+                                                        if (err) reject();
+                                                        resolve();
+                                                    });
+
+                                                case 2:
+                                                case 'end':
+                                                    return _context3.stop();
+                                            }
+                                        }
+                                    }, _callee3, this);
+                                }));
+
+                                return function (_x6, _x7) {
+                                    return _ref4.apply(this, arguments);
+                                };
+                            }()));
 
                         case 1:
                         case 'end':
@@ -145,30 +138,110 @@ exports.default = {
             }, _callee4, this);
         }));
 
-        function remove(_x6) {
-            return _ref4.apply(this, arguments);
+        function setFollowed(_x4, _x5) {
+            return _ref3.apply(this, arguments);
+        }
+
+        return setFollowed;
+    }(),
+    setType: function () {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(user, type, obj) {
+            return regeneratorRuntime.wrap(function _callee6$(_context6) {
+                while (1) {
+                    switch (_context6.prev = _context6.next) {
+                        case 0:
+                            return _context6.abrupt('return', new Promise(function () {
+                                var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                                        while (1) {
+                                            switch (_context5.prev = _context5.next) {
+                                                case 0:
+                                                    _context5.next = 2;
+                                                    return _user2.default.update({
+                                                        username: user.username
+                                                    }, {
+                                                        $set: {
+                                                            type: type,
+                                                            reviewed: true,
+                                                            reviewed_at: Date.now()
+                                                        }
+                                                    }, function (err, users) {
+                                                        if (err) reject();
+                                                        resolve();
+                                                    });
+
+                                                case 2:
+                                                case 'end':
+                                                    return _context5.stop();
+                                            }
+                                        }
+                                    }, _callee5, this);
+                                }));
+
+                                return function (_x11, _x12) {
+                                    return _ref6.apply(this, arguments);
+                                };
+                            }()));
+
+                        case 1:
+                        case 'end':
+                            return _context6.stop();
+                    }
+                }
+            }, _callee6, this);
+        }));
+
+        function setType(_x8, _x9, _x10) {
+            return _ref5.apply(this, arguments);
+        }
+
+        return setType;
+    }(),
+    remove: function () {
+        var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(user) {
+            return regeneratorRuntime.wrap(function _callee7$(_context7) {
+                while (1) {
+                    switch (_context7.prev = _context7.next) {
+                        case 0:
+                            return _context7.abrupt('return', _user2.default.remove({
+                                username: user.username
+                            }, function (err) {
+                                // if (err) console.log(err);
+                                console.log(user.username + ' was removed');
+                            }));
+
+                        case 1:
+                        case 'end':
+                            return _context7.stop();
+                    }
+                }
+            }, _callee7, this);
+        }));
+
+        function remove(_x13) {
+            return _ref7.apply(this, arguments);
         }
 
         return remove;
     }(),
     softDelete: function () {
-        var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(user) {
-            return regeneratorRuntime.wrap(function _callee5$(_context5) {
+        var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(user) {
+            return regeneratorRuntime.wrap(function _callee8$(_context8) {
                 while (1) {
-                    switch (_context5.prev = _context5.next) {
+                    switch (_context8.prev = _context8.next) {
                         case 0:
-                            return _context5.abrupt('return', this.setType(user, 'removed'));
+                            return _context8.abrupt('return', this.setType(user, 'removed'));
 
                         case 1:
                         case 'end':
-                            return _context5.stop();
+                            return _context8.stop();
                     }
                 }
-            }, _callee5, this);
+            }, _callee8, this);
         }));
 
-        function softDelete(_x7) {
-            return _ref5.apply(this, arguments);
+        function softDelete(_x14) {
+            return _ref8.apply(this, arguments);
         }
 
         return softDelete;

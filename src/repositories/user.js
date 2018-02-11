@@ -6,7 +6,7 @@ export default {
         return User.find({
             type: 'analyze',
             reviewed: false
-        }).limit(limit || config.batchUserLimitCount);
+        });
     },
 
     follow(limit) {
@@ -39,22 +39,45 @@ export default {
     async insertMany(newUsers) {
         return new Promise(async function (resolve, reject) {
             await User.insertMany(newUsers, function (err, users) {
-                if(err) reject();
+                if (err) reject();
                 console.log(newUsers.length + ' users were added to collection');
                 resolve();
             });
         });
     },
 
-    async setType(user, type) {
-        return await User.update({
-            username: user.username
-        }, {
-            $set: {
-                type,
-                reviewed: true,
-                reviewed_at: Date.now(),
-            }
+    async setFollowed(user, by) {
+        return new Promise(async function (resolve, reject) {
+            await User.update({
+                username: user.username
+            }, {
+                $set: {
+                    type: 'followed',
+                    reviewed: true,
+                    reviewed_at: Date.now(),
+                    followed_by: by
+                }
+            }, function(err, users) {
+                if (err) reject();
+                resolve();
+            });
+        });
+    },
+
+    async setType(user, type, obj) {
+        return new Promise(async function (resolve, reject) {
+            await User.update({
+                username: user.username
+            }, {
+                $set: {
+                    type,
+                    reviewed: true,
+                    reviewed_at: Date.now(),
+                }
+            }, function(err, users) {
+                if (err) reject();
+                resolve();
+            });
         });
     },
 
@@ -62,7 +85,7 @@ export default {
         return User.remove({
             username: user.username
         }, function (err) {
-            if (err) console.log(err);
+            // if (err) console.log(err);
             console.log(user.username + ' was removed');
         })
     },

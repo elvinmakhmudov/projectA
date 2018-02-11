@@ -1,17 +1,20 @@
-'use strict';
+"use strict";
 
-var _automator = require('./automator');
+var _automator = require("./automator");
 
 var _automator2 = _interopRequireDefault(_automator);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// let automateFollowers = new automater().getFollowings();
-//  let automateFollowers2 = new automater().savePosts();
-// let automateFollowers3 = new automater().analyzePosts();
-//  let automateFollowers3 = new automater().followUsers();
-//  let automateFollowers3 = new automater().analyzeUsers();
-//  let automateFollowers4 = new automater().likeUserPosts();
-// new automater().tripleCombo();
-new _automator2.default().commentPosts();
+// new automater().getFollowings();
+// new automater().savePosts();
+// new automater().analyzePosts();
+// new automater().analyzeUsers();
+// new automater().followUsers();
 // new automater().unfollowUsers();
+// new automater().likeUserPosts();
+// new automater().commentPosts();
+// new automater("leyli8294","topaz.az").findNewPages();
+// new automater("leyli8294","topaz.az").getPostsToComment();
+new _automator2.default().tripleAnalyzator();
+new _automator2.default("ayselqurbanova2222", "topaz.az").triplePageActions();

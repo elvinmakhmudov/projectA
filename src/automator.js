@@ -1,6 +1,7 @@
 import "babel-polyfill";
 let config = require('../config.json');
 import api from './InstagramAPI.js';
+import actions from './actions.js';
 import postrepo from './repositories/post';
 import userrepo from './repositories/user';
 import pagerepo from './repositories/page';
@@ -13,6 +14,7 @@ class Automater {
         this.login = login;
         this.password = password;
         this.instagram = new api(login, password).init();
+        return this;
     }
 
     async getFollowings() {
@@ -21,26 +23,26 @@ class Automater {
         await this.instagram.getAndSaveFollowings();
     }
 
+    async findNewPages() {
+        await this.instagram.logIn();
+        while (true) {
+            await actions.findNewPages.call(this);
+            await this.instagram.sleep(config.sleepEveryIteration);
+        }
+    }
+
+    async getPostsToComment() {
+        await this.instagram.logIn();
+        while (true) {
+            await actions.getPostsToComment.call(this);
+            await this.instagram.sleep(config.sleepEveryIteration);
+        }
+    }
+
     async savePosts() {
         await this.instagram.logIn();
         while (true) {
-            let pages = await pagerepo.private();
-            let postsReviewed = await postrepo.reviewed();
-            let posts;
-            //get new usernames
-            for (let i = 0; i < pages.length; i++) {
-                let username = pages[i].username;
-                //go to the username page
-                try {
-                    await this.instagram.goToUsername(username);
-                    posts = await this.instagram.getNewPosts(pages[i], postsReviewed);
-                    await postrepo.insertMany(posts);
-                    await pagerepo.setReviewed(pages[i])
-                } catch (e) {
-                    await pagerepo.remove(pages[i])
-                    console.log(e);
-                }
-            }
+            await actions.savePosts.call(this);
             await this.instagram.sleep(config.sleepEveryIteration);
         }
     }
@@ -48,49 +50,15 @@ class Automater {
     async analyzePosts() {
         await this.instagram.logIn();
         while (true) {
-            let posts = await postrepo.analyze();
-            let users = await userrepo.analyze() || [];
-            let newUsers = [];
-            console.log('Analyzing posts.');
-            for (let i = 0; i < posts.length; i++) {
-                try {
-                    let postData = await this.instagram.getPostData(posts[i], users);
-                    newUsers.push.apply(newUsers, postData.newUsers);
-                    await postrepo.setReviewed(posts[i], postData);
-                } catch (e) {
-                    console.log(e);
-                    await postrepo.remove(posts[i]);
-                }
-            }
-            if (newUsers.length > 0) {
-                try {
-                    await userrepo.insertMany(newUsers);
-                    console.log(users.length + ' users found.');
-                    newUsers.length = 0;
-                    users.length = 0;
-                } catch (e) {
-                    console.log(e);
-                }
-            }
+            await actions.analyzePosts.call(this);
             await this.instagram.sleep(config.sleepEveryIteration);
         }
     }
 
     async analyzeUsers() {
         await this.instagram.logIn();
-        let type;
         while (true) {
-            let users = await userrepo.analyze() || [];
-            for (let i = 0; i < users.length; i++) {
-                try {
-                    type = await this.instagram.getUserType(users[i]);
-                    console.log('to ' + type);
-                    await userrepo.setType(users[i], type);
-                } catch (e) {
-                    console.log(e);
-                    await userrepo.softDelete(users[i]);
-                }
-            }
+            await actions.analyzeUsers.call(this);
             await this.instagram.sleep(config.sleepEveryIteration);
         }
     }
@@ -98,17 +66,7 @@ class Automater {
     async followUsers() {
         await this.instagram.logIn();
         while (true) {
-            let users = await userrepo.follow();
-            for (let i = 0; i < users.length; i++) {
-                try {
-                    let followed = await this.instagram.followUser(users[i]);
-                    await userrepo.setType(users[i], 'followed');
-                    console.log('followed');
-                } catch (e) {
-                    await userrepo.setType(users[i], 'error');
-                    console.log('Error following: ' + users[i].username);
-                }
-            }
+            await actions.followUsers.call(this);
             await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay);
         }
     }
@@ -116,17 +74,7 @@ class Automater {
     async unfollowUsers() {
         await this.instagram.logIn();
         while (true) {
-            // await this.instagram.unfollowUsers();
-            let users = await userrepo.unfollow();
-            for (let i = 0; i < users.length; i++) {
-                try {
-                    let unfollowed = await this.instagram.unfollowUser(users[i]);
-                    await userrepo.setType(users[i], 'unfollowed');
-                } catch (e) {
-                    await userrepo.setType(users[i], 'error');
-                    console.log('Error unfollowing: ' + users[i].username);
-                }
-            }
+            await actions.unfollowUsers.call(this);
             await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay);
         }
     }
@@ -134,17 +82,7 @@ class Automater {
     async likeUserPosts() {
         await this.instagram.logIn();
         while (true) {
-            let users = await userrepo.like();
-            for (let i = 0; i < users.length; i++) {
-                try {
-                    await this.instagram.likeUserPosts(users[i]);
-                    await userrepo.setType(users[i], 'liked');
-                } catch (e) {
-                    await userrepo.softDelete(users[i]);
-                    console.log('Soft deleted: ' + users[i].username);
-                }
-
-            }
+            await actions.likeUserPosts.call(this);
             await this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / config.usersToLikePerDay);
         }
     }
@@ -152,30 +90,55 @@ class Automater {
     async commentPosts() {
         await this.instagram.logIn();
         while (true) {
-            let posts = await postrepo.comment();
-            for (let i = 0; i <posts.length; i++) {
-                try {
-                    console.log('Commenting '+ (i + 1) + ' of ' + posts.length + ' posts.')
-                    await this.instagram.commentPosts(posts[i]);
-                    await postrepo.setType(posts[i], 'commented');
-                    await pagerepo.setCommented(posts[i].page[0]);
-                } catch (e) {
-                    await postrepo.remove(posts[i]);
-                }
-            }
+            await actions.commentPosts.call(this);
             await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay));
         }
     }
 
-    async tripleCombo() {
+    async triplePageActions() {
         await this.instagram.logIn();
         while (true) {
-            await this.instagram.likeUserPosts();
-            await this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / (config.usersToLikePerDay * 3));
-            await this.instagram.followUsers();
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 3));
-            await this.instagram.commentPosts();
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 3));
+
+            await actions.followUsers.call(this);
+            console.log(this.login + ' : Following users is done');
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4));
+
+            await actions.commentPosts.call(this);
+            console.log(this.login + ' : Commenting posts is done.');
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4));
+
+            await actions.unfollowUsers.call(this);
+            console.log(this.login + ' : Unfollowing users is done.');
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4));
+
+            await actions.likeUserPosts.call(this);
+            console.log(this.login + ' : Liking user posts is done.');
+            await this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / (config.usersToLikePerDay * 4));
+
+            //sleep the rest of the time after working hours
+            // await this.instagram.sleep((24 - config.workingHours) * 60 * 60);
+        }
+    }
+    async tripleAnalyzator() {
+        await this.instagram.logIn();
+        while (true) {
+            await actions.savePosts.call(this);
+            console.log(this.login + ' : Save posts is done.')
+            await this.instagram.sleep(config.sleepEveryIteration);
+
+            await actions.analyzePosts.call(this);
+            console.log(this.login + ' : Analyzing posts is done.')
+            await this.instagram.sleep(config.sleepEveryIteration);
+
+            await actions.getPostsToComment.call(this);
+            console.log(this.login + ' : Get posts to comment is done.')
+            await this.instagram.sleep(config.sleepEveryIteration);
+
+            await actions.analyzeUsers.call(this);
+            console.log(this.login + ' : Analyzing users is done.')
+            await this.instagram.sleep(config.sleepEveryIteration);
+
+            // await this.instagram.sleep((24 - config.workingHours) * 60 * 60);
         }
     }
 }
