@@ -380,7 +380,7 @@ class InstagramAPI {
                         } catch (e) {
                             continue;
                         }
-                        console.log(await newPages[i].getText());
+                        console.log(this.login + ' : new page is : ' + await newPages[i].getText());
                     }
                 }
                 console.log(this.login+ ' : new pages length: ' + pages.length);

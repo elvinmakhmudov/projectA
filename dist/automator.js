@@ -478,41 +478,50 @@ var Automater = function () {
 
                             case 2:
                                 if (!true) {
-                                    _context11.next = 20;
+                                    _context11.next = 25;
                                     break;
                                 }
 
                                 _context11.next = 5;
-                                return _actions2.default.commentPosts.call(this);
+                                return _actions2.default.followUsers.call(this);
 
                             case 5:
-                                console.log(this.login + ' : Commenting posts is done.');
+                                console.log(this.login + ' : Following users is done');
                                 _context11.next = 8;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4));
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4));
 
                             case 8:
                                 _context11.next = 10;
-                                return _actions2.default.unfollowUsers.call(this);
+                                return _actions2.default.commentPosts.call(this);
 
                             case 10:
-                                console.log(this.login + ' : Unfollowing users is done.');
+                                console.log(this.login + ' : Commenting posts is done.');
                                 _context11.next = 13;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4));
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4));
 
                             case 13:
                                 _context11.next = 15;
-                                return _actions2.default.likeUserPosts.call(this);
+                                return _actions2.default.unfollowUsers.call(this);
 
                             case 15:
-                                console.log(this.login + ' : Liking user posts is done.');
+                                console.log(this.login + ' : Unfollowing users is done.');
                                 _context11.next = 18;
-                                return this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / (config.usersToLikePerDay * 4));
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4));
 
                             case 18:
+                                _context11.next = 20;
+                                return _actions2.default.likeUserPosts.call(this);
+
+                            case 20:
+                                console.log(this.login + ' : Liking user posts is done.');
+                                _context11.next = 23;
+                                return this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / (config.usersToLikePerDay * 4));
+
+                            case 23:
                                 _context11.next = 2;
                                 break;
 
-                            case 20:
+                            case 25:
                             case 'end':
                                 return _context11.stop();
                         }

@@ -267,7 +267,6 @@ exports.default = {
                                                         }
                                                     }, function (err, post) {
                                                         if (err) reject();
-                                                        console.log('Post was reviewed');
                                                         resolve();
                                                     });
 

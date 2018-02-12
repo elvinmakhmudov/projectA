@@ -18,8 +18,13 @@ export default {
         }
     },
     async getPostsToComment() {
-        let explorePages = await pagerepo.explore(10);
-        console.log(this.login + ' : Pages to explore : ' + explorePages.length);
+        let explorePages;
+        try {
+            explorePages = await pagerepo.explore(10);
+            console.log(this.login + ' : Pages to explore : ' + explorePages.length);
+        } catch (e) {
+            console.log(e);
+        }
         for (let i = 0; i < explorePages.length; i++) {
             try {
                 await this.instagram.goToUsername(explorePages[i].username);
@@ -45,10 +50,15 @@ export default {
         console.log(this.login + ' : inserting explore pages');
     },
     async savePosts() {
-        let pages = await pagerepo.private(10);
-        console.log(this.login + ' : Private page size is : ' + pages.length);
-        let postsReviewed = await postrepo.reviewed();
-        console.log(this.login + ' : Reviewed posts size is : ' + postsReviewed.length);
+        let pages, postsReviewed;
+        try {
+            pages = await pagerepo.private(10);
+            console.log(this.login + ' : Private page size is : ' + pages.length);
+            postsReviewed = await postrepo.reviewed();
+            console.log(this.login + ' : Reviewed posts size is : ' + postsReviewed.length);
+        } catch (e) {
+            console.log(e);
+        }
         let posts;
         //get new usernames
         for (let i = 0; i < pages.length; i++) {
@@ -66,9 +76,14 @@ export default {
     },
 
     async analyzePosts() {
-        let posts = await postrepo.analyze(10);
-        console.log(this.login + ' : Posts to analyze : ' + posts.length);
-        let users = await userrepo.analyze() || [];
+        let posts, users;
+        try {
+            posts = await postrepo.analyze(10);
+            console.log(this.login + ' : Posts to analyze : ' + posts.length);
+            users = await userrepo.analyze() || [];
+        } catch (e) {
+            console.log(e);
+        }
         let newUsers = [];
         console.log(this.login + ' : Analyzing posts.');
         for (let i = 0; i < posts.length; i++) {
@@ -93,8 +108,13 @@ export default {
         }
     },
     async analyzeUsers() {
-        let users = await userrepo.analyze(10) || [];
-        console.log(this.login + ' : Users  to analyze : ' + users.length);
+        let users;
+        try {
+            users = await userrepo.analyze(10) || [];
+            console.log(this.login + ' : Users  to analyze : ' + users.length);
+        } catch (e) {
+            console.log(e);
+        }
         for (let i = 0; i < users.length; i++) {
             try {
                 let type = await this.instagram.getUserType(users[i]);
@@ -107,8 +127,13 @@ export default {
     },
 
     async followUsers() {
-        let users = await userrepo.follow();
-        console.log(this.login + ' : Users  to follow : ' + users.length);
+        let users
+        try {
+            users = await userrepo.follow();
+            console.log(this.login + ' : Users  to follow : ' + users.length);
+        } catch (e) {
+            console.log(e);
+        }
         for (let i = 0; i < users.length; i++) {
             try {
                 let followed = await this.instagram.followUser(users[i]);
@@ -122,8 +147,13 @@ export default {
 
     async unfollowUsers() {
         // await this.instagram.unfollowUsers();
-        let users = await userrepo.unfollow();
-        console.log(this.login + ' : Users  to unfollow : ' + users.length);
+        let users;
+        try {
+            users = await userrepo.unfollow();
+            console.log(this.login + ' : Users  to unfollow : ' + users.length);
+        } catch (e) {
+            console.log(e);
+        }
         for (let i = 0; i < users.length; i++) {
             try {
                 let unfollowed = await this.instagram.unfollowUser(users[i]);
@@ -135,8 +165,13 @@ export default {
         }
     },
     async likeUserPosts() {
-        let users = await userrepo.like();
-        console.log(this.login + ' : Users  to like : ' + users.length);
+        let users
+        try {
+            users = await userrepo.like();
+            console.log(this.login + ' : Users  to like : ' + users.length);
+        } catch (e) {
+            console.log(e);
+        }
         for (let i = 0; i < users.length; i++) {
             try {
                 await this.instagram.likeUserPosts(users[i]);
@@ -148,8 +183,13 @@ export default {
         }
     },
     async commentPosts() {
-        let posts = await postrepo.comment();
-        console.log(this.login + ' : Posts to comment : ' + posts.length);
+        let posts;
+        try {
+            posts = await postrepo.comment();
+            console.log(this.login + ' : Posts to comment : ' + posts.length);
+        } catch (e) {
+            console.log(e);
+        }
         for (let i = 0; i < posts.length; i++) {
             try {
                 console.log(this.login + ' : Commenting ' + (i + 1) + ' of ' + posts.length + ' posts.')
