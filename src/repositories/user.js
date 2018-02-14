@@ -64,7 +64,7 @@ export default {
         });
     },
 
-    async setType(user, type, obj) {
+    async setType(user, type) {
         return new Promise(async function (resolve, reject) {
             await User.update({
                 username: user.username
@@ -91,6 +91,6 @@ export default {
     },
 
     async softDelete(user) {
-        return this.setType(user, 'removed');
+        return await this.setType(user, 'removed');
     }
 }

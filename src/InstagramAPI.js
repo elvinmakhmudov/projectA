@@ -39,7 +39,7 @@ class InstagramAPI {
             if (cookies.length !== 0) {
                 await this.cookieLogIn(cookies).then(function () {
                     console.log(this.login + ' : Logged in with Cookies');
-                    resolve();
+                    return resolve();
                 }.bind(this))
             } else {
                 await driver.wait(until.elementLocated(By.name("username")), config.timeout);
@@ -60,7 +60,7 @@ class InstagramAPI {
                 for (let i = 0; i < cookies.length; i++) {
                     await this.driver.manage().addCookie(JSON.parse(cookies[i].cookies));
                 }
-                resolve();
+                return resolve();
             }
         }.bind(this))
     }
@@ -79,7 +79,7 @@ class InstagramAPI {
                 username: username
             }).remove().exec();
             await Cookie.insertMany(cookiesArr, () => console.log('Cookie collection was populated'));
-            resolve();
+            return resolve();
         }.bind(this))
     }
 
@@ -112,7 +112,7 @@ class InstagramAPI {
                                 if (followingsArr.length === followings.length) {
                                     Page.collection.drop({}, () => console.log('Collection was cleared'))
                                     Page.insertMany(followingsArr, () => console.log('Collection was populated'));
-                                    resolve();
+                                    return resolve();
                                 }
                             }.bind(this))
                         }
@@ -131,7 +131,7 @@ class InstagramAPI {
                     if (scrollTop !== current) {
                         this.driver.sleep(500);
                         return this.scrollFollowings(current).then(function () {
-                            return resolve()
+                            return resolve();
                         }.bind(this));
                     } else {
                         return resolve();
@@ -151,7 +151,7 @@ class InstagramAPI {
             //fetch posts
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) return reject();
             if (await this.driver.findElements(By.className("_mck9w")) == 0) {
-                reject();
+                return reject();
             };
             this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
             let posts = await this.driver.findElements(By.css('._mck9w a'));
@@ -167,7 +167,7 @@ class InstagramAPI {
                     }));
                 }
             }
-            resolve(postsArr);
+            return resolve(postsArr);
         }.bind(this));
     }
 
@@ -180,7 +180,7 @@ class InstagramAPI {
             await this.driver.get(post.url);
             //if page has been removed then break
             if (await this.driver.findElements(By.className("error-container")) != 0 || await this.driver.findElements(By.className("_ezgzd")) == 0) {
-                reject();
+                return reject();
             };
             await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
             let comments = await this.driver.findElements(By.className("_ezgzd"));
@@ -188,7 +188,7 @@ class InstagramAPI {
             let dateattr = await this.driver.findElements(By.className("_p29ma")) != 0 ? await this.driver.findElement(By.className("_p29ma")).getAttribute('datetime') : 0;
             let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 ));
             let rating = Math.round(likes / datetime * 100) / 100;
-            resolve(rating);
+            return resolve(rating);
         }.bind(this));
     }
 
@@ -201,7 +201,7 @@ class InstagramAPI {
             await this.driver.get(post.url);
             //if page has been removed then break
             if (await this.driver.findElements(By.className("error-container")) != 0 || await this.driver.findElements(By.className("_ezgzd")) == 0) {
-                reject();
+                return reject();
             };
             await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
             let comments = await this.driver.findElements(By.className("_ezgzd"));
@@ -221,7 +221,7 @@ class InstagramAPI {
                     console.log(this.login+ ' : New username is:' + username);
                 }
             }
-            resolve({
+            return resolve({
                 newUsers,
                 likes,
                 rating
@@ -240,14 +240,14 @@ class InstagramAPI {
         return new Promise(async function (resolve, reject) {
             await this.driver.get(config.urls.main + user.username);
             if (await this.driver.findElements(By.className("error-container")) != 0) {
-                reject();
+                return reject();
             };
             console.log(this.login+ ' : Analyzing ' + user.username);
             await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
-                resolve('follow');
+                return resolve('follow');
             } else {
-                resolve('like');
+                return resolve('like');
             }
         }.bind(this));
     }
@@ -256,21 +256,20 @@ class InstagramAPI {
         return new Promise(async function (resolve, reject) {
             await this.driver.get(config.urls.main + user.username);
             if ((await this.driver.findElements(By.className("error-container")) != 0) || (await this.driver.findElements(By.className("_rf3jb")) == 0)) {
-                reject();
+                return reject();
             };
             console.log(this.login+ ' : Following ' + user.username);
-            await this.driver.wait(until.elementLocated(By.className("_r9b8f")), config.timeout);
+            // await this.driver.wait(until.elementLocated(By.className("r9b8f")), config.timeout);
             //follow
-            if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
+            if (await this.driver.findElements(By.className("_gexxb")) != 0) {
                 //click follow button
-                await this.driver.findElement(By.className('_r9b8f')).click();
+                await this.driver.findElement(By.className('_gexxb')).click();
                 await this.sleep(2);
                 //wait until requested text
                 // await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
-                resolve(true);
+                return resolve(true);
             } else {
-                reject();
-                return false;
+                return reject(false);
             }
         }.bind(this));
     }
@@ -280,15 +279,15 @@ class InstagramAPI {
             await this.driver.get(config.urls.main + user.username);
             if (await this.driver.findElements(By.className("error-container")) != 0) {
                 // this.removeUser(user.username)
-                reject();
+                return reject();
             };
             if (await this.driver.findElements(By.className("_t78yp")) != 0) {
                 console.log(this.login+ ' : Unfollowing ' + user.username);
                 await this.driver.findElement(By.className('_t78yp')).click();
-                resolve();
                 await this.sleep(1);
+                return resolve();
             }
-            reject();
+            return reject();
         }.bind(this))
     }
 
@@ -297,7 +296,7 @@ class InstagramAPI {
             await this.driver.get(config.urls.main + user.username);
             //follow
             if (await this.driver.findElements(By.className("_mck9w")) == 0) {
-                reject();
+                return reject();
             };
             await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
             this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
@@ -312,11 +311,11 @@ class InstagramAPI {
                 await this.driver.get(postsArr[j]);
                 if ((await this.driver.findElements(By.className("coreSpriteHeartFull"))).length != []) continue;
                 this.driver.wait(until.elementLocated(By.className('coreSpriteHeartOpen')), config.timeout);
-                await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
+                // await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
                 await this.sleep(2);
             }
             console.log(this.login+ ' : liked posts of ' + user.username);
-            resolve()
+            return resolve();
         }.bind(this));
     }
 
@@ -325,7 +324,7 @@ class InstagramAPI {
             await this.driver.get(post.url);
             //if page has been removed then break
             if (await this.driver.findElements(By.className("error-container")) != 0 || await this.driver.findElements(By.className("_bilrf")) == 0) {
-                reject();
+                return reject();
             };
             await this.driver.wait(until.elementLocated(By.className("_bilrf")), config.timeout);
             //comment post
@@ -334,7 +333,7 @@ class InstagramAPI {
             await this.driver.findElement(By.className('_bilrf')).sendKeys(comment);
             await this.driver.findElement(By.className('_bilrf')).sendKeys(Key.ENTER);
             await this.sleep(5);
-            resolve();
+            return resolve();
         }.bind(this));
     }
 
@@ -387,10 +386,10 @@ class InstagramAPI {
                 try {
                     if (next) await this.driver.findElement(By.className('_r48jm')).click();
                 } catch (e) {
-                    reject(e);
+                    return reject(e);
                 }
             } while (next && pages.length < 40);
-            resolve(pages);
+            return resolve(pages);
         }.bind(this));
     }
 

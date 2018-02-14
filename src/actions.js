@@ -25,7 +25,7 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0; i < explorePages.length; i++) {
+        for (let i = 0, k=0; k < explorePages.length && i < explorePages.length ; i++) {
             try {
                 await this.instagram.goToUsername(explorePages[i].username);
                 let postsFor = await postrepo.postsFor(explorePages[i]);
@@ -41,6 +41,7 @@ export default {
                     }
                 }
                 await postrepo.insertMany(posts);
+                k++;
             } catch (e) {
                 // await pagerepo.remove(explorePages[i])
                 // console.log(e);
@@ -52,7 +53,7 @@ export default {
     async savePosts() {
         let pages, postsReviewed;
         try {
-            pages = await pagerepo.private(10);
+            pages = await pagerepo.private(20);
             console.log(this.login + ' : Private page size is : ' + pages.length);
             postsReviewed = await postrepo.reviewed();
             console.log(this.login + ' : Reviewed posts size is : ' + postsReviewed.length);
@@ -61,17 +62,18 @@ export default {
         }
         let posts;
         //get new usernames
-        for (let i = 0; i < pages.length; i++) {
+        for (let i = 0,j=0; j < pages.length && i < pages.length; i++) {
             let username = pages[i].username;
             //go to the username page
             try {
                 await this.instagram.goToUsername(username);
                 posts = await this.instagram.getNewPosts(pages[i], postsReviewed, 'analyze');
                 await postrepo.insertMany(posts);
-                await pagerepo.setReviewed(pages[i])
+                j++;
             } catch (e) {
                 // await pagerepo.remove(pages[i])
             }
+            await pagerepo.setReviewed(pages[i])
         }
     },
 
@@ -86,11 +88,12 @@ export default {
         }
         let newUsers = [];
         console.log(this.login + ' : Analyzing posts.');
-        for (let i = 0; i < posts.length; i++) {
+        for (let i = 0,j=0; j < posts.length && i < posts.length; i++) {
             try {
                 let postData = await this.instagram.getPostData(posts[i], users);
                 newUsers.push.apply(newUsers, postData.newUsers);
                 await postrepo.setReviewed(posts[i], postData);
+                j++;
             } catch (e) {
                 // console.log(e);
                 await postrepo.remove(posts[i]);
@@ -115,10 +118,11 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0; i < users.length; i++) {
+        for (let i = 0,j=0; j < users.length && i < users.length; i++) {
             try {
                 let type = await this.instagram.getUserType(users[i]);
                 await userrepo.setType(users[i], type);
+                j++;
             } catch (e) {
                 // console.log(e);
                 await userrepo.softDelete(users[i]);
@@ -127,17 +131,18 @@ export default {
     },
 
     async followUsers() {
-        let users
+        let users;
         try {
             users = await userrepo.follow();
             console.log(this.login + ' : Users  to follow : ' + users.length);
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0; i < users.length; i++) {
+        for (let i = 0,j=0; j < users.length && i < users.length; i++) {
             try {
                 let followed = await this.instagram.followUser(users[i]);
                 await userrepo.setFollowed(users[i], this.login);
+                j++;
             } catch (e) {
                 await userrepo.setType(users[i], 'error');
                 console.log(this.login + ' : Error following: ' + users[i].username);
@@ -154,10 +159,11 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0; i < users.length; i++) {
+        for (let i = 0,j=0; j < users.length && i < users.length; i++) {
             try {
                 let unfollowed = await this.instagram.unfollowUser(users[i]);
                 await userrepo.setType(users[i], 'unfollowed');
+                j++;
             } catch (e) {
                 await userrepo.setType(users[i], 'error');
                 console.log(this.login + ' : Error unfollowing: ' + users[i].username);
@@ -165,17 +171,18 @@ export default {
         }
     },
     async likeUserPosts() {
-        let users
+        let users;
         try {
             users = await userrepo.like();
             console.log(this.login + ' : Users  to like : ' + users.length);
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0; i < users.length; i++) {
+        for (let i = 0,j=0; j < users.length && i< users.length; i++) {
             try {
                 await this.instagram.likeUserPosts(users[i]);
                 await userrepo.setType(users[i], 'liked');
+                j++;
             } catch (e) {
                 await userrepo.softDelete(users[i]);
                 console.log(this.login + ' : Soft deleted: ' + users[i].username);
@@ -190,12 +197,13 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0; i < posts.length; i++) {
+        for (let i = 0,j=0; j < posts.length && i< posts.length; i++) {
             try {
                 console.log(this.login + ' : Commenting ' + (i + 1) + ' of ' + posts.length + ' posts.')
                 await this.instagram.commentPosts(posts[i]);
                 await postrepo.setType(posts[i], 'commented');
                 await pagerepo.setCommented(posts[i].page[0]);
+                j++;
             } catch (e) {
                 await postrepo.remove(posts[i]);
             }

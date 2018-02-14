@@ -92,7 +92,7 @@ var InstagramAPI = function () {
                                     _context.next = 9;
                                     return this.cookieLogIn(cookies).then(function () {
                                         console.log(this.login + ' : Logged in with Cookies');
-                                        resolve();
+                                        return resolve();
                                     }.bind(this));
 
                                 case 9:
@@ -177,7 +177,7 @@ var InstagramAPI = function () {
                                                         break;
 
                                                     case 8:
-                                                        resolve();
+                                                        return _context2.abrupt('return', resolve());
 
                                                     case 9:
                                                     case 'end':
@@ -246,7 +246,7 @@ var InstagramAPI = function () {
                                                         });
 
                                                     case 9:
-                                                        resolve();
+                                                        return _context4.abrupt('return', resolve());
 
                                                     case 10:
                                                     case 'end':
@@ -337,7 +337,7 @@ var InstagramAPI = function () {
                                         _page2.default.insertMany(followingsArr, function () {
                                             return console.log('Collection was populated');
                                         });
-                                        resolve();
+                                        return resolve();
                                     }
                                 }.bind(this));
                             }
@@ -410,7 +410,7 @@ var InstagramAPI = function () {
                                         break;
                                     }
 
-                                    reject();
+                                    return _context8.abrupt('return', reject());
 
                                 case 10:
                                     ;
@@ -471,7 +471,7 @@ var InstagramAPI = function () {
                                     break;
 
                                 case 23:
-                                    resolve(postsArr);
+                                    return _context8.abrupt('return', resolve(postsArr));
 
                                 case 24:
                                 case 'end':
@@ -530,7 +530,7 @@ var InstagramAPI = function () {
                                         break;
                                     }
 
-                                    reject();
+                                    return _context9.abrupt('return', reject());
 
                                 case 14:
                                     ;
@@ -595,8 +595,7 @@ var InstagramAPI = function () {
                                     dateattr = _context9.t6;
                                     datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60));
                                     rating = Math.round(likes / datetime * 100) / 100;
-
-                                    resolve(rating);
+                                    return _context9.abrupt('return', resolve(rating));
 
                                 case 45:
                                 case 'end':
@@ -658,7 +657,7 @@ var InstagramAPI = function () {
                                         break;
                                     }
 
-                                    reject();
+                                    return _context11.abrupt('return', reject());
 
                                 case 14:
                                     ;
@@ -781,11 +780,11 @@ var InstagramAPI = function () {
                                     break;
 
                                 case 51:
-                                    resolve({
+                                    return _context11.abrupt('return', resolve({
                                         newUsers: newUsers,
                                         likes: likes,
                                         rating: rating
-                                    });
+                                    }));
 
                                 case 52:
                                 case 'end':
@@ -836,7 +835,7 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        reject();
+                                                        return _context12.abrupt('return', reject());
 
                                                     case 7:
                                                         ;
@@ -856,12 +855,10 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        resolve('follow');
-                                                        _context12.next = 19;
-                                                        break;
+                                                        return _context12.abrupt('return', resolve('follow'));
 
                                                     case 18:
-                                                        resolve('like');
+                                                        return _context12.abrupt('return', resolve('like'));
 
                                                     case 19:
                                                     case 'end':
@@ -933,45 +930,38 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        reject();
+                                                        return _context14.abrupt('return', reject());
 
                                                     case 13:
                                                         ;
                                                         console.log(this.login + ' : Following ' + user.username);
+                                                        // await this.driver.wait(until.elementLocated(By.className("r9b8f")), config.timeout);
+                                                        //follow
                                                         _context14.next = 17;
-                                                        return this.driver.wait(until.elementLocated(By.className("_r9b8f")), config.timeout);
+                                                        return this.driver.findElements(By.className("_gexxb"));
 
                                                     case 17:
-                                                        _context14.next = 19;
-                                                        return this.driver.findElements(By.className("_kcrwx"));
-
-                                                    case 19:
                                                         _context14.t3 = _context14.sent;
 
                                                         if (!(_context14.t3 != 0)) {
-                                                            _context14.next = 28;
+                                                            _context14.next = 26;
                                                             break;
                                                         }
 
-                                                        _context14.next = 23;
-                                                        return this.driver.findElement(By.className('_r9b8f')).click();
+                                                        _context14.next = 21;
+                                                        return this.driver.findElement(By.className('_gexxb')).click();
 
-                                                    case 23:
-                                                        _context14.next = 25;
+                                                    case 21:
+                                                        _context14.next = 23;
                                                         return this.sleep(2);
 
-                                                    case 25:
-                                                        //wait until requested text
-                                                        // await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
-                                                        resolve(true);
-                                                        _context14.next = 30;
-                                                        break;
+                                                    case 23:
+                                                        return _context14.abrupt('return', resolve(true));
 
-                                                    case 28:
-                                                        reject();
-                                                        return _context14.abrupt('return', false);
+                                                    case 26:
+                                                        return _context14.abrupt('return', reject(false));
 
-                                                    case 30:
+                                                    case 27:
                                                     case 'end':
                                                         return _context14.stop();
                                                 }
@@ -1027,8 +1017,7 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        // this.removeUser(user.username)
-                                                        reject();
+                                                        return _context16.abrupt('return', reject());
 
                                                     case 7:
                                                         ;
@@ -1048,12 +1037,14 @@ var InstagramAPI = function () {
                                                         return this.driver.findElement(By.className('_t78yp')).click();
 
                                                     case 15:
-                                                        resolve();
-                                                        _context16.next = 18;
+                                                        _context16.next = 17;
                                                         return this.sleep(1);
 
+                                                    case 17:
+                                                        return _context16.abrupt('return', resolve());
+
                                                     case 18:
-                                                        reject();
+                                                        return _context16.abrupt('return', reject());
 
                                                     case 19:
                                                     case 'end':
@@ -1112,7 +1103,7 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        reject();
+                                                        return _context18.abrupt('return', reject());
 
                                                     case 7:
                                                         ;
@@ -1153,7 +1144,7 @@ var InstagramAPI = function () {
 
                                                     case 25:
                                                         if (!(j < config.userPostsToLike && j < postsArr.length)) {
-                                                            _context18.next = 42;
+                                                            _context18.next = 40;
                                                             break;
                                                         }
 
@@ -1173,27 +1164,24 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        return _context18.abrupt('continue', 39);
+                                                        return _context18.abrupt('continue', 37);
 
                                                     case 34:
                                                         this.driver.wait(until.elementLocated(By.className('coreSpriteHeartOpen')), config.timeout);
+                                                        // await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
                                                         _context18.next = 37;
-                                                        return this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
-
-                                                    case 37:
-                                                        _context18.next = 39;
                                                         return this.sleep(2);
 
-                                                    case 39:
+                                                    case 37:
                                                         j++;
                                                         _context18.next = 25;
                                                         break;
 
-                                                    case 42:
+                                                    case 40:
                                                         console.log(this.login + ' : liked posts of ' + user.username);
-                                                        resolve();
+                                                        return _context18.abrupt('return', resolve());
 
-                                                    case 44:
+                                                    case 42:
                                                     case 'end':
                                                         return _context18.stop();
                                                 }
@@ -1264,7 +1252,7 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        reject();
+                                                        return _context20.abrupt('return', reject());
 
                                                     case 13:
                                                         ;
@@ -1290,7 +1278,7 @@ var InstagramAPI = function () {
                                                         return this.sleep(5);
 
                                                     case 25:
-                                                        resolve();
+                                                        return _context20.abrupt('return', resolve());
 
                                                     case 26:
                                                     case 'end':
@@ -1461,7 +1449,7 @@ var InstagramAPI = function () {
                                                                             if (!(username && (explorePages.length > 0 ? !explorePages.some(function (page) {
                                                                                 return page.username === username;
                                                                             }) : true))) {
-                                                                                _context22.next = 22;
+                                                                                _context22.next = 24;
                                                                                 break;
                                                                             }
 
@@ -1487,15 +1475,17 @@ var InstagramAPI = function () {
 
                                                                         case 17:
                                                                             _context22.t2 = console;
-                                                                            _context22.next = 20;
+                                                                            _context22.t3 = _this3.login + ' : new page is : ';
+                                                                            _context22.next = 21;
                                                                             return newPages[i].getText();
 
-                                                                        case 20:
-                                                                            _context22.t3 = _context22.sent;
+                                                                        case 21:
+                                                                            _context22.t4 = _context22.sent;
+                                                                            _context22.t5 = _context22.t3 + _context22.t4;
 
-                                                                            _context22.t2.log.call(_context22.t2, _context22.t3);
+                                                                            _context22.t2.log.call(_context22.t2, _context22.t5);
 
-                                                                        case 22:
+                                                                        case 24:
                                                                         case 'end':
                                                                             return _context22.stop();
                                                                     }
@@ -1546,8 +1536,7 @@ var InstagramAPI = function () {
                                                     case 60:
                                                         _context23.prev = 60;
                                                         _context23.t5 = _context23['catch'](54);
-
-                                                        reject(_context23.t5);
+                                                        return _context23.abrupt('return', reject(_context23.t5));
 
                                                     case 63:
                                                         if (next && pages.length < 40) {
@@ -1556,7 +1545,7 @@ var InstagramAPI = function () {
                                                         }
 
                                                     case 64:
-                                                        resolve(pages);
+                                                        return _context23.abrupt('return', resolve(pages));
 
                                                     case 65:
                                                     case 'end':

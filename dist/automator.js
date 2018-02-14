@@ -45,12 +45,13 @@ var async = require('async');
 var secondsInDay = 60 * 60 * config.workingHours;
 
 var Automater = function () {
-    function Automater(login, password) {
+    function Automater(login, password, comments) {
         _classCallCheck(this, Automater);
 
-        this.login = login;
-        this.password = password;
-        this.instagram = new _InstagramAPI2.default(login, password).init();
+        this.login = login || config.instagram.login;
+        this.password = password || config.instagram.password;
+        this.comments = comments || config.comments;
+        this.instagram = new _InstagramAPI2.default(login, password, comments).init();
         return this;
     }
 
@@ -515,7 +516,7 @@ var Automater = function () {
                             case 20:
                                 console.log(this.login + ' : Liking user posts is done.');
                                 _context11.next = 23;
-                                return this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / (config.usersToLikePerDay * 4));
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4));
 
                             case 23:
                                 _context11.next = 2;

@@ -225,9 +225,9 @@ exports.default = {
                                                             commented_at: Date.now(),
                                                             commented_times: Number(Number(page.commented_times) >= Number(config.maxCommentForPageInDay)) ? 1 : Number(page.commented_times) + 1
                                                         }
-                                                    }, function (err, page) {
+                                                    }, function (err) {
                                                         if (err) reject();
-                                                        console.log('Page was commented');
+                                                        console.log('Page ' + page.username + ' was commented');
                                                         resolve();
                                                     });
 

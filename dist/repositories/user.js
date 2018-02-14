@@ -145,7 +145,7 @@ exports.default = {
         return setFollowed;
     }(),
     setType: function () {
-        var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(user, type, obj) {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(user, type) {
             return regeneratorRuntime.wrap(function _callee6$(_context6) {
                 while (1) {
                     switch (_context6.prev = _context6.next) {
@@ -178,7 +178,7 @@ exports.default = {
                                     }, _callee5, this);
                                 }));
 
-                                return function (_x11, _x12) {
+                                return function (_x10, _x11) {
                                     return _ref6.apply(this, arguments);
                                 };
                             }()));
@@ -191,7 +191,7 @@ exports.default = {
             }, _callee6, this);
         }));
 
-        function setType(_x8, _x9, _x10) {
+        function setType(_x8, _x9) {
             return _ref5.apply(this, arguments);
         }
 
@@ -218,7 +218,7 @@ exports.default = {
             }, _callee7, this);
         }));
 
-        function remove(_x13) {
+        function remove(_x12) {
             return _ref7.apply(this, arguments);
         }
 
@@ -230,9 +230,13 @@ exports.default = {
                 while (1) {
                     switch (_context8.prev = _context8.next) {
                         case 0:
-                            return _context8.abrupt('return', this.setType(user, 'removed'));
+                            _context8.next = 2;
+                            return this.setType(user, 'removed');
 
-                        case 1:
+                        case 2:
+                            return _context8.abrupt('return', _context8.sent);
+
+                        case 3:
                         case 'end':
                             return _context8.stop();
                     }
@@ -240,7 +244,7 @@ exports.default = {
             }, _callee8, this);
         }));
 
-        function softDelete(_x14) {
+        function softDelete(_x13) {
             return _ref8.apply(this, arguments);
         }
 

@@ -10,10 +10,11 @@ const async = require('async');
 
 let secondsInDay = 60 * 60 * config.workingHours;
 class Automater {
-    constructor(login, password) {
-        this.login = login;
-        this.password = password;
-        this.instagram = new api(login, password).init();
+    constructor(login, password, comments) {
+        this.login = login || config.instagram.login;
+        this.password = password || config.instagram.password;
+        this.comments = comments || config.comments;
+        this.instagram = new api(login, password, comments).init();
         return this;
     }
 
@@ -113,7 +114,7 @@ class Automater {
 
             await actions.likeUserPosts.call(this);
             console.log(this.login + ' : Liking user posts is done.');
-            await this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / (config.usersToLikePerDay * 4));
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4));
 
             //sleep the rest of the time after working hours
             // await this.instagram.sleep((24 - config.workingHours) * 60 * 60);

@@ -77,7 +77,7 @@ exports.default = {
     }(),
     getPostsToComment: function () {
         var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-            var explorePages, i, postsFor, posts, j, rating;
+            var explorePages, i, k, postsFor, posts, j, rating;
             return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
                     switch (_context2.prev = _context2.next) {
@@ -101,11 +101,11 @@ exports.default = {
                             console.log(_context2.t0);
 
                         case 11:
-                            i = 0;
+                            i = 0, k = 0;
 
                         case 12:
-                            if (!(i < explorePages.length)) {
-                                _context2.next = 47;
+                            if (!(k < explorePages.length && i < explorePages.length)) {
+                                _context2.next = 48;
                                 break;
                             }
 
@@ -161,28 +161,29 @@ exports.default = {
                             return _post2.default.insertMany(posts);
 
                         case 40:
-                            _context2.next = 44;
+                            k++;
+                            _context2.next = 45;
                             break;
 
-                        case 42:
-                            _context2.prev = 42;
+                        case 43:
+                            _context2.prev = 43;
                             _context2.t2 = _context2['catch'](13);
 
-                        case 44:
+                        case 45:
                             i++;
                             _context2.next = 12;
                             break;
 
-                        case 47:
+                        case 48:
                             // await pagerepo.insertMany(explorePages)
                             console.log(this.login + ' : inserting explore pages');
 
-                        case 48:
+                        case 49:
                         case 'end':
                             return _context2.stop();
                     }
                 }
-            }, _callee2, this, [[1, 8], [13, 42], [26, 33]]);
+            }, _callee2, this, [[1, 8], [13, 43], [26, 33]]);
         }));
 
         function getPostsToComment() {
@@ -193,7 +194,7 @@ exports.default = {
     }(),
     savePosts: function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-            var pages, postsReviewed, posts, i, username;
+            var pages, postsReviewed, posts, i, j, username;
             return regeneratorRuntime.wrap(function _callee3$(_context3) {
                 while (1) {
                     switch (_context3.prev = _context3.next) {
@@ -201,7 +202,7 @@ exports.default = {
                             pages = void 0, postsReviewed = void 0;
                             _context3.prev = 1;
                             _context3.next = 4;
-                            return _page2.default.private(10);
+                            return _page2.default.private(20);
 
                         case 4:
                             pages = _context3.sent;
@@ -227,11 +228,11 @@ exports.default = {
                             posts = void 0;
                             //get new usernames
 
-                            i = 0;
+                            i = 0, j = 0;
 
                         case 17:
-                            if (!(i < pages.length)) {
-                                _context3.next = 36;
+                            if (!(j < pages.length && i < pages.length)) {
+                                _context3.next = 37;
                                 break;
                             }
 
@@ -252,28 +253,29 @@ exports.default = {
                             return _post2.default.insertMany(posts);
 
                         case 27:
-                            _context3.next = 29;
-                            return _page2.default.setReviewed(pages[i]);
-
-                        case 29:
-                            _context3.next = 33;
+                            j++;
+                            _context3.next = 32;
                             break;
 
-                        case 31:
-                            _context3.prev = 31;
+                        case 30:
+                            _context3.prev = 30;
                             _context3.t1 = _context3['catch'](19);
 
-                        case 33:
+                        case 32:
+                            _context3.next = 34;
+                            return _page2.default.setReviewed(pages[i]);
+
+                        case 34:
                             i++;
                             _context3.next = 17;
                             break;
 
-                        case 36:
+                        case 37:
                         case 'end':
                             return _context3.stop();
                     }
                 }
-            }, _callee3, this, [[1, 12], [19, 31]]);
+            }, _callee3, this, [[1, 12], [19, 30]]);
         }));
 
         function savePosts() {
@@ -284,7 +286,7 @@ exports.default = {
     }(),
     analyzePosts: function () {
         var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-            var posts, users, newUsers, i, postData;
+            var posts, users, newUsers, i, j, postData;
             return regeneratorRuntime.wrap(function _callee4$(_context4) {
                 while (1) {
                     switch (_context4.prev = _context4.next) {
@@ -326,11 +328,11 @@ exports.default = {
                             newUsers = [];
 
                             console.log(this.login + ' : Analyzing posts.');
-                            i = 0;
+                            i = 0, j = 0;
 
                         case 20:
-                            if (!(i < posts.length)) {
-                                _context4.next = 37;
+                            if (!(j < posts.length && i < posts.length)) {
+                                _context4.next = 38;
                                 break;
                             }
 
@@ -346,47 +348,48 @@ exports.default = {
                             return _post2.default.setReviewed(posts[i], postData);
 
                         case 28:
-                            _context4.next = 34;
+                            j++;
+                            _context4.next = 35;
                             break;
 
-                        case 30:
-                            _context4.prev = 30;
+                        case 31:
+                            _context4.prev = 31;
                             _context4.t2 = _context4['catch'](21);
-                            _context4.next = 34;
+                            _context4.next = 35;
                             return _post2.default.remove(posts[i]);
 
-                        case 34:
+                        case 35:
                             i++;
                             _context4.next = 20;
                             break;
 
-                        case 37:
+                        case 38:
                             if (!(newUsers.length > 0)) {
-                                _context4.next = 48;
+                                _context4.next = 49;
                                 break;
                             }
 
-                            _context4.prev = 38;
-                            _context4.next = 41;
+                            _context4.prev = 39;
+                            _context4.next = 42;
                             return _user2.default.insertMany(newUsers);
 
-                        case 41:
+                        case 42:
                             console.log(this.login + ' : ' + users.length + ' users found.');
                             newUsers.length = 0;
                             users.length = 0;
-                            _context4.next = 48;
+                            _context4.next = 49;
                             break;
 
-                        case 46:
-                            _context4.prev = 46;
-                            _context4.t3 = _context4['catch'](38);
+                        case 47:
+                            _context4.prev = 47;
+                            _context4.t3 = _context4['catch'](39);
 
-                        case 48:
+                        case 49:
                         case 'end':
                             return _context4.stop();
                     }
                 }
-            }, _callee4, this, [[1, 14], [21, 30], [38, 46]]);
+            }, _callee4, this, [[1, 14], [21, 31], [39, 47]]);
         }));
 
         function analyzePosts() {
@@ -397,7 +400,7 @@ exports.default = {
     }(),
     analyzeUsers: function () {
         var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-            var users, i, type;
+            var users, i, j, type;
             return regeneratorRuntime.wrap(function _callee5$(_context5) {
                 while (1) {
                     switch (_context5.prev = _context5.next) {
@@ -431,11 +434,11 @@ exports.default = {
                             console.log(_context5.t1);
 
                         case 14:
-                            i = 0;
+                            i = 0, j = 0;
 
                         case 15:
-                            if (!(i < users.length)) {
-                                _context5.next = 31;
+                            if (!(j < users.length && i < users.length)) {
+                                _context5.next = 32;
                                 break;
                             }
 
@@ -449,26 +452,27 @@ exports.default = {
                             return _user2.default.setType(users[i], type);
 
                         case 22:
-                            _context5.next = 28;
+                            j++;
+                            _context5.next = 29;
                             break;
 
-                        case 24:
-                            _context5.prev = 24;
+                        case 25:
+                            _context5.prev = 25;
                             _context5.t2 = _context5['catch'](16);
-                            _context5.next = 28;
+                            _context5.next = 29;
                             return _user2.default.softDelete(users[i]);
 
-                        case 28:
+                        case 29:
                             i++;
                             _context5.next = 15;
                             break;
 
-                        case 31:
+                        case 32:
                         case 'end':
                             return _context5.stop();
                     }
                 }
-            }, _callee5, this, [[1, 11], [16, 24]]);
+            }, _callee5, this, [[1, 11], [16, 25]]);
         }));
 
         function analyzeUsers() {
@@ -479,7 +483,7 @@ exports.default = {
     }(),
     followUsers: function () {
         var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-            var users, i, followed;
+            var users, i, j, followed;
             return regeneratorRuntime.wrap(function _callee6$(_context6) {
                 while (1) {
                     switch (_context6.prev = _context6.next) {
@@ -503,11 +507,11 @@ exports.default = {
                             console.log(_context6.t0);
 
                         case 11:
-                            i = 0;
+                            i = 0, j = 0;
 
                         case 12:
-                            if (!(i < users.length)) {
-                                _context6.next = 29;
+                            if (!(j < users.length && i < users.length)) {
+                                _context6.next = 30;
                                 break;
                             }
 
@@ -521,29 +525,30 @@ exports.default = {
                             return _user2.default.setFollowed(users[i], this.login);
 
                         case 19:
-                            _context6.next = 26;
+                            j++;
+                            _context6.next = 27;
                             break;
 
-                        case 21:
-                            _context6.prev = 21;
+                        case 22:
+                            _context6.prev = 22;
                             _context6.t1 = _context6['catch'](13);
-                            _context6.next = 25;
+                            _context6.next = 26;
                             return _user2.default.setType(users[i], 'error');
 
-                        case 25:
+                        case 26:
                             console.log(this.login + ' : Error following: ' + users[i].username);
 
-                        case 26:
+                        case 27:
                             i++;
                             _context6.next = 12;
                             break;
 
-                        case 29:
+                        case 30:
                         case 'end':
                             return _context6.stop();
                     }
                 }
-            }, _callee6, this, [[1, 8], [13, 21]]);
+            }, _callee6, this, [[1, 8], [13, 22]]);
         }));
 
         function followUsers() {
@@ -554,7 +559,7 @@ exports.default = {
     }(),
     unfollowUsers: function () {
         var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-            var users, i, unfollowed;
+            var users, i, j, unfollowed;
             return regeneratorRuntime.wrap(function _callee7$(_context7) {
                 while (1) {
                     switch (_context7.prev = _context7.next) {
@@ -579,11 +584,11 @@ exports.default = {
                             console.log(_context7.t0);
 
                         case 11:
-                            i = 0;
+                            i = 0, j = 0;
 
                         case 12:
-                            if (!(i < users.length)) {
-                                _context7.next = 29;
+                            if (!(j < users.length && i < users.length)) {
+                                _context7.next = 30;
                                 break;
                             }
 
@@ -597,29 +602,30 @@ exports.default = {
                             return _user2.default.setType(users[i], 'unfollowed');
 
                         case 19:
-                            _context7.next = 26;
+                            j++;
+                            _context7.next = 27;
                             break;
 
-                        case 21:
-                            _context7.prev = 21;
+                        case 22:
+                            _context7.prev = 22;
                             _context7.t1 = _context7['catch'](13);
-                            _context7.next = 25;
+                            _context7.next = 26;
                             return _user2.default.setType(users[i], 'error');
 
-                        case 25:
+                        case 26:
                             console.log(this.login + ' : Error unfollowing: ' + users[i].username);
 
-                        case 26:
+                        case 27:
                             i++;
                             _context7.next = 12;
                             break;
 
-                        case 29:
+                        case 30:
                         case 'end':
                             return _context7.stop();
                     }
                 }
-            }, _callee7, this, [[1, 8], [13, 21]]);
+            }, _callee7, this, [[1, 8], [13, 22]]);
         }));
 
         function unfollowUsers() {
@@ -630,7 +636,7 @@ exports.default = {
     }(),
     likeUserPosts: function () {
         var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
-            var users, i;
+            var users, i, j;
             return regeneratorRuntime.wrap(function _callee8$(_context8) {
                 while (1) {
                     switch (_context8.prev = _context8.next) {
@@ -654,11 +660,11 @@ exports.default = {
                             console.log(_context8.t0);
 
                         case 11:
-                            i = 0;
+                            i = 0, j = 0;
 
                         case 12:
-                            if (!(i < users.length)) {
-                                _context8.next = 28;
+                            if (!(j < users.length && i < users.length)) {
+                                _context8.next = 29;
                                 break;
                             }
 
@@ -671,29 +677,30 @@ exports.default = {
                             return _user2.default.setType(users[i], 'liked');
 
                         case 18:
-                            _context8.next = 25;
+                            j++;
+                            _context8.next = 26;
                             break;
 
-                        case 20:
-                            _context8.prev = 20;
+                        case 21:
+                            _context8.prev = 21;
                             _context8.t1 = _context8['catch'](13);
-                            _context8.next = 24;
+                            _context8.next = 25;
                             return _user2.default.softDelete(users[i]);
 
-                        case 24:
+                        case 25:
                             console.log(this.login + ' : Soft deleted: ' + users[i].username);
 
-                        case 25:
+                        case 26:
                             i++;
                             _context8.next = 12;
                             break;
 
-                        case 28:
+                        case 29:
                         case 'end':
                             return _context8.stop();
                     }
                 }
-            }, _callee8, this, [[1, 8], [13, 20]]);
+            }, _callee8, this, [[1, 8], [13, 21]]);
         }));
 
         function likeUserPosts() {
@@ -704,7 +711,7 @@ exports.default = {
     }(),
     commentPosts: function () {
         var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
-            var posts, i;
+            var posts, i, j;
             return regeneratorRuntime.wrap(function _callee9$(_context9) {
                 while (1) {
                     switch (_context9.prev = _context9.next) {
@@ -728,11 +735,11 @@ exports.default = {
                             console.log(_context9.t0);
 
                         case 11:
-                            i = 0;
+                            i = 0, j = 0;
 
                         case 12:
-                            if (!(i < posts.length)) {
-                                _context9.next = 30;
+                            if (!(j < posts.length && i < posts.length)) {
+                                _context9.next = 31;
                                 break;
                             }
 
@@ -751,26 +758,27 @@ exports.default = {
                             return _page2.default.setCommented(posts[i].page[0]);
 
                         case 21:
-                            _context9.next = 27;
+                            j++;
+                            _context9.next = 28;
                             break;
 
-                        case 23:
-                            _context9.prev = 23;
+                        case 24:
+                            _context9.prev = 24;
                             _context9.t1 = _context9['catch'](13);
-                            _context9.next = 27;
+                            _context9.next = 28;
                             return _post2.default.remove(posts[i]);
 
-                        case 27:
+                        case 28:
                             i++;
                             _context9.next = 12;
                             break;
 
-                        case 30:
+                        case 31:
                         case 'end':
                             return _context9.stop();
                     }
                 }
-            }, _callee9, this, [[1, 8], [13, 23]]);
+            }, _callee9, this, [[1, 8], [13, 24]]);
         }));
 
         function commentPosts() {
