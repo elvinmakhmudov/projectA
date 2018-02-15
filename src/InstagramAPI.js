@@ -142,7 +142,7 @@ class InstagramAPI {
     }
 
     goToUsername(username) {
-        console.log(this.login+ ' : Reviewing ' + username);
+        console.log(this.login + ' : Reviewing ' + username);
         return this.driver.get(config.urls.main + username);
     }
 
@@ -186,7 +186,7 @@ class InstagramAPI {
             let comments = await this.driver.findElements(By.className("_ezgzd"));
             let likes = await this.driver.findElements(By.className("_nzn1h")) != 0 ? await this.driver.findElement(By.css("._nzn1h span")).getText().then(likes => likes.replace(',', '')) : 0;
             let dateattr = await this.driver.findElements(By.className("_p29ma")) != 0 ? await this.driver.findElement(By.className("_p29ma")).getAttribute('datetime') : 0;
-            let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 ));
+            let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60));
             let rating = Math.round(likes / datetime * 100) / 100;
             return resolve(rating);
         }.bind(this));
@@ -218,7 +218,7 @@ class InstagramAPI {
                         username,
                         type: 'analyze'
                     }));
-                    console.log(this.login+ ' : New username is:' + username);
+                    console.log(this.login + ' : New username is:' + username);
                 }
             }
             return resolve({
@@ -242,7 +242,7 @@ class InstagramAPI {
             if (await this.driver.findElements(By.className("error-container")) != 0) {
                 return reject();
             };
-            console.log(this.login+ ' : Analyzing ' + user.username);
+            console.log(this.login + ' : Analyzing ' + user.username);
             await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
                 return resolve('follow');
@@ -258,7 +258,7 @@ class InstagramAPI {
             if ((await this.driver.findElements(By.className("error-container")) != 0) || (await this.driver.findElements(By.className("_rf3jb")) == 0)) {
                 return reject();
             };
-            console.log(this.login+ ' : Following ' + user.username);
+            console.log(this.login + ' : Following ' + user.username);
             // await this.driver.wait(until.elementLocated(By.className("r9b8f")), config.timeout);
             //follow
             if (await this.driver.findElements(By.className("_gexxb")) != 0) {
@@ -282,7 +282,7 @@ class InstagramAPI {
                 return reject();
             };
             if (await this.driver.findElements(By.className("_t78yp")) != 0) {
-                console.log(this.login+ ' : Unfollowing ' + user.username);
+                console.log(this.login + ' : Unfollowing ' + user.username);
                 await this.driver.findElement(By.className('_t78yp')).click();
                 await this.sleep(1);
                 return resolve();
@@ -314,7 +314,7 @@ class InstagramAPI {
                 // await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
                 await this.sleep(2);
             }
-            console.log(this.login+ ' : liked posts of ' + user.username);
+            console.log(this.login + ' : liked posts of ' + user.username);
             return resolve();
         }.bind(this));
     }
@@ -382,7 +382,7 @@ class InstagramAPI {
                         console.log(this.login + ' : new page is : ' + await newPages[i].getText());
                     }
                 }
-                console.log(this.login+ ' : new pages length: ' + pages.length);
+                console.log(this.login + ' : new pages length: ' + pages.length);
                 try {
                     if (next) await this.driver.findElement(By.className('_r48jm')).click();
                 } catch (e) {
@@ -393,9 +393,9 @@ class InstagramAPI {
         }.bind(this));
     }
 
-    async sleep(seconds) {
+    async sleep(seconds, log = false) {
         try {
-            console.log(this.login + ' : Sleeping for ' + seconds + ' seconds.')
+            if (log) console.log(this.login + ' : Sleeping for ' + seconds + ' seconds.');
             await this.driver.sleep(seconds * 1000)
         } catch (e) {
             // console.log(e);

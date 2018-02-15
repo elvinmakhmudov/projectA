@@ -12,6 +12,10 @@ var _InstagramAPI = require('./InstagramAPI.js');
 
 var _InstagramAPI2 = _interopRequireDefault(_InstagramAPI);
 
+var _counter = require('./counter');
+
+var _counter2 = _interopRequireDefault(_counter);
+
 var _actions = require('./actions.js');
 
 var _actions2 = _interopRequireDefault(_actions);
@@ -110,7 +114,7 @@ var Automater = function () {
 
                             case 5:
                                 _context2.next = 7;
-                                return this.instagram.sleep(config.sleepEveryIteration);
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
 
                             case 7:
                                 _context2.next = 2;
@@ -152,7 +156,7 @@ var Automater = function () {
 
                             case 5:
                                 _context3.next = 7;
-                                return this.instagram.sleep(config.sleepEveryIteration);
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
 
                             case 7:
                                 _context3.next = 2;
@@ -194,7 +198,7 @@ var Automater = function () {
 
                             case 5:
                                 _context4.next = 7;
-                                return this.instagram.sleep(config.sleepEveryIteration);
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
 
                             case 7:
                                 _context4.next = 2;
@@ -236,7 +240,7 @@ var Automater = function () {
 
                             case 5:
                                 _context5.next = 7;
-                                return this.instagram.sleep(config.sleepEveryIteration);
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
 
                             case 7:
                                 _context5.next = 2;
@@ -278,7 +282,7 @@ var Automater = function () {
 
                             case 5:
                                 _context6.next = 7;
-                                return this.instagram.sleep(config.sleepEveryIteration);
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
 
                             case 7:
                                 _context6.next = 2;
@@ -320,7 +324,7 @@ var Automater = function () {
 
                             case 5:
                                 _context7.next = 7;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay);
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay, true);
 
                             case 7:
                                 _context7.next = 2;
@@ -362,7 +366,7 @@ var Automater = function () {
 
                             case 5:
                                 _context8.next = 7;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay);
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay, true);
 
                             case 7:
                                 _context8.next = 2;
@@ -404,7 +408,7 @@ var Automater = function () {
 
                             case 5:
                                 _context9.next = 7;
-                                return this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / config.usersToLikePerDay);
+                                return this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / config.usersToLikePerDay, true);
 
                             case 7:
                                 _context9.next = 2;
@@ -446,7 +450,7 @@ var Automater = function () {
 
                             case 5:
                                 _context10.next = 7;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.pagesToCommentPerDay);
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.pagesToCommentPerDay, true);
 
                             case 7:
                                 _context10.next = 2;
@@ -470,6 +474,7 @@ var Automater = function () {
         key: 'triplePageActions',
         value: function () {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
+                var followed, commented, unfollowed, liked;
                 return regeneratorRuntime.wrap(function _callee11$(_context11) {
                     while (1) {
                         switch (_context11.prev = _context11.next) {
@@ -479,50 +484,94 @@ var Automater = function () {
 
                             case 2:
                                 if (!true) {
+                                    _context11.next = 33;
+                                    break;
+                                }
+
+                                followed = _counter2.default.users.followed;
+
+                            case 4:
+                                _context11.next = 6;
+                                return _actions2.default.followUsers.call(this);
+
+                            case 6:
+                                console.log(this.login + ' : Following users is done');
+
+                            case 7:
+                                if (followed <= _counter2.default.users.followed) {
+                                    _context11.next = 4;
+                                    break;
+                                }
+
+                            case 8:
+                                _context11.next = 10;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
+
+                            case 10:
+                                commented = _counter2.default.posts.commented;
+
+                            case 11:
+                                _context11.next = 13;
+                                return _actions2.default.commentPosts.call(this);
+
+                            case 13:
+                                console.log(this.login + ' : Commenting posts is done.');
+
+                            case 14:
+                                if (commented <= _counter2.default.posts.commented) {
+                                    _context11.next = 11;
+                                    break;
+                                }
+
+                            case 15:
+                                _context11.next = 17;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
+
+                            case 17:
+                                unfollowed = _counter2.default.users.unfollowed;
+
+                            case 18:
+                                _context11.next = 20;
+                                return _actions2.default.unfollowUsers.call(this);
+
+                            case 20:
+                                console.log(this.login + ' : Unfollowing users is done.');
+
+                            case 21:
+                                if (unfollowed <= _counter2.default.users.unfollowed) {
+                                    _context11.next = 18;
+                                    break;
+                                }
+
+                            case 22:
+                                _context11.next = 24;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
+
+                            case 24:
+                                liked = _counter2.default.users.liked;
+
+                            case 25:
+                                _context11.next = 27;
+                                return _actions2.default.likeUserPosts.call(this);
+
+                            case 27:
+                                console.log(this.login + ' : Liking user posts is done.');
+
+                            case 28:
+                                if (liked <= _counter2.default.users.liked) {
                                     _context11.next = 25;
                                     break;
                                 }
 
-                                _context11.next = 5;
-                                return _actions2.default.followUsers.call(this);
+                            case 29:
+                                _context11.next = 31;
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
 
-                            case 5:
-                                console.log(this.login + ' : Following users is done');
-                                _context11.next = 8;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4));
-
-                            case 8:
-                                _context11.next = 10;
-                                return _actions2.default.commentPosts.call(this);
-
-                            case 10:
-                                console.log(this.login + ' : Commenting posts is done.');
-                                _context11.next = 13;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4));
-
-                            case 13:
-                                _context11.next = 15;
-                                return _actions2.default.unfollowUsers.call(this);
-
-                            case 15:
-                                console.log(this.login + ' : Unfollowing users is done.');
-                                _context11.next = 18;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4));
-
-                            case 18:
-                                _context11.next = 20;
-                                return _actions2.default.likeUserPosts.call(this);
-
-                            case 20:
-                                console.log(this.login + ' : Liking user posts is done.');
-                                _context11.next = 23;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4));
-
-                            case 23:
+                            case 31:
                                 _context11.next = 2;
                                 break;
 
-                            case 25:
+                            case 33:
                             case 'end':
                                 return _context11.stop();
                         }
@@ -540,6 +589,7 @@ var Automater = function () {
         key: 'tripleAnalyzator',
         value: function () {
             var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
+                var postsToAnalyze, usersToAnalyze, toComment, analyzed;
                 return regeneratorRuntime.wrap(function _callee12$(_context12) {
                     while (1) {
                         switch (_context12.prev = _context12.next) {
@@ -549,50 +599,86 @@ var Automater = function () {
 
                             case 2:
                                 if (!true) {
+                                    _context12.next = 33;
+                                    break;
+                                }
+
+                                postsToAnalyze = _counter2.default.posts.toAnalyze;
+
+                            case 4:
+                                _context12.next = 6;
+                                return _actions2.default.savePosts.call(this);
+
+                            case 6:
+                                console.log(this.login + ' : Save posts is done.');
+                                _context12.next = 9;
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
+
+                            case 9:
+                                if (postsToAnalyze <= _counter2.default.posts.toAnalyze) {
+                                    _context12.next = 4;
+                                    break;
+                                }
+
+                            case 10:
+                                usersToAnalyze = _counter2.default.users.toAnalyze;
+
+                            case 11:
+                                _context12.next = 13;
+                                return _actions2.default.analyzePosts.call(this);
+
+                            case 13:
+                                console.log(this.login + ' : Analyzing posts is done.');
+                                _context12.next = 16;
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
+
+                            case 16:
+                                if (usersToAnalyze <= _counter2.default.users.toAnalyze) {
+                                    _context12.next = 11;
+                                    break;
+                                }
+
+                            case 17:
+                                toComment = _counter2.default.posts.toComment;
+
+                            case 18:
+                                _context12.next = 20;
+                                return _actions2.default.getPostsToComment.call(this);
+
+                            case 20:
+                                console.log(this.login + ' : Get posts to comment is done.');
+                                _context12.next = 23;
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
+
+                            case 23:
+                                if (toComment <= _counter2.default.posts.toComment) {
+                                    _context12.next = 18;
+                                    break;
+                                }
+
+                            case 24:
+                                analyzed = _counter2.default.users.analyzed;
+
+                            case 25:
+                                _context12.next = 27;
+                                return _actions2.default.analyzeUsers.call(this);
+
+                            case 27:
+                                console.log(this.login + ' : Analyzing users is done.');
+                                _context12.next = 30;
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
+
+                            case 30:
+                                if (analyzed <= _counter2.default.users.analyzed) {
                                     _context12.next = 25;
                                     break;
                                 }
 
-                                _context12.next = 5;
-                                return _actions2.default.savePosts.call(this);
-
-                            case 5:
-                                console.log(this.login + ' : Save posts is done.');
-                                _context12.next = 8;
-                                return this.instagram.sleep(config.sleepEveryIteration);
-
-                            case 8:
-                                _context12.next = 10;
-                                return _actions2.default.analyzePosts.call(this);
-
-                            case 10:
-                                console.log(this.login + ' : Analyzing posts is done.');
-                                _context12.next = 13;
-                                return this.instagram.sleep(config.sleepEveryIteration);
-
-                            case 13:
-                                _context12.next = 15;
-                                return _actions2.default.getPostsToComment.call(this);
-
-                            case 15:
-                                console.log(this.login + ' : Get posts to comment is done.');
-                                _context12.next = 18;
-                                return this.instagram.sleep(config.sleepEveryIteration);
-
-                            case 18:
-                                _context12.next = 20;
-                                return _actions2.default.analyzeUsers.call(this);
-
-                            case 20:
-                                console.log(this.login + ' : Analyzing users is done.');
-                                _context12.next = 23;
-                                return this.instagram.sleep(config.sleepEveryIteration);
-
-                            case 23:
+                            case 31:
                                 _context12.next = 2;
                                 break;
 
-                            case 25:
+                            case 33:
                             case 'end':
                                 return _context12.stop();
                         }

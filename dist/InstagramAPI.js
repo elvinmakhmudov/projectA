@@ -1578,13 +1578,14 @@ var InstagramAPI = function () {
         key: 'sleep',
         value: function () {
             var _ref22 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee22(seconds) {
+                var log = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
                 return regeneratorRuntime.wrap(function _callee22$(_context25) {
                     while (1) {
                         switch (_context25.prev = _context25.next) {
                             case 0:
                                 _context25.prev = 0;
 
-                                console.log(this.login + ' : Sleeping for ' + seconds + ' seconds.');
+                                if (log) console.log(this.login + ' : Sleeping for ' + seconds + ' seconds.');
                                 _context25.next = 4;
                                 return this.driver.sleep(seconds * 1000);
 
@@ -1604,7 +1605,7 @@ var InstagramAPI = function () {
                 }, _callee22, this, [[0, 6]]);
             }));
 
-            function sleep(_x33) {
+            function sleep(_x34) {
                 return _ref22.apply(this, arguments);
             }
 

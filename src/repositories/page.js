@@ -28,9 +28,15 @@ export default {
     },
 
     async explore(limit) {
+        var d = new Date();
+        d.setDate(d.getDate() - config.oldestPageInDays);
+        let yesterdayInMseconds = Date.now() - d.getMilliseconds();
         return Page.find({
             reviewed: false,
-            type: 'explore'
+            type: 'explore',
+            reviewed_at: {
+                $lt: yesterdayInMseconds
+            },
         }).limit(limit || config.batchUserLimitCount);
     },
 

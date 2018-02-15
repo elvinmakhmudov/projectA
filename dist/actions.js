@@ -20,6 +20,10 @@ var _page = require('./repositories/page');
 
 var _page2 = _interopRequireDefault(_page);
 
+var _counter = require('./counter');
+
+var _counter2 = _interopRequireDefault(_counter);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -77,7 +81,8 @@ exports.default = {
     }(),
     getPostsToComment: function () {
         var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-            var explorePages, i, k, postsFor, posts, j, rating;
+            var explorePages, i, k, postsFor, posts, _j, _l, rating;
+
             return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
                     switch (_context2.prev = _context2.next) {
@@ -105,7 +110,7 @@ exports.default = {
 
                         case 12:
                             if (!(k < explorePages.length && i < explorePages.length)) {
-                                _context2.next = 48;
+                                _context2.next = 52;
                                 break;
                             }
 
@@ -128,62 +133,68 @@ exports.default = {
                             posts = _context2.sent;
 
                             console.log(this.login + ' : posts length is : ' + posts.length);
-                            j = 0;
+                            _j = 0, _l = 0;
 
                         case 25:
-                            if (!(j < posts.length)) {
-                                _context2.next = 38;
+                            if (!(_j < posts.length && _l < posts.length)) {
+                                _context2.next = 39;
                                 break;
                             }
 
                             _context2.prev = 26;
                             _context2.next = 29;
-                            return this.instagram.getRating(posts[j]);
+                            return this.instagram.getRating(posts[_j]);
 
                         case 29:
                             rating = _context2.sent;
 
-                            posts[j].rating = rating;
-                            _context2.next = 35;
+                            posts[_j].rating = rating;
+                            _l++;
+                            _context2.next = 36;
                             break;
 
-                        case 33:
-                            _context2.prev = 33;
+                        case 34:
+                            _context2.prev = 34;
                             _context2.t1 = _context2['catch'](26);
 
-                        case 35:
-                            j++;
+                        case 36:
+                            _j++;
                             _context2.next = 25;
                             break;
 
-                        case 38:
-                            _context2.next = 40;
+                        case 39:
+                            _context2.next = 41;
                             return _post2.default.insertMany(posts);
 
-                        case 40:
+                        case 41:
                             k++;
-                            _context2.next = 45;
+                            console.log(this.login + ' : New posts to comment size : ' + (_counter2.default.posts.toComment += l));
+                            _context2.next = 47;
                             break;
 
-                        case 43:
-                            _context2.prev = 43;
+                        case 45:
+                            _context2.prev = 45;
                             _context2.t2 = _context2['catch'](13);
 
-                        case 45:
+                        case 47:
+                            _context2.next = 49;
+                            return _page2.default.setReviewed(explorePages[i]);
+
+                        case 49:
                             i++;
                             _context2.next = 12;
                             break;
 
-                        case 48:
+                        case 52:
                             // await pagerepo.insertMany(explorePages)
                             console.log(this.login + ' : inserting explore pages');
 
-                        case 49:
+                        case 53:
                         case 'end':
                             return _context2.stop();
                     }
                 }
-            }, _callee2, this, [[1, 8], [13, 43], [26, 33]]);
+            }, _callee2, this, [[1, 8], [13, 45], [26, 34]]);
         }));
 
         function getPostsToComment() {
@@ -194,7 +205,8 @@ exports.default = {
     }(),
     savePosts: function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-            var pages, postsReviewed, posts, i, j, username;
+            var pages, postsReviewed, posts, i, _j2, username;
+
             return regeneratorRuntime.wrap(function _callee3$(_context3) {
                 while (1) {
                     switch (_context3.prev = _context3.next) {
@@ -228,11 +240,11 @@ exports.default = {
                             posts = void 0;
                             //get new usernames
 
-                            i = 0, j = 0;
+                            i = 0, _j2 = 0;
 
                         case 17:
-                            if (!(j < pages.length && i < pages.length)) {
-                                _context3.next = 37;
+                            if (!(_j2 < pages.length && i < pages.length)) {
+                                _context3.next = 38;
                                 break;
                             }
 
@@ -253,29 +265,30 @@ exports.default = {
                             return _post2.default.insertMany(posts);
 
                         case 27:
-                            j++;
-                            _context3.next = 32;
+                            _j2++;
+                            console.log(this.login + ' : New posts to analyze size : ' + (_counter2.default.posts.toAnalyze += posts.length));
+                            _context3.next = 33;
                             break;
 
-                        case 30:
-                            _context3.prev = 30;
+                        case 31:
+                            _context3.prev = 31;
                             _context3.t1 = _context3['catch'](19);
 
-                        case 32:
-                            _context3.next = 34;
+                        case 33:
+                            _context3.next = 35;
                             return _page2.default.setReviewed(pages[i]);
 
-                        case 34:
+                        case 35:
                             i++;
                             _context3.next = 17;
                             break;
 
-                        case 37:
+                        case 38:
                         case 'end':
                             return _context3.stop();
                     }
                 }
-            }, _callee3, this, [[1, 12], [19, 30]]);
+            }, _callee3, this, [[1, 12], [19, 31]]);
         }));
 
         function savePosts() {
@@ -286,7 +299,8 @@ exports.default = {
     }(),
     analyzePosts: function () {
         var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-            var posts, users, newUsers, i, j, postData;
+            var posts, users, newUsers, i, _j3, postData;
+
             return regeneratorRuntime.wrap(function _callee4$(_context4) {
                 while (1) {
                     switch (_context4.prev = _context4.next) {
@@ -328,10 +342,10 @@ exports.default = {
                             newUsers = [];
 
                             console.log(this.login + ' : Analyzing posts.');
-                            i = 0, j = 0;
+                            i = 0, _j3 = 0;
 
                         case 20:
-                            if (!(j < posts.length && i < posts.length)) {
+                            if (!(_j3 < posts.length && i < posts.length)) {
                                 _context4.next = 38;
                                 break;
                             }
@@ -348,7 +362,7 @@ exports.default = {
                             return _post2.default.setReviewed(posts[i], postData);
 
                         case 28:
-                            j++;
+                            _j3++;
                             _context4.next = 35;
                             break;
 
@@ -365,7 +379,7 @@ exports.default = {
 
                         case 38:
                             if (!(newUsers.length > 0)) {
-                                _context4.next = 49;
+                                _context4.next = 50;
                                 break;
                             }
 
@@ -375,21 +389,22 @@ exports.default = {
 
                         case 42:
                             console.log(this.login + ' : ' + users.length + ' users found.');
+                            console.log(this.login + ' : New users to analyze size : ' + (_counter2.default.users.toAnalyze += newUsers.length));
                             newUsers.length = 0;
                             users.length = 0;
-                            _context4.next = 49;
+                            _context4.next = 50;
                             break;
 
-                        case 47:
-                            _context4.prev = 47;
+                        case 48:
+                            _context4.prev = 48;
                             _context4.t3 = _context4['catch'](39);
 
-                        case 49:
+                        case 50:
                         case 'end':
                             return _context4.stop();
                     }
                 }
-            }, _callee4, this, [[1, 14], [21, 31], [39, 47]]);
+            }, _callee4, this, [[1, 14], [21, 31], [39, 48]]);
         }));
 
         function analyzePosts() {
@@ -400,7 +415,8 @@ exports.default = {
     }(),
     analyzeUsers: function () {
         var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-            var users, i, j, type;
+            var users, i, _j4, type;
+
             return regeneratorRuntime.wrap(function _callee5$(_context5) {
                 while (1) {
                     switch (_context5.prev = _context5.next) {
@@ -434,10 +450,10 @@ exports.default = {
                             console.log(_context5.t1);
 
                         case 14:
-                            i = 0, j = 0;
+                            i = 0, _j4 = 0;
 
                         case 15:
-                            if (!(j < users.length && i < users.length)) {
+                            if (!(_j4 < users.length && i < users.length)) {
                                 _context5.next = 32;
                                 break;
                             }
@@ -452,7 +468,7 @@ exports.default = {
                             return _user2.default.setType(users[i], type);
 
                         case 22:
-                            j++;
+                            _j4++;
                             _context5.next = 29;
                             break;
 
@@ -468,6 +484,9 @@ exports.default = {
                             break;
 
                         case 32:
+                            console.log(this.login + ' : New users to analyze size : ' + (_counter2.default.users.analyzed += j));
+
+                        case 33:
                         case 'end':
                             return _context5.stop();
                     }
@@ -483,7 +502,8 @@ exports.default = {
     }(),
     followUsers: function () {
         var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-            var users, i, j, followed;
+            var users, i, _j5, followed;
+
             return regeneratorRuntime.wrap(function _callee6$(_context6) {
                 while (1) {
                     switch (_context6.prev = _context6.next) {
@@ -507,10 +527,10 @@ exports.default = {
                             console.log(_context6.t0);
 
                         case 11:
-                            i = 0, j = 0;
+                            i = 0, _j5 = 0;
 
                         case 12:
-                            if (!(j < users.length && i < users.length)) {
+                            if (!(_j5 < users.length && i < users.length)) {
                                 _context6.next = 30;
                                 break;
                             }
@@ -525,7 +545,7 @@ exports.default = {
                             return _user2.default.setFollowed(users[i], this.login);
 
                         case 19:
-                            j++;
+                            _j5++;
                             _context6.next = 27;
                             break;
 
@@ -544,6 +564,9 @@ exports.default = {
                             break;
 
                         case 30:
+                            console.log(this.login + ' : New users to follow size : ' + (_counter2.default.users.followed += j));
+
+                        case 31:
                         case 'end':
                             return _context6.stop();
                     }
@@ -559,7 +582,8 @@ exports.default = {
     }(),
     unfollowUsers: function () {
         var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-            var users, i, j, unfollowed;
+            var users, i, _j6, unfollowed;
+
             return regeneratorRuntime.wrap(function _callee7$(_context7) {
                 while (1) {
                     switch (_context7.prev = _context7.next) {
@@ -584,10 +608,10 @@ exports.default = {
                             console.log(_context7.t0);
 
                         case 11:
-                            i = 0, j = 0;
+                            i = 0, _j6 = 0;
 
                         case 12:
-                            if (!(j < users.length && i < users.length)) {
+                            if (!(_j6 < users.length && i < users.length)) {
                                 _context7.next = 30;
                                 break;
                             }
@@ -602,7 +626,7 @@ exports.default = {
                             return _user2.default.setType(users[i], 'unfollowed');
 
                         case 19:
-                            j++;
+                            _j6++;
                             _context7.next = 27;
                             break;
 
@@ -621,6 +645,9 @@ exports.default = {
                             break;
 
                         case 30:
+                            console.log(this.login + ' : New users to unfollow size : ' + (_counter2.default.users.unfollowed += j));
+
+                        case 31:
                         case 'end':
                             return _context7.stop();
                     }
@@ -636,7 +663,8 @@ exports.default = {
     }(),
     likeUserPosts: function () {
         var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
-            var users, i, j;
+            var users, i, _j7;
+
             return regeneratorRuntime.wrap(function _callee8$(_context8) {
                 while (1) {
                     switch (_context8.prev = _context8.next) {
@@ -660,10 +688,10 @@ exports.default = {
                             console.log(_context8.t0);
 
                         case 11:
-                            i = 0, j = 0;
+                            i = 0, _j7 = 0;
 
                         case 12:
-                            if (!(j < users.length && i < users.length)) {
+                            if (!(_j7 < users.length && i < users.length)) {
                                 _context8.next = 29;
                                 break;
                             }
@@ -677,7 +705,7 @@ exports.default = {
                             return _user2.default.setType(users[i], 'liked');
 
                         case 18:
-                            j++;
+                            _j7++;
                             _context8.next = 26;
                             break;
 
@@ -696,6 +724,9 @@ exports.default = {
                             break;
 
                         case 29:
+                            console.log(this.login + ' : Liked users size : ' + (_counter2.default.users.liked += j));
+
+                        case 30:
                         case 'end':
                             return _context8.stop();
                     }
@@ -711,7 +742,8 @@ exports.default = {
     }(),
     commentPosts: function () {
         var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
-            var posts, i, j;
+            var posts, i, _j8;
+
             return regeneratorRuntime.wrap(function _callee9$(_context9) {
                 while (1) {
                     switch (_context9.prev = _context9.next) {
@@ -735,10 +767,10 @@ exports.default = {
                             console.log(_context9.t0);
 
                         case 11:
-                            i = 0, j = 0;
+                            i = 0, _j8 = 0;
 
                         case 12:
-                            if (!(j < posts.length && i < posts.length)) {
+                            if (!(_j8 < posts.length && i < posts.length)) {
                                 _context9.next = 31;
                                 break;
                             }
@@ -758,7 +790,7 @@ exports.default = {
                             return _page2.default.setCommented(posts[i].page[0]);
 
                         case 21:
-                            j++;
+                            _j8++;
                             _context9.next = 28;
                             break;
 
@@ -774,6 +806,9 @@ exports.default = {
                             break;
 
                         case 31:
+                            console.log(this.login + ' : Commented posts size : ' + (_counter2.default.posts.commented += j));
+
+                        case 32:
                         case 'end':
                             return _context9.stop();
                     }

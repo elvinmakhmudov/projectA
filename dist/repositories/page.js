@@ -78,16 +78,24 @@ exports.default = {
     }(),
     explore: function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(limit) {
+            var d, yesterdayInMseconds;
             return regeneratorRuntime.wrap(function _callee3$(_context3) {
                 while (1) {
                     switch (_context3.prev = _context3.next) {
                         case 0:
+                            d = new Date();
+
+                            d.setDate(d.getDate() - config.oldestPageInDays);
+                            yesterdayInMseconds = Date.now() - d.getMilliseconds();
                             return _context3.abrupt('return', _page2.default.find({
                                 reviewed: false,
-                                type: 'explore'
+                                type: 'explore',
+                                reviewed_at: {
+                                    $lt: yesterdayInMseconds
+                                }
                             }).limit(limit || config.batchUserLimitCount));
 
-                        case 1:
+                        case 4:
                         case 'end':
                             return _context3.stop();
                     }

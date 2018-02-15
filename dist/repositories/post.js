@@ -208,7 +208,7 @@ exports.default = {
                                                     return _post2.default.insertMany(postsArr, {
                                                         ordered: false
                                                     }, function (err) {
-                                                        if (err) reject(err);
+                                                        if (err) return reject(err);
                                                         resolve();
                                                     });
 
@@ -266,7 +266,7 @@ exports.default = {
                                                             reviewed_at: Date.now()
                                                         }
                                                     }, function (err, post) {
-                                                        if (err) reject();
+                                                        if (err) return reject();
                                                         resolve();
                                                     });
 
@@ -319,7 +319,7 @@ exports.default = {
                                                             reviewed_at: Date.now()
                                                         }
                                                     }, function (err, post) {
-                                                        if (err) reject();
+                                                        if (err) return reject();
                                                         console.log('Post type was set to ' + type);
                                                         resolve();
                                                     });
@@ -371,7 +371,7 @@ exports.default = {
                                                             rating: rating
                                                         }
                                                     }, function (err, post) {
-                                                        if (err) reject();
+                                                        if (err) return reject();
                                                         console.log('Post rating was set to ' + rating);
                                                         resolve();
                                                     });

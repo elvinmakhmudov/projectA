@@ -1,6 +1,7 @@
 import "babel-polyfill";
 let config = require('../config.json');
 import api from './InstagramAPI.js';
+import counter from './counter';
 import actions from './actions.js';
 import postrepo from './repositories/post';
 import userrepo from './repositories/user';
@@ -28,7 +29,7 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
             await actions.findNewPages.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration);
+            await this.instagram.sleep(config.sleepEveryIteration, true);
         }
     }
 
@@ -36,7 +37,7 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
             await actions.getPostsToComment.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration);
+            await this.instagram.sleep(config.sleepEveryIteration,true);
         }
     }
 
@@ -44,7 +45,7 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
             await actions.savePosts.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration);
+            await this.instagram.sleep(config.sleepEveryIteration, true);
         }
     }
 
@@ -52,7 +53,7 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
             await actions.analyzePosts.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration);
+            await this.instagram.sleep(config.sleepEveryIteration, true);
         }
     }
 
@@ -60,7 +61,7 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
             await actions.analyzeUsers.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration);
+            await this.instagram.sleep(config.sleepEveryIteration,true);
         }
     }
 
@@ -68,7 +69,7 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
             await actions.followUsers.call(this);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay);
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay, true);
         }
     }
 
@@ -76,7 +77,7 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
             await actions.unfollowUsers.call(this);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay);
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay, true);
         }
     }
 
@@ -84,7 +85,7 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
             await actions.likeUserPosts.call(this);
-            await this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / config.usersToLikePerDay);
+            await this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / config.usersToLikePerDay, true);
         }
     }
 
@@ -92,7 +93,7 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
             await actions.commentPosts.call(this);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay));
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.pagesToCommentPerDay, true);
         }
     }
 
@@ -100,21 +101,36 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
 
-            await actions.followUsers.call(this);
-            console.log(this.login + ' : Following users is done');
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4));
+            let followed = counter.users.followed;
+            do {
+                await actions.followUsers.call(this);
+                console.log(this.login + ' : Following users is done');
+            }
+            while (followed <= counter.users.followed);
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
 
-            await actions.commentPosts.call(this);
-            console.log(this.login + ' : Commenting posts is done.');
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4));
 
-            await actions.unfollowUsers.call(this);
-            console.log(this.login + ' : Unfollowing users is done.');
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4));
+            let commented = counter.posts.commented;
+            do {
+                await actions.commentPosts.call(this);
+                console.log(this.login + ' : Commenting posts is done.');
+            } while (commented <= counter.posts.commented);
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
 
-            await actions.likeUserPosts.call(this);
-            console.log(this.login + ' : Liking user posts is done.');
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4));
+            let unfollowed = counter.users.unfollowed;
+            do {
+                await actions.unfollowUsers.call(this);
+                console.log(this.login + ' : Unfollowing users is done.');
+            } while (unfollowed <= counter.users.unfollowed);
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
+
+            let liked = counter.users.liked;
+            do {
+                await actions.likeUserPosts.call(this);
+                console.log(this.login + ' : Liking user posts is done.');
+            }
+            while (liked <= counter.users.liked);
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
 
             //sleep the rest of the time after working hours
             // await this.instagram.sleep((24 - config.workingHours) * 60 * 60);
@@ -123,21 +139,34 @@ class Automater {
     async tripleAnalyzator() {
         await this.instagram.logIn();
         while (true) {
-            await actions.savePosts.call(this);
-            console.log(this.login + ' : Save posts is done.')
-            await this.instagram.sleep(config.sleepEveryIteration);
+            let postsToAnalyze = counter.posts.toAnalyze;
+            do {
+                await actions.savePosts.call(this);
+                console.log(this.login + ' : Save posts is done.')
+                await this.instagram.sleep(config.sleepEveryIteration, true);
+            } while (postsToAnalyze <= counter.posts.toAnalyze);
 
-            await actions.analyzePosts.call(this);
-            console.log(this.login + ' : Analyzing posts is done.')
-            await this.instagram.sleep(config.sleepEveryIteration);
+            let usersToAnalyze = counter.users.toAnalyze;
+            do {
+                await actions.analyzePosts.call(this);
+                console.log(this.login + ' : Analyzing posts is done.')
+                await this.instagram.sleep(config.sleepEveryIteration, true);
+            } while (usersToAnalyze <= counter.users.toAnalyze);
 
-            await actions.getPostsToComment.call(this);
-            console.log(this.login + ' : Get posts to comment is done.')
-            await this.instagram.sleep(config.sleepEveryIteration);
+            let toComment = counter.posts.toComment;
+            do {
+                await actions.getPostsToComment.call(this);
+                console.log(this.login + ' : Get posts to comment is done.')
+                await this.instagram.sleep(config.sleepEveryIteration, true);
+            }
+            while (toComment <= counter.posts.toComment);
 
-            await actions.analyzeUsers.call(this);
-            console.log(this.login + ' : Analyzing users is done.')
-            await this.instagram.sleep(config.sleepEveryIteration);
+            let analyzed = counter.users.analyzed;
+            do {
+                await actions.analyzeUsers.call(this);
+                console.log(this.login + ' : Analyzing users is done.')
+                await this.instagram.sleep(config.sleepEveryIteration, true);
+            } while (analyzed <= counter.users.analyzed);
 
             // await this.instagram.sleep((24 - config.workingHours) * 60 * 60);
         }

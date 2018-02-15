@@ -69,7 +69,7 @@ export default {
             return await Post.insertMany(postsArr, {
                 ordered: false
             }, function (err) {
-                if (err) reject(err);
+                if (err) return reject(err);
                 resolve();
             });
         });
@@ -88,7 +88,7 @@ export default {
                     reviewed_at: Date.now()
                 }
             }, function (err, post) {
-                if (err) reject();
+                if (err) return reject();
                 resolve();
             });
         });
@@ -105,7 +105,7 @@ export default {
                     reviewed_at: Date.now()
                 }
             }, function (err, post) {
-                if (err) reject();
+                if (err) return reject();
                 console.log('Post type was set to ' + type);
                 resolve();
             });
@@ -121,7 +121,7 @@ export default {
                     rating
                 }
             }, function (err, post) {
-                if (err) reject();
+                if (err) return reject();
                 console.log('Post rating was set to ' + rating);
                 resolve();
             });
