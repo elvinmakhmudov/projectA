@@ -26,14 +26,14 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0, k = 0; k < explorePages.length && i < explorePages.length; i++) {
+        for (var i = 0, k = 0; k < explorePages.length && i < explorePages.length; i++) {
             try {
                 await this.instagram.goToUsername(explorePages[i].username);
                 let postsFor = await postrepo.postsFor(explorePages[i]);
                 console.log(this.login + ' : post to analyze for a user is : ' + postsFor.length);
                 let posts = await this.instagram.getNewPosts(explorePages[i], postsFor, 'comment');
                 console.log(this.login + ' : posts length is : ' + posts.length)
-                for (let j = 0, l = 0; j < posts.length && l < posts.length; j++) {
+                for (var j = 0, l = 0; j < posts.length && l < posts.length; j++) {
                     try {
                         let rating = await this.instagram.getRating(posts[j]);
                         posts[j].rating = rating;
@@ -66,9 +66,9 @@ export default {
         }
         let posts;
         //get new usernames
-        for (let i = 0, j = 0; j < pages.length && i < pages.length; i++) {
+        for (var i = 0, j = 0; j < pages.length && i < pages.length; i++) {
             let username = pages[i].username;
-            //go to the username page
+              //go to the username page
             try {
                 await this.instagram.goToUsername(username);
                 posts = await this.instagram.getNewPosts(pages[i], postsReviewed, 'analyze');
@@ -93,7 +93,7 @@ export default {
         }
         let newUsers = [];
         console.log(this.login + ' : Analyzing posts.');
-        for (let i = 0, j = 0; j < posts.length && i < posts.length; i++) {
+        for (var i = 0, j = 0; j < posts.length && i < posts.length; i++) {
             try {
                 let postData = await this.instagram.getPostData(posts[i], users);
                 newUsers.push.apply(newUsers, postData.newUsers);
@@ -124,7 +124,7 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0, j = 0; j < users.length && i < users.length; i++) {
+        for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             try {
                 let type = await this.instagram.getUserType(users[i]);
                 await userrepo.setType(users[i], type);
@@ -145,7 +145,7 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0, j = 0; j < users.length && i < users.length; i++) {
+        for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             try {
                 let followed = await this.instagram.followUser(users[i]);
                 await userrepo.setFollowed(users[i], this.login);
@@ -167,7 +167,7 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0, j = 0; j < users.length && i < users.length; i++) {
+        for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             try {
                 let unfollowed = await this.instagram.unfollowUser(users[i]);
                 await userrepo.setType(users[i], 'unfollowed');
@@ -188,7 +188,7 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0, j = 0; j < users.length && i < users.length; i++) {
+        for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             try {
                 await this.instagram.likeUserPosts(users[i]);
                 await userrepo.setType(users[i], 'liked');
@@ -208,7 +208,7 @@ export default {
         } catch (e) {
             console.log(e);
         }
-        for (let i = 0, j = 0; j < posts.length && i < posts.length; i++) {
+        for (var i = 0, j = 0; j < posts.length && i < posts.length; i++) {
             try {
                 console.log(this.login + ' : Commenting ' + (i + 1) + ' of ' + posts.length + ' posts.')
                 await this.instagram.commentPosts(posts[i]);

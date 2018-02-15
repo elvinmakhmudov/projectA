@@ -498,7 +498,7 @@ var Automater = function () {
                                 console.log(this.login + ' : Following users is done');
 
                             case 7:
-                                if (followed <= _counter2.default.users.followed) {
+                                if (followed >= _counter2.default.users.followed) {
                                     _context11.next = 4;
                                     break;
                                 }
@@ -538,7 +538,7 @@ var Automater = function () {
                                 console.log(this.login + ' : Unfollowing users is done.');
 
                             case 21:
-                                if (unfollowed <= _counter2.default.users.unfollowed) {
+                                if (unfollowed >= _counter2.default.users.unfollowed) {
                                     _context11.next = 18;
                                     break;
                                 }
@@ -558,7 +558,7 @@ var Automater = function () {
                                 console.log(this.login + ' : Liking user posts is done.');
 
                             case 28:
-                                if (liked <= _counter2.default.users.liked) {
+                                if (liked >= _counter2.default.users.liked) {
                                     _context11.next = 25;
                                     break;
                                 }
@@ -615,7 +615,7 @@ var Automater = function () {
                                 return this.instagram.sleep(config.sleepEveryIteration, true);
 
                             case 9:
-                                if (postsToAnalyze <= _counter2.default.posts.toAnalyze) {
+                                if (postsToAnalyze >= _counter2.default.posts.toAnalyze) {
                                     _context12.next = 4;
                                     break;
                                 }
@@ -633,7 +633,7 @@ var Automater = function () {
                                 return this.instagram.sleep(config.sleepEveryIteration, true);
 
                             case 16:
-                                if (usersToAnalyze <= _counter2.default.users.toAnalyze) {
+                                if (usersToAnalyze >= _counter2.default.users.toAnalyze) {
                                     _context12.next = 11;
                                     break;
                                 }
@@ -651,7 +651,7 @@ var Automater = function () {
                                 return this.instagram.sleep(config.sleepEveryIteration, true);
 
                             case 23:
-                                if (toComment <= _counter2.default.posts.toComment) {
+                                if (toComment >= _counter2.default.posts.toComment) {
                                     _context12.next = 18;
                                     break;
                                 }
@@ -669,7 +669,7 @@ var Automater = function () {
                                 return this.instagram.sleep(config.sleepEveryIteration, true);
 
                             case 30:
-                                if (analyzed <= _counter2.default.users.analyzed) {
+                                if (analyzed >= _counter2.default.users.analyzed) {
                                     _context12.next = 25;
                                     break;
                                 }
