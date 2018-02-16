@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var random = require('mongoose-simple-random');
+
 
 var pageSchema = new Schema({
     username: {
@@ -32,5 +34,7 @@ var pageSchema = new Schema({
         ref: 'Post'
     }
 });
+
+pageSchema.plugin(random);
 
 module.exports = mongoose.model('Page', pageSchema);

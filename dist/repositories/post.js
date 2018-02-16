@@ -171,7 +171,7 @@ exports.default = {
                             return _post2.default.remove({
                                 url: post.url
                             }, function (err) {
-                                // if (err) console.log(err);
+                                if (err) console.log(err);
                                 console.log('Post was removed');
                             });
 
@@ -209,7 +209,7 @@ exports.default = {
                                                         ordered: false
                                                     }, function (err) {
                                                         if (err) return reject(err);
-                                                        resolve();
+                                                        return resolve();
                                                     });
 
                                                 case 2:
@@ -266,8 +266,8 @@ exports.default = {
                                                             reviewed_at: Date.now()
                                                         }
                                                     }, function (err, post) {
-                                                        if (err) return reject();
-                                                        resolve();
+                                                        if (err) return reject(err);
+                                                        return resolve();
                                                     });
 
                                                 case 2:
@@ -319,7 +319,7 @@ exports.default = {
                                                             reviewed_at: Date.now()
                                                         }
                                                     }, function (err, post) {
-                                                        if (err) return reject();
+                                                        if (err) return reject(err);
                                                         console.log('Post type was set to ' + type);
                                                         resolve();
                                                     });
@@ -371,7 +371,7 @@ exports.default = {
                                                             rating: rating
                                                         }
                                                     }, function (err, post) {
-                                                        if (err) return reject();
+                                                        if (err) return reject(err);
                                                         console.log('Post rating was set to ' + rating);
                                                         resolve();
                                                     });

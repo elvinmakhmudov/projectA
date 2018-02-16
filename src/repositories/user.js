@@ -39,9 +39,9 @@ export default {
     async insertMany(newUsers) {
         return new Promise(async function (resolve, reject) {
             await User.insertMany(newUsers, function (err, users) {
-                if (err) reject();
+                if (err) return reject(err);
                 console.log(newUsers.length + ' users were added to collection');
-                resolve();
+                return resolve();
             });
         });
     },
@@ -58,8 +58,8 @@ export default {
                     followed_by: by
                 }
             }, function(err, users) {
-                if (err) reject();
-                resolve();
+                if (err) return reject(err);
+                return resolve();
             });
         });
     },
@@ -75,8 +75,8 @@ export default {
                     reviewed_at: Date.now(),
                 }
             }, function(err, users) {
-                if (err) reject();
-                resolve();
+                if (err) return reject(err);
+                return resolve();
             });
         });
     },
@@ -85,7 +85,7 @@ export default {
         return User.remove({
             username: user.username
         }, function (err) {
-            // if (err) console.log(err);
+             if (err) console.log(err);
             console.log(user.username + ' was removed');
         })
     },

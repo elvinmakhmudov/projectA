@@ -15,132 +15,164 @@ export default {
         try {
             let explorePages = await this.instagram.explorePage(oldExplorePages);
         } catch (e) {
-            // console.log(e)
+            console.log(e)
         }
     },
     async getPostsToComment() {
-        let explorePages;
-        try {
-            explorePages = await pagerepo.explore(10);
-            console.log(this.login + ' : Pages to explore : ' + explorePages.length);
-        } catch (e) {
-            console.log(e);
-        }
-        for (var i = 0, k = 0; k < explorePages.length && i < explorePages.length; i++) {
+        return new Promise(async function (resolve, reject) {
+            let explorePages;
             try {
-                await this.instagram.goToUsername(explorePages[i].username);
-                let postsFor = await postrepo.postsFor(explorePages[i]);
-                console.log(this.login + ' : post to analyze for a user is : ' + postsFor.length);
-                let posts = await this.instagram.getNewPosts(explorePages[i], postsFor, 'comment');
-                console.log(this.login + ' : posts length is : ' + posts.length)
-                for (var j = 0, l = 0; j < posts.length && l < posts.length; j++) {
-                    try {
-                        let rating = await this.instagram.getRating(posts[j]);
-                        posts[j].rating = rating;
-                        l++;
-                    } catch (e) {
-                        // console.log(e);
-                    }
+                explorePages = await pagerepo.explore(30);
+                if ((typeof explorePages === "undefined") || explorePages.length === 0) {
+                    // await this.instagram.sleep(config.sleepEveryIteration, true);
+                    return reject(this.login + ' : ERROR ON GETTINGS POSTS TO COMMENT. POSTS is undefined or posts.length is 0');
                 }
-                await postrepo.insertMany(posts);
-                k++;
-                console.log(this.login + ' : New posts to comment size : ' + (counter.posts.toComment += l));
+                console.log(this.login + ' : Pages to explore : ' + explorePages.length);
             } catch (e) {
-                // await pagerepo.remove(explorePages[i])
-                // console.log(e);
+                console.log(e);
             }
-            await pagerepo.setReviewed(explorePages[i]);
-        }
-        // await pagerepo.insertMany(explorePages)
-        console.log(this.login + ' : inserting explore pages');
+            for (var i = 0, k = 0; k < explorePages.length && i < explorePages.length; i++) {
+                try {
+                    await this.instagram.goToUsername(explorePages[i].username);
+                    let postsFor = await postrepo.postsFor(explorePages[i]);
+                    console.log(this.login + ' : post to analyze for a user is : ' + postsFor.length);
+                    let posts = await this.instagram.getNewPosts(explorePages[i], postsFor, 'comment');
+                    console.log(this.login + ' : posts length is : ' + posts.length)
+                    for (var j = 0, l = 0; j < posts.length && l < posts.length; j++) {
+                        try {
+                            let rating = await this.instagram.getRating(posts[j]);
+                            posts[j].rating = rating;
+                            l++;
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }
+                    await postrepo.insertMany(posts);
+                    k++;
+                    console.log(this.login + ' : New posts to comment size : ' + (counter.posts.toComment += l));
+                } catch (e) {
+                    // await pagerepo.remove(explorePages[i])
+                    console.log(e);
+                }
+                await pagerepo.setReviewed(explorePages[i]);
+            }
+            // await pagerepo.insertMany(explorePages)
+            console.log(this.login + ' : inserting explore pages');
+            return resolve();
+        });
     },
     async savePosts() {
-        let pages, postsReviewed;
-        try {
-            pages = await pagerepo.private(20);
-            console.log(this.login + ' : Private page size is : ' + pages.length);
-            postsReviewed = await postrepo.reviewed();
-            console.log(this.login + ' : Reviewed posts size is : ' + postsReviewed.length);
-        } catch (e) {
-            console.log(e);
-        }
-        let posts;
-        //get new usernames
-        for (var i = 0, j = 0; j < pages.length && i < pages.length; i++) {
-            let username = pages[i].username;
-              //go to the username page
+        return new Promise(async function (resolve, reject) {
+            let pages, postsReviewed;
             try {
-                await this.instagram.goToUsername(username);
-                posts = await this.instagram.getNewPosts(pages[i], postsReviewed, 'analyze');
-                await postrepo.insertMany(posts);
-                j++;
-                console.log(this.login + ' : New posts to analyze size : ' + (counter.posts.toAnalyze += posts.length));
+                pages = await pagerepo.private(20);
+                if ((typeof pages === "undefined") || pages.length === 0) {
+                    // await this.instagram.sleep(config.sleepEveryIteration, true);
+                    return reject(this.login + ' : ERROR ON SAVING POSTS. POSTS is undefined or posts.length is 0');
+                }
+                console.log(this.login + ' : Private page size is : ' + pages.length);
+                postsReviewed = await postrepo.reviewed();
+                console.log(this.login + ' : Reviewed posts size is : ' + postsReviewed.length);
             } catch (e) {
-                // await pagerepo.remove(pages[i])
+                console.log(e);
             }
-            await pagerepo.setReviewed(pages[i])
-        }
+            let posts;
+            //get new usernames
+            for (var i = 0, j = 0; j < pages.length && i < pages.length; i++) {
+                let username = pages[i].username;
+                //go to the username page
+                try {
+                    await this.instagram.goToUsername(username);
+                    posts = await this.instagram.getNewPosts(pages[i], postsReviewed, 'analyze');
+                    await postrepo.insertMany(posts);
+                    j++;
+                    console.log(this.login + ' : New posts to analyze size : ' + (counter.posts.toAnalyze += posts.length));
+                } catch (e) {
+                    // await pagerepo.remove(pages[i])
+                }
+                await pagerepo.setReviewed(pages[i])
+            }
+            return resolve();
+        }.bind(this));
     },
 
     async analyzePosts() {
-        let posts, users;
-        try {
-            posts = await postrepo.analyze(10);
-            console.log(this.login + ' : Posts to analyze : ' + posts.length);
-            users = await userrepo.analyze() || [];
-        } catch (e) {
-            console.log(e);
-        }
-        let newUsers = [];
-        console.log(this.login + ' : Analyzing posts.');
-        for (var i = 0, j = 0; j < posts.length && i < posts.length; i++) {
+        return new Promise(async function (resolve, reject) {
+            let posts, users;
             try {
-                let postData = await this.instagram.getPostData(posts[i], users);
-                newUsers.push.apply(newUsers, postData.newUsers);
-                await postrepo.setReviewed(posts[i], postData);
-                j++;
+                posts = await postrepo.analyze(30);
+                if ((typeof posts === "undefined") || posts.length === 0) {
+                    // await this.instagram.sleep(config.sleepEveryIteration, true);
+                    return reject(this.login + ' : ERROR ON ANALYZING POSTS. POSTS is undefined or posts.length is 0');
+                }
+                console.log(this.login + ' : Posts to analyze : ' + posts.length);
+                users = await userrepo.analyze() || [];
             } catch (e) {
-                // console.log(e);
-                await postrepo.remove(posts[i]);
+                console.log(e);
             }
-        }
-        if (newUsers.length > 0) {
-            try {
-                await userrepo.insertMany(newUsers);
-                console.log(this.login + ' : ' + users.length + ' users found.');
-                console.log(this.login + ' : New users to analyze size : ' + (counter.users.toAnalyze += newUsers.length));
-                newUsers.length = 0;
-                users.length = 0;
-            } catch (e) {
-                // console.log(e);
+            let newUsers = [];
+            console.log(this.login + ' : Analyzing posts.');
+            for (var i = 0, j = 0; j < posts.length && i < posts.length; i++) {
+                try {
+                    let postData = await this.instagram.getPostData(posts[i], users, newUsers);
+                    newUsers.push.apply(newUsers, postData.newUsers);
+                    await postrepo.setReviewed(posts[i], postData);
+                    j++;
+                } catch (e) {
+                    console.log(e);
+                    await postrepo.remove(posts[i]);
+                }
             }
-        }
+            if (newUsers.length > 0) {
+                try {
+                    await userrepo.insertMany(newUsers);
+                    console.log(this.login + ' : ' + users.length + ' users found.');
+                    console.log(this.login + ' : New users to analyze size : ' + (counter.users.toAnalyze += newUsers.length));
+                    newUsers.length = 0;
+                    users.length = 0;
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+            return resolve();
+        }.bind(this));
     },
     async analyzeUsers() {
-        let users;
-        try {
-            users = await userrepo.analyze(10) || [];
-            console.log(this.login + ' : Users  to analyze : ' + users.length);
-        } catch (e) {
-            console.log(e);
-        }
-        for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
+        return new Promise(async function (resolve, reject) {
+            let users;
             try {
-                let type = await this.instagram.getUserType(users[i]);
-                await userrepo.setType(users[i], type);
-                j++;
+                users = await userrepo.analyze(30) || [];
+                if ((typeof users === "undefined") || users.length === 0) {
+                    // await this.instagram.sleep(config.sleepEveryIteration, true);
+                    return reject(this.login + ' : ERROR ON ANALYZING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0');
+                }
+                console.log(this.login + ' : Users  to analyze : ' + users.length);
             } catch (e) {
-                // console.log(e);
-                await userrepo.softDelete(users[i]);
+                console.log(e);
             }
-        }
-        console.log(this.login + ' : New users to analyze size : ' + (counter.users.analyzed += j));
+            for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
+                try {
+                    let type = await this.instagram.getUserType(users[i]);
+                    await userrepo.setType(users[i], type);
+                    j++;
+                } catch (e) {
+                    console.log(e);
+                    await userrepo.softDelete(users[i]);
+                }
+            }
+            console.log(this.login + ' : New users to analyze size : ' + (counter.users.analyzed += j));
+            return resolve();
+        }.bind(this));
     },
 
     async followUsers() {
         let users;
         try {
             users = await userrepo.follow();
+            if ((typeof users === "undefined") || users.length === 0) {
+                await this.instagram.sleep(config.sleepEveryIteration, true);
+                return;
+            }
             console.log(this.login + ' : Users  to follow : ' + users.length);
         } catch (e) {
             console.log(e);
@@ -163,11 +195,15 @@ export default {
         let users;
         try {
             users = await userrepo.unfollow();
+            if ((typeof users === "undefined") || users.length === 0) {
+                await this.instagram.sleep(config.sleepEveryIteration, true);
+                return;
+            }
             console.log(this.login + ' : Users  to unfollow : ' + users.length);
         } catch (e) {
             console.log(e);
         }
-        for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
+        for (var i = 0, j = 0; j < users.length || i < users.length; i++) {
             try {
                 let unfollowed = await this.instagram.unfollowUser(users[i]);
                 await userrepo.setType(users[i], 'unfollowed');
@@ -184,7 +220,11 @@ export default {
         let users;
         try {
             users = await userrepo.like();
-            console.log(this.login + ' : Users  to like : ' + users.length);
+            if ((typeof users === "undefined") || users.length === 0) {
+                await this.instagram.sleep(config.sleepEveryIteration, true);
+                return;
+            }
+            console.log(this.login + ' : Users to like : ' + users.length);
         } catch (e) {
             console.log(e);
         }
@@ -200,10 +240,15 @@ export default {
         }
         console.log(this.login + ' : Liked users size : ' + (counter.users.liked += j));
     },
+
     async commentPosts() {
         let posts;
         try {
             posts = await postrepo.comment();
+            if ((typeof posts === "undefined") || posts.length === 0) {
+                await this.instagram.sleep(config.sleepEveryIteration, true);
+                return;
+            }
             console.log(this.login + ' : Posts to comment : ' + posts.length);
         } catch (e) {
             console.log(e);

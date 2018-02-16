@@ -58,9 +58,9 @@ exports.default = {
                                                 case 0:
                                                     _context.next = 2;
                                                     return _user2.default.insertMany(newUsers, function (err, users) {
-                                                        if (err) reject();
+                                                        if (err) return reject(err);
                                                         console.log(newUsers.length + ' users were added to collection');
-                                                        resolve();
+                                                        return resolve();
                                                     });
 
                                                 case 2:
@@ -113,8 +113,8 @@ exports.default = {
                                                             followed_by: by
                                                         }
                                                     }, function (err, users) {
-                                                        if (err) reject();
-                                                        resolve();
+                                                        if (err) return reject(err);
+                                                        return resolve();
                                                     });
 
                                                 case 2:
@@ -166,8 +166,8 @@ exports.default = {
                                                             reviewed_at: Date.now()
                                                         }
                                                     }, function (err, users) {
-                                                        if (err) reject();
-                                                        resolve();
+                                                        if (err) return reject(err);
+                                                        return resolve();
                                                     });
 
                                                 case 2:
@@ -206,7 +206,7 @@ exports.default = {
                             return _context7.abrupt('return', _user2.default.remove({
                                 username: user.username
                             }, function (err) {
-                                // if (err) console.log(err);
+                                if (err) console.log(err);
                                 console.log(user.username + ' was removed');
                             }));
 

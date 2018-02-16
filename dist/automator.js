@@ -589,7 +589,7 @@ var Automater = function () {
         key: 'tripleAnalyzator',
         value: function () {
             var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
-                var postsToAnalyze, usersToAnalyze, toComment, analyzed;
+                var usersToAnalyze, analyzed, postsToAnalyze, toComment;
                 return regeneratorRuntime.wrap(function _callee12$(_context12) {
                     while (1) {
                         switch (_context12.prev = _context12.next) {
@@ -599,91 +599,139 @@ var Automater = function () {
 
                             case 2:
                                 if (!true) {
-                                    _context12.next = 33;
+                                    _context12.next = 61;
                                     break;
                                 }
 
-                                postsToAnalyze = _counter2.default.posts.toAnalyze;
+                                usersToAnalyze = _counter2.default.users.toAnalyze;
 
                             case 4:
-                                _context12.next = 6;
-                                return _actions2.default.savePosts.call(this);
+                                _context12.prev = 4;
+                                _context12.next = 7;
+                                return _actions2.default.analyzePosts.call(this);
 
-                            case 6:
-                                console.log(this.login + ' : Save posts is done.');
-                                _context12.next = 9;
-                                return this.instagram.sleep(config.sleepEveryIteration, true);
+                            case 7:
+                                _context12.next = 13;
+                                break;
 
                             case 9:
-                                if (postsToAnalyze >= _counter2.default.posts.toAnalyze) {
+                                _context12.prev = 9;
+                                _context12.t0 = _context12['catch'](4);
+
+                                console.log(_context12.t0);
+                                return _context12.abrupt('break', 14);
+
+                            case 13:
+                                if (usersToAnalyze >= _counter2.default.users.toAnalyze) {
                                     _context12.next = 4;
                                     break;
                                 }
 
-                            case 10:
-                                usersToAnalyze = _counter2.default.users.toAnalyze;
-
-                            case 11:
-                                _context12.next = 13;
-                                return _actions2.default.analyzePosts.call(this);
-
-                            case 13:
+                            case 14:
                                 console.log(this.login + ' : Analyzing posts is done.');
-                                _context12.next = 16;
+                                _context12.next = 17;
                                 return this.instagram.sleep(config.sleepEveryIteration, true);
-
-                            case 16:
-                                if (usersToAnalyze >= _counter2.default.users.toAnalyze) {
-                                    _context12.next = 11;
-                                    break;
-                                }
 
                             case 17:
-                                toComment = _counter2.default.posts.toComment;
+                                analyzed = _counter2.default.users.analyzed;
 
                             case 18:
-                                _context12.next = 20;
-                                return _actions2.default.getPostsToComment.call(this);
+                                _context12.prev = 18;
+                                _context12.next = 21;
+                                return _actions2.default.analyzeUsers.call(this);
 
-                            case 20:
-                                console.log(this.login + ' : Get posts to comment is done.');
-                                _context12.next = 23;
-                                return this.instagram.sleep(config.sleepEveryIteration, true);
+                            case 21:
+                                _context12.next = 27;
+                                break;
 
                             case 23:
-                                if (toComment >= _counter2.default.posts.toComment) {
+                                _context12.prev = 23;
+                                _context12.t1 = _context12['catch'](18);
+
+                                console.log(_context12.t1);
+                                return _context12.abrupt('break', 28);
+
+                            case 27:
+                                if (analyzed >= _counter2.default.users.analyzed) {
                                     _context12.next = 18;
                                     break;
                                 }
 
-                            case 24:
-                                analyzed = _counter2.default.users.analyzed;
-
-                            case 25:
-                                _context12.next = 27;
-                                return _actions2.default.analyzeUsers.call(this);
-
-                            case 27:
+                            case 28:
                                 console.log(this.login + ' : Analyzing users is done.');
-                                _context12.next = 30;
+                                _context12.next = 31;
                                 return this.instagram.sleep(config.sleepEveryIteration, true);
 
-                            case 30:
-                                if (analyzed >= _counter2.default.users.analyzed) {
-                                    _context12.next = 25;
+                            case 31:
+                                postsToAnalyze = _counter2.default.posts.toAnalyze;
+
+                            case 32:
+                                _context12.prev = 32;
+                                _context12.next = 35;
+                                return _actions2.default.savePosts.call(this);
+
+                            case 35:
+                                _context12.next = 41;
+                                break;
+
+                            case 37:
+                                _context12.prev = 37;
+                                _context12.t2 = _context12['catch'](32);
+
+                                console.log(_context12.t2);
+                                return _context12.abrupt('break', 42);
+
+                            case 41:
+                                if (postsToAnalyze >= _counter2.default.posts.toAnalyze) {
+                                    _context12.next = 32;
                                     break;
                                 }
 
-                            case 31:
+                            case 42:
+                                console.log(this.login + ' : Save posts is done.');
+                                _context12.next = 45;
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
+
+                            case 45:
+                                toComment = _counter2.default.posts.toComment;
+
+                            case 46:
+                                _context12.prev = 46;
+                                _context12.next = 49;
+                                return _actions2.default.getPostsToComment.call(this);
+
+                            case 49:
+                                _context12.next = 55;
+                                break;
+
+                            case 51:
+                                _context12.prev = 51;
+                                _context12.t3 = _context12['catch'](46);
+
+                                console.log(_context12.t3);
+                                return _context12.abrupt('break', 56);
+
+                            case 55:
+                                if (toComment >= _counter2.default.posts.toComment) {
+                                    _context12.next = 46;
+                                    break;
+                                }
+
+                            case 56:
+                                console.log(this.login + ' : Get posts to comment is done.');
+                                _context12.next = 59;
+                                return this.instagram.sleep(config.sleepEveryIteration, true);
+
+                            case 59:
                                 _context12.next = 2;
                                 break;
 
-                            case 33:
+                            case 61:
                             case 'end':
                                 return _context12.stop();
                         }
                     }
-                }, _callee12, this);
+                }, _callee12, this, [[4, 9], [18, 23], [32, 37], [46, 51]]);
             }));
 
             function tripleAnalyzator() {

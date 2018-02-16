@@ -7,7 +7,7 @@ export default {
             await Page.remove({
                 username: page.username
             }, function (err) {
-                if (err) reject();
+                if (err) reject(err);
                 console.log(page.username + ' was removed.');
                 resolve();
             });
@@ -15,16 +15,23 @@ export default {
     },
 
     async private(limit) {
-        var d = new Date();
-        d.setDate(d.getDate() - config.oldestPageInDays);
-        let yesterdayInMseconds = Date.now() - d.getMilliseconds();
-        return Page.find({
-            reviewed: false,
-            reviewed_at: {
-                $lt: yesterdayInMseconds
-            },
-            type: 'private'
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(async function (resolve, reject) {
+            return await Page.findRandom({ reviewed: false, type: 'private' }, {}, { limit: limit || config.batchUserLimitCount }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
+        // var d = new Date();
+        // d.setDate(d.getDate() - config.oldestPageInDays);
+        // let yesterdayInMseconds = Date.now() - d.getMilliseconds();
+        // Find "limit" random documents (defaults to array of 1)
+        // return Page.findRandom({
+        //     reviewed: false,
+        //     // reviewed_at: {
+        //     //     $lt: yesterdayInMseconds
+        //     // },
+        //     type: 'private'
+        // }).limit(limit || config.batchUserLimitCount);
     },
 
     async explore(limit) {
@@ -37,13 +44,13 @@ export default {
             reviewed_at: {
                 $lt: yesterdayInMseconds
             },
-        }).limit(limit || config.batchUserLimitCount);
+        }, {}, { limit: limit || limit });
     },
 
     async insertMany(pageArr) {
         return new Promise(async function (resolve, reject) {
             return await Page.insertMany(pageArr, function (err) {
-                if (err) reject();
+                if (err) reject(err);
                 console.log(pageArr.length + ' pages were added');
                 resolve();
             });
@@ -55,14 +62,14 @@ export default {
             await Page.update({
                 username: page.username
             }, {
-                $set: {
-                    reviewed: true,
-                    reviewed_at: Date.now()
-                }
-            }, function (err, page) {
-                if (err) reject();
-                resolve();
-            });
+                    $set: {
+                        reviewed: true,
+                        reviewed_at: Date.now()
+                    }
+                }, function (err, page) {
+                    if (err) reject(err);
+                    resolve();
+                });
         });
     },
 
@@ -71,18 +78,18 @@ export default {
             await Page.update({
                 username: page.username
             }, {
-                $set: {
-                    type: 'commented',
-                    reviewed: true,
-                    reviewed_at: Date.now(),
-                    commented_at: Date.now(),
-                    commented_times: Number(Number(page.commented_times) >= Number(config.maxCommentForPageInDay)) ? 1 : (Number(page.commented_times) + 1)
-                }
-            }, function (err) {
-                if (err) reject();
-                console.log('Page ' + page.username + ' was commented');
-                resolve();
-            });
+                    $set: {
+                        type: 'commented',
+                        reviewed: true,
+                        reviewed_at: Date.now(),
+                        commented_at: Date.now(),
+                        commented_times: Number(Number(page.commented_times) >= Number(config.maxCommentForPageInDay)) ? 1 : (Number(page.commented_times) + 1)
+                    }
+                }, function (err) {
+                    if (err) reject(err);
+                    console.log('Page ' + page.username + ' was commented');
+                    resolve();
+                });
         }.bind(this));
     }
 }

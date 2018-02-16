@@ -153,7 +153,10 @@ class InstagramAPI {
             if (await this.driver.findElements(By.className("_mck9w")) == 0) {
                 return reject();
             };
-            this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
+            //this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
+            if (await this.driver.findElements(By.className("_mck9w a")) == 0) {
+                return reject();
+            };
             let posts = await this.driver.findElements(By.css('._mck9w a'));
             let postsArr = [];
             for (let i = 0; i < posts.length && i < config.postsToReview; i++) {
@@ -192,11 +195,11 @@ class InstagramAPI {
         }.bind(this));
     }
 
-    getPostData(post, users) {
+    getPostData(post, users, newUsers) {
         return new Promise(async function (resolve, reject) {
             // let posts = await this.dbase.getPostsToAnalyze();
             // let users = await this.dbase.getUsersToAnalyze() || [];
-            let newUsers = [];
+            // let newUsers = [];
             // for (let i = 0; i < posts.length; i++) {
             await this.driver.get(post.url);
             //if page has been removed then break
@@ -211,6 +214,7 @@ class InstagramAPI {
             let rating = Math.round(likes / datetime * 100) / 100;
 
             for (let j = 0; j < comments.length; j++) {
+                console.log('NEW USERS : ' +newUsers.length);
                 let username = await comments[j].findElement(By.tagName('a')).getText();
                 //get the users which are not author of post and which are not duplicate
                 if ((username !== post.username) && ((users.length > 0) ? !users.some(user => user.username === username) : true) && ((newUsers.length > 0) ? !newUsers.some((user) => user.username === username) : true)) {
@@ -218,7 +222,7 @@ class InstagramAPI {
                         username,
                         type: 'analyze'
                     }));
-                    console.log(this.login + ' : New username is:' + username);
+                    console.log(this.login + ' : New username is : ' + username);
                 }
             }
             return resolve({
@@ -243,7 +247,10 @@ class InstagramAPI {
                 return reject();
             };
             console.log(this.login + ' : Analyzing ' + user.username);
-            await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+            //await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+            if (await this.driver.findElements(By.className("_rf3jb")) == 0) {
+                return reject();
+            };
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
                 return resolve('follow');
             } else {
@@ -298,7 +305,10 @@ class InstagramAPI {
             if (await this.driver.findElements(By.className("_mck9w")) == 0) {
                 return reject();
             };
-            await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+            //await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
+            if (await this.driver.findElements(By.className("_rf3jb")) == 0) {
+                return reject();
+            };
             this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
             let posts = await this.driver.findElements(By.css('._mck9w a'));
             let postsArr = [];
@@ -382,7 +392,6 @@ class InstagramAPI {
                         console.log(this.login + ' : new page is : ' + await newPages[i].getText());
                     }
                 }
-                console.log(this.login + ' : new pages length: ' + pages.length);
                 try {
                     if (next) await this.driver.findElement(By.className('_r48jm')).click();
                 } catch (e) {
@@ -395,10 +404,10 @@ class InstagramAPI {
 
     async sleep(seconds, log = false) {
         try {
-            if (log) console.log(this.login + ' : Sleeping for ' + seconds + ' seconds.');
+            if (log) console.log(this.login + ' : SLEEPING FOR ' + seconds + ' SECONDS.');
             await this.driver.sleep(seconds * 1000)
         } catch (e) {
-            // console.log(e);
+             console.log(e);
         }
     }
 }
