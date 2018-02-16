@@ -264,7 +264,7 @@ class InstagramAPI {
             if (await this.driver.findElements(By.className("_gexxb")) != 0) {
                 //click follow button
                 await this.driver.findElement(By.className('_gexxb')).click();
-                await this.sleep(2);
+                await this.sleep(3);
                 //wait until requested text
                 // await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
                 return resolve(true);
@@ -311,7 +311,7 @@ class InstagramAPI {
                 await this.driver.get(postsArr[j]);
                 if ((await this.driver.findElements(By.className("coreSpriteHeartFull"))).length != []) continue;
                 this.driver.wait(until.elementLocated(By.className('coreSpriteHeartOpen')), config.timeout);
-                // await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
+                await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
                 await this.sleep(2);
             }
             console.log(this.login + ' : liked posts of ' + user.username);

@@ -474,7 +474,7 @@ var Automater = function () {
         key: 'triplePageActions',
         value: function () {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
-                var followed, commented, unfollowed, liked;
+                var liked, followed, commented, unfollowed;
                 return regeneratorRuntime.wrap(function _callee11$(_context11) {
                     while (1) {
                         switch (_context11.prev = _context11.next) {
@@ -488,84 +488,84 @@ var Automater = function () {
                                     break;
                                 }
 
-                                followed = _counter2.default.users.followed;
+                                liked = _counter2.default.users.liked;
 
                             case 4:
                                 _context11.next = 6;
-                                return _actions2.default.followUsers.call(this);
+                                return _actions2.default.likeUserPosts.call(this);
 
                             case 6:
-                                console.log(this.login + ' : Following users is done');
+                                console.log(this.login + ' : Liking user posts is done.');
 
                             case 7:
-                                if (followed >= _counter2.default.users.followed) {
+                                if (liked >= _counter2.default.users.liked) {
                                     _context11.next = 4;
                                     break;
                                 }
 
                             case 8:
                                 _context11.next = 10;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
 
                             case 10:
-                                commented = _counter2.default.posts.commented;
+                                followed = _counter2.default.users.followed;
 
                             case 11:
                                 _context11.next = 13;
-                                return _actions2.default.commentPosts.call(this);
+                                return _actions2.default.followUsers.call(this);
 
                             case 13:
-                                console.log(this.login + ' : Commenting posts is done.');
+                                console.log(this.login + ' : Following users is done');
 
                             case 14:
-                                if (commented <= _counter2.default.posts.commented) {
+                                if (followed >= _counter2.default.users.followed) {
                                     _context11.next = 11;
                                     break;
                                 }
 
                             case 15:
                                 _context11.next = 17;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
 
                             case 17:
-                                unfollowed = _counter2.default.users.unfollowed;
+                                commented = _counter2.default.posts.commented;
 
                             case 18:
                                 _context11.next = 20;
-                                return _actions2.default.unfollowUsers.call(this);
+                                return _actions2.default.commentPosts.call(this);
 
                             case 20:
-                                console.log(this.login + ' : Unfollowing users is done.');
+                                console.log(this.login + ' : Commenting posts is done.');
 
                             case 21:
-                                if (unfollowed >= _counter2.default.users.unfollowed) {
+                                if (commented >= _counter2.default.posts.commented) {
                                     _context11.next = 18;
                                     break;
                                 }
 
                             case 22:
                                 _context11.next = 24;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
 
                             case 24:
-                                liked = _counter2.default.users.liked;
+                                unfollowed = _counter2.default.users.unfollowed;
 
                             case 25:
                                 _context11.next = 27;
-                                return _actions2.default.likeUserPosts.call(this);
+                                return _actions2.default.unfollowUsers.call(this);
 
                             case 27:
-                                console.log(this.login + ' : Liking user posts is done.');
+                                console.log(this.login + ' : Unfollowing users is done.');
 
                             case 28:
-                                if (liked >= _counter2.default.users.liked) {
+                                if (unfollowed >= _counter2.default.users.unfollowed) {
                                     _context11.next = 25;
                                     break;
                                 }
 
                             case 29:
                                 _context11.next = 31;
-                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
+                                return this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
 
                             case 31:
                                 _context11.next = 2;

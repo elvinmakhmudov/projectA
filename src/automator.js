@@ -101,6 +101,15 @@ class Automater {
         await this.instagram.logIn();
         while (true) {
 
+            let liked = counter.users.liked;
+            do {
+                await actions.likeUserPosts.call(this);
+                console.log(this.login + ' : Liking user posts is done.');
+            }
+            while (liked >= counter.users.liked);
+            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
+
+            
             let followed = counter.users.followed;
             do {
                 await actions.followUsers.call(this);
@@ -124,13 +133,6 @@ class Automater {
             } while (unfollowed >= counter.users.unfollowed);
             await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
 
-            let liked = counter.users.liked;
-            do {
-                await actions.likeUserPosts.call(this);
-                console.log(this.login + ' : Liking user posts is done.');
-            }
-            while (liked >= counter.users.liked);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
 
             //sleep the rest of the time after working hours
             // await this.instagram.sleep((24 - config.workingHours) * 60 * 60);
