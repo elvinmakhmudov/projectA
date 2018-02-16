@@ -89,7 +89,7 @@ exports.default = {
                         case 0:
                             return _context3.abrupt('return', new Promise(function () {
                                 var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(resolve, reject) {
-                                    var explorePages, i, k, postsFor, posts, j, l, rating;
+                                    var explorePages, oldPosts, i, k, posts, j, l, rating;
                                     return regeneratorRuntime.wrap(function _callee2$(_context2) {
                                         while (1) {
                                             switch (_context2.prev = _context2.next) {
@@ -111,117 +111,115 @@ exports.default = {
 
                                                 case 7:
                                                     console.log(this.login + ' : Pages to explore : ' + explorePages.length);
-                                                    _context2.next = 13;
-                                                    break;
+                                                    _context2.next = 10;
+                                                    return _post2.default.explore();
 
                                                 case 10:
-                                                    _context2.prev = 10;
+                                                    oldPosts = _context2.sent;
+                                                    _context2.next = 16;
+                                                    break;
+
+                                                case 13:
+                                                    _context2.prev = 13;
                                                     _context2.t0 = _context2['catch'](1);
 
                                                     console.log(_context2.t0);
 
-                                                case 13:
+                                                case 16:
                                                     i = 0, k = 0;
 
-                                                case 14:
+                                                case 17:
                                                     if (!(k < explorePages.length && i < explorePages.length)) {
-                                                        _context2.next = 56;
+                                                        _context2.next = 55;
                                                         break;
                                                     }
 
-                                                    _context2.prev = 15;
-                                                    _context2.next = 18;
+                                                    _context2.prev = 18;
+                                                    _context2.next = 21;
                                                     return this.instagram.goToUsername(explorePages[i].username);
 
-                                                case 18:
-                                                    _context2.next = 20;
-                                                    return _post2.default.postsFor(explorePages[i]);
+                                                case 21:
+                                                    _context2.next = 23;
+                                                    return this.instagram.getNewPosts(explorePages[i], oldPosts, 'comment');
 
-                                                case 20:
-                                                    postsFor = _context2.sent;
-
-                                                    console.log(this.login + ' : post to analyze for a user is : ' + postsFor.length);
-                                                    _context2.next = 24;
-                                                    return this.instagram.getNewPosts(explorePages[i], postsFor, 'comment');
-
-                                                case 24:
+                                                case 23:
                                                     posts = _context2.sent;
 
                                                     console.log(this.login + ' : posts length is : ' + posts.length);
                                                     j = 0, l = 0;
 
-                                                case 27:
+                                                case 26:
                                                     if (!(j < posts.length && l < posts.length)) {
-                                                        _context2.next = 42;
+                                                        _context2.next = 41;
                                                         break;
                                                     }
 
-                                                    _context2.prev = 28;
-                                                    _context2.next = 31;
+                                                    _context2.prev = 27;
+                                                    _context2.next = 30;
                                                     return this.instagram.getRating(posts[j]);
 
-                                                case 31:
+                                                case 30:
                                                     rating = _context2.sent;
 
                                                     posts[j].rating = rating;
                                                     l++;
-                                                    _context2.next = 39;
+                                                    _context2.next = 38;
                                                     break;
 
-                                                case 36:
-                                                    _context2.prev = 36;
-                                                    _context2.t1 = _context2['catch'](28);
+                                                case 35:
+                                                    _context2.prev = 35;
+                                                    _context2.t1 = _context2['catch'](27);
 
                                                     console.log(_context2.t1);
 
-                                                case 39:
+                                                case 38:
                                                     j++;
-                                                    _context2.next = 27;
+                                                    _context2.next = 26;
                                                     break;
 
-                                                case 42:
-                                                    _context2.next = 44;
+                                                case 41:
+                                                    _context2.next = 43;
                                                     return _post2.default.insertMany(posts);
 
-                                                case 44:
+                                                case 43:
                                                     k++;
                                                     console.log(this.login + ' : New posts to comment size : ' + (_counter2.default.posts.toComment += l));
-                                                    _context2.next = 51;
+                                                    _context2.next = 50;
                                                     break;
 
-                                                case 48:
-                                                    _context2.prev = 48;
-                                                    _context2.t2 = _context2['catch'](15);
+                                                case 47:
+                                                    _context2.prev = 47;
+                                                    _context2.t2 = _context2['catch'](18);
 
                                                     // await pagerepo.remove(explorePages[i])
                                                     console.log(_context2.t2);
 
-                                                case 51:
-                                                    _context2.next = 53;
+                                                case 50:
+                                                    _context2.next = 52;
                                                     return _page2.default.setReviewed(explorePages[i]);
 
-                                                case 53:
+                                                case 52:
                                                     i++;
-                                                    _context2.next = 14;
+                                                    _context2.next = 17;
                                                     break;
 
-                                                case 56:
+                                                case 55:
                                                     // await pagerepo.insertMany(explorePages)
                                                     console.log(this.login + ' : inserting explore pages');
                                                     return _context2.abrupt('return', resolve());
 
-                                                case 58:
+                                                case 57:
                                                 case 'end':
                                                     return _context2.stop();
                                             }
                                         }
-                                    }, _callee2, this, [[1, 10], [15, 48], [28, 36]]);
+                                    }, _callee2, this, [[1, 13], [18, 47], [27, 35]]);
                                 }));
 
                                 return function (_x, _x2) {
                                     return _ref3.apply(this, arguments);
                                 };
-                            }()));
+                            }().bind(this)));
 
                         case 1:
                         case 'end':
@@ -391,7 +389,7 @@ exports.default = {
                                                 case 7:
                                                     console.log(this.login + ' : Posts to analyze : ' + posts.length);
                                                     _context6.next = 10;
-                                                    return _user2.default.analyze();
+                                                    return _user2.default.all();
 
                                                 case 10:
                                                     _context6.t0 = _context6.sent;
@@ -422,7 +420,7 @@ exports.default = {
 
                                                 case 22:
                                                     if (!(j < posts.length && i < posts.length)) {
-                                                        _context6.next = 41;
+                                                        _context6.next = 40;
                                                         break;
                                                     }
 
@@ -432,62 +430,60 @@ exports.default = {
 
                                                 case 26:
                                                     postData = _context6.sent;
-
-                                                    newUsers.push.apply(newUsers, postData.newUsers);
-                                                    _context6.next = 30;
+                                                    _context6.next = 29;
                                                     return _post2.default.setReviewed(posts[i], postData);
 
-                                                case 30:
+                                                case 29:
                                                     j++;
-                                                    _context6.next = 38;
+                                                    _context6.next = 37;
                                                     break;
 
-                                                case 33:
-                                                    _context6.prev = 33;
+                                                case 32:
+                                                    _context6.prev = 32;
                                                     _context6.t2 = _context6['catch'](23);
 
                                                     console.log(_context6.t2);
-                                                    _context6.next = 38;
+                                                    _context6.next = 37;
                                                     return _post2.default.remove(posts[i]);
 
-                                                case 38:
+                                                case 37:
                                                     i++;
                                                     _context6.next = 22;
                                                     break;
 
-                                                case 41:
+                                                case 40:
                                                     if (!(newUsers.length > 0)) {
-                                                        _context6.next = 54;
+                                                        _context6.next = 53;
                                                         break;
                                                     }
 
-                                                    _context6.prev = 42;
-                                                    _context6.next = 45;
+                                                    _context6.prev = 41;
+                                                    _context6.next = 44;
                                                     return _user2.default.insertMany(newUsers);
 
-                                                case 45:
+                                                case 44:
                                                     console.log(this.login + ' : ' + users.length + ' users found.');
                                                     console.log(this.login + ' : New users to analyze size : ' + (_counter2.default.users.toAnalyze += newUsers.length));
                                                     newUsers.length = 0;
                                                     users.length = 0;
-                                                    _context6.next = 54;
+                                                    _context6.next = 53;
                                                     break;
 
-                                                case 51:
-                                                    _context6.prev = 51;
-                                                    _context6.t3 = _context6['catch'](42);
+                                                case 50:
+                                                    _context6.prev = 50;
+                                                    _context6.t3 = _context6['catch'](41);
 
                                                     console.log(_context6.t3);
 
-                                                case 54:
+                                                case 53:
                                                     return _context6.abrupt('return', resolve());
 
-                                                case 55:
+                                                case 54:
                                                 case 'end':
                                                     return _context6.stop();
                                             }
                                         }
-                                    }, _callee6, this, [[1, 16], [23, 33], [42, 51]]);
+                                    }, _callee6, this, [[1, 16], [23, 32], [41, 50]]);
                                 }));
 
                                 return function (_x5, _x6) {
@@ -758,7 +754,7 @@ exports.default = {
                             i = 0, j = 0;
 
                         case 16:
-                            if (!(j < users.length || i < users.length)) {
+                            if (!(j < users.length && i < users.length)) {
                                 _context11.next = 34;
                                 break;
                             }

@@ -149,14 +149,14 @@ class InstagramAPI {
     getNewPosts(page, postsAnalyze, type) {
         return new Promise(async function (resolve, reject) {
             //fetch posts
-            if (await this.driver.findElements(By.className("_kcrwx")) != 0) return reject();
+            // if (await this.driver.findElements(By.className("_kcrwx")) != 0) return reject();
             if (await this.driver.findElements(By.className("_mck9w")) == 0) {
                 return reject();
             };
-            //this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
-            if (await this.driver.findElements(By.className("_mck9w a")) == 0) {
-                return reject();
-            };
+            // this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
+            // if (await this.driver.findElements(By.className("_mck9w a")) == 0) {
+            //     return reject();
+            // };
             let posts = await this.driver.findElements(By.css('._mck9w a'));
             let postsArr = [];
             for (let i = 0; i < posts.length && i < config.postsToReview; i++) {
@@ -214,7 +214,6 @@ class InstagramAPI {
             let rating = Math.round(likes / datetime * 100) / 100;
 
             for (let j = 0; j < comments.length; j++) {
-                console.log('NEW USERS : ' +newUsers.length);
                 let username = await comments[j].findElement(By.tagName('a')).getText();
                 //get the users which are not author of post and which are not duplicate
                 if ((username !== post.username) && ((users.length > 0) ? !users.some(user => user.username === username) : true) && ((newUsers.length > 0) ? !newUsers.some((user) => user.username === username) : true)) {
@@ -320,9 +319,11 @@ class InstagramAPI {
                 (j < config.userPostsToLike) && (j < postsArr.length); j++) {
                 await this.driver.get(postsArr[j]);
                 if ((await this.driver.findElements(By.className("coreSpriteHeartFull"))).length != []) continue;
-                this.driver.wait(until.elementLocated(By.className('coreSpriteHeartOpen')), config.timeout);
-                await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
-                await this.sleep(2);
+                // this.driver.wait(until.elementLocated(By.className('coreSpriteHeartOpen')), config.timeout);
+                if ((await this.driver.findElements(By.className("coreSpriteHeartOpen"))).length != []) {
+                    await this.driver.findElement(By.className('coreSpriteHeartOpen')).click();
+                    await this.sleep(2);
+                };
             }
             console.log(this.login + ' : liked posts of ' + user.username);
             return resolve();
@@ -407,7 +408,7 @@ class InstagramAPI {
             if (log) console.log(this.login + ' : SLEEPING FOR ' + seconds + ' SECONDS.');
             await this.driver.sleep(seconds * 1000)
         } catch (e) {
-             console.log(e);
+            console.log(e);
         }
     }
 }

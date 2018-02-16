@@ -14,6 +14,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 var config = require('../../config.json');
 exports.default = {
+    all: function all() {
+        return _user2.default.find({});
+    },
     analyze: function analyze(limit) {
         return _user2.default.find({
             type: 'analyze',
@@ -28,7 +31,7 @@ exports.default = {
     },
     unfollow: function unfollow(limit) {
         var d = new Date();
-        d.setDate(d.getDate() - 1);
+        d.setDate(d.getDate() - 7);
         var yesterdayInMseconds = Date.now() - d.getMilliseconds();
         return _user2.default.find({
             type: 'followed',

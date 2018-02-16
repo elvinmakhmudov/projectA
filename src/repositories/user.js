@@ -2,6 +2,10 @@ const config = require('../../config.json');
 import User from '../models/user';
 
 export default {
+    all() {
+        return User.find({});
+    },
+
     analyze(limit) {
         return User.find({
             type: 'analyze',
@@ -18,7 +22,7 @@ export default {
 
     unfollow(limit) {
         var d = new Date();
-        d.setDate(d.getDate() - 1);
+        d.setDate(d.getDate() - 7);
         let yesterdayInMseconds = Date.now() - d.getMilliseconds();
         return User.find({
             type: 'followed',

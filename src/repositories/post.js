@@ -40,6 +40,24 @@ export default {
         }).limit(limit || config.batchUserLimitCount);
     },
 
+    async explore(limit) {
+        let posts = await Post.find({
+            type: 'analyze',
+            reviewed: false
+        }).populate({
+            path: 'page',
+            match: {
+                type: 'explore'
+            }
+        }).sort({
+            rating: -1
+        });
+        posts = await posts.filter(function (post) {
+            return post.page.length != [] ? true : false;
+        });
+        return posts;
+    },
+
     async postsFor(page) {
         return await Post.find({
             reviewed: false,
@@ -59,7 +77,7 @@ export default {
         return await Post.remove({
             url: post.url
         }, function (err) {
-             if (err) console.log(err);
+            if (err) console.log(err);
             console.log('Post was removed');
         })
     },
@@ -106,8 +124,7 @@ export default {
                 }
             }, function (err, post) {
                 if (err) return reject(err);
-                console.log('Post type was set to ' + type);
-                resolve();
+                return resolve();
             });
         });
     },
