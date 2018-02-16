@@ -100,7 +100,7 @@ export default {
         return new Promise(async function (resolve, reject) {
             let posts, users;
             try {
-                posts = await postrepo.analyze(30);
+                posts = await postrepo.analyze(10);
                 if ((typeof posts === "undefined") || posts.length === 0) {
                     // await this.instagram.sleep(config.sleepEveryIteration, true);
                     return reject(this.login + ' : ERROR ON ANALYZING POSTS. POSTS is undefined or posts.length is 0');
@@ -141,7 +141,7 @@ export default {
         return new Promise(async function (resolve, reject) {
             let users;
             try {
-                users = await userrepo.analyze(30) || [];
+                users = await userrepo.analyze(10) || [];
                 if ((typeof users === "undefined") || users.length === 0) {
                     // await this.instagram.sleep(config.sleepEveryIteration, true);
                     return reject(this.login + ' : ERROR ON ANALYZING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0');
@@ -194,7 +194,7 @@ export default {
         // await this.instagram.unfollowUsers();
         let users;
         try {
-            users = await userrepo.unfollow();
+            users = await userrepo.unfollow(this.login);
             if ((typeof users === "undefined") || users.length === 0) {
                 await this.instagram.sleep(config.sleepEveryIteration, true);
                 return;

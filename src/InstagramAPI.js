@@ -204,7 +204,7 @@ class InstagramAPI {
             await this.driver.get(post.url);
             //if page has been removed then break
             if (await this.driver.findElements(By.className("error-container")) != 0 || await this.driver.findElements(By.className("_ezgzd")) == 0) {
-                return reject();
+                return reject('Post contains error-container or does not contain comments class.');
             };
             await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
             let comments = await this.driver.findElements(By.className("_ezgzd"));
@@ -215,13 +215,27 @@ class InstagramAPI {
 
             for (let j = 0; j < comments.length; j++) {
                 let username = await comments[j].findElement(By.tagName('a')).getText();
-                //get the users which are not author of post and which are not duplicate
-                if ((username !== post.username) && ((users.length > 0) ? !users.some(user => user.username === username) : true) && ((newUsers.length > 0) ? !newUsers.some((user) => user.username === username) : true)) {
-                    newUsers.push(await new User({
-                        username,
-                        type: 'analyze'
-                    }));
-                    console.log(this.login + ' : New username is : ' + username);
+                try {
+                    // console.log('userlength : ' + users.length );
+                    // console.log('username : ' + username);
+                    // console.log('usersome is : ' + !await users.some(user => user.username === username));
+                    // users.some(function (user) {
+                    //     console.log('user is : ' + user.username + ' , username is : ' + username);
+                    //     return user.username === username
+                    // })
+                    //get the users which are not author of post and which are not duplicate
+                    if ((username !== post.username) && ((users.length > 0) ? (!users.some(user => user.username === username)) : true) && ((newUsers.length > 0) ? (!newUsers.some((user) => user.username === username)) : true)) {
+                        for (let k = 0; k < config.toExclude.length; k++) {
+                            if (username.indexOf(config.toExclude[k]) !== -1) throw (this.login + ' : ERROR, STRING COTNAINS FORBIDDEN WORD');
+                            newUsers.push(await new User({
+                                username,
+                                type: 'analyze'
+                            }));
+                        }
+                        console.log(this.login + ' : New username is : ' + username);
+                    }
+                } catch (e) {
+                    console.log(e);
                 }
             }
             return resolve({

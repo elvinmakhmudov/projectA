@@ -250,7 +250,7 @@ exports.default = {
                                             switch (_context7.prev = _context7.next) {
                                                 case 0:
                                                     _context7.next = 2;
-                                                    return _post2.default.insertMany(postsArr, {
+                                                    return _post2.default.collection.insertMany(postsArr, {
                                                         ordered: false
                                                     }, function (err) {
                                                         if (err) return reject(err);

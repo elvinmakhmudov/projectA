@@ -641,7 +641,7 @@ var InstagramAPI = function () {
                                         break;
                                     }
 
-                                    return _context11.abrupt('return', reject());
+                                    return _context11.abrupt('return', reject('Post contains error-container or does not contain comments class.'));
 
                                 case 13:
                                     ;
@@ -707,7 +707,7 @@ var InstagramAPI = function () {
                                     datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
                                     rating = Math.round(likes / datetime * 100) / 100;
                                     _loop2 = /*#__PURE__*/regeneratorRuntime.mark(function _loop2(j) {
-                                        var username;
+                                        var username, k;
                                         return regeneratorRuntime.wrap(function _loop2$(_context10) {
                                             while (1) {
                                                 switch (_context10.prev = _context10.next) {
@@ -717,36 +717,69 @@ var InstagramAPI = function () {
 
                                                     case 2:
                                                         username = _context10.sent;
+                                                        _context10.prev = 3;
 
                                                         if (!(username !== post.username && (users.length > 0 ? !users.some(function (user) {
                                                             return user.username === username;
                                                         }) : true) && (newUsers.length > 0 ? !newUsers.some(function (user) {
                                                             return user.username === username;
                                                         }) : true))) {
-                                                            _context10.next = 10;
+                                                            _context10.next = 18;
                                                             break;
                                                         }
 
+                                                        k = 0;
+
+                                                    case 6:
+                                                        if (!(k < config.toExclude.length)) {
+                                                            _context10.next = 17;
+                                                            break;
+                                                        }
+
+                                                        if (!(username.indexOf(config.toExclude[k]) !== -1)) {
+                                                            _context10.next = 9;
+                                                            break;
+                                                        }
+
+                                                        throw _this2.login + ' : ERROR, STRING COTNAINS FORBIDDEN WORD';
+
+                                                    case 9:
                                                         _context10.t0 = newUsers;
-                                                        _context10.next = 7;
+                                                        _context10.next = 12;
                                                         return new _user2.default({
                                                             username: username,
                                                             type: 'analyze'
                                                         });
 
-                                                    case 7:
+                                                    case 12:
                                                         _context10.t1 = _context10.sent;
 
                                                         _context10.t0.push.call(_context10.t0, _context10.t1);
 
+                                                    case 14:
+                                                        k++;
+                                                        _context10.next = 6;
+                                                        break;
+
+                                                    case 17:
                                                         console.log(_this2.login + ' : New username is : ' + username);
 
-                                                    case 10:
+                                                    case 18:
+                                                        _context10.next = 23;
+                                                        break;
+
+                                                    case 20:
+                                                        _context10.prev = 20;
+                                                        _context10.t2 = _context10['catch'](3);
+
+                                                        console.log(_context10.t2);
+
+                                                    case 23:
                                                     case 'end':
                                                         return _context10.stop();
                                                 }
                                             }
-                                        }, _loop2, _this2);
+                                        }, _loop2, _this2, [[3, 20]]);
                                     });
                                     j = 0;
 

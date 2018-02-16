@@ -137,7 +137,7 @@ exports.default = {
                                             switch (_context5.prev = _context5.next) {
                                                 case 0:
                                                     _context5.next = 2;
-                                                    return _page2.default.insertMany(pageArr, function (err) {
+                                                    return _page2.default.collection.insertMany(pageArr, { ordered: false }, function (err) {
                                                         if (err) reject(err);
                                                         console.log(pageArr.length + ' pages were added');
                                                         resolve();

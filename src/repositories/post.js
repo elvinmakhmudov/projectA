@@ -84,7 +84,7 @@ export default {
 
     async insertMany(postsArr) {
         return new Promise(async function (resolve, reject) {
-            return await Post.insertMany(postsArr, {
+            return await Post.collection.insertMany(postsArr, {
                 ordered: false
             }, function (err) {
                 if (err) return reject(err);

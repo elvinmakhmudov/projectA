@@ -374,7 +374,7 @@ exports.default = {
                                                     posts = void 0, users = void 0;
                                                     _context6.prev = 1;
                                                     _context6.next = 4;
-                                                    return _post2.default.analyze(30);
+                                                    return _post2.default.analyze(10);
 
                                                 case 4:
                                                     posts = _context6.sent;
@@ -521,7 +521,7 @@ exports.default = {
                                                     users = void 0;
                                                     _context8.prev = 1;
                                                     _context8.next = 4;
-                                                    return _user2.default.analyze(30);
+                                                    return _user2.default.analyze(10);
 
                                                 case 4:
                                                     _context8.t0 = _context8.sent;
@@ -723,7 +723,7 @@ exports.default = {
                             users = void 0;
                             _context11.prev = 1;
                             _context11.next = 4;
-                            return _user2.default.unfollow();
+                            return _user2.default.unfollow(this.login);
 
                         case 4:
                             users = _context11.sent;

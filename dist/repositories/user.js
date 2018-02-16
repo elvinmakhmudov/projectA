@@ -29,7 +29,7 @@ exports.default = {
             reviewed: true
         }).limit(limit || config.batchUserLimitCount);
     },
-    unfollow: function unfollow(limit) {
+    unfollow: function unfollow(username, limit) {
         var d = new Date();
         d.setDate(d.getDate() - 7);
         var yesterdayInMseconds = Date.now() - d.getMilliseconds();
@@ -38,7 +38,8 @@ exports.default = {
             reviewed: true,
             followed_at: {
                 $lte: yesterdayInMseconds
-            }
+            },
+            followed_by: username
         }).limit(limit || config.batchUserLimitCount);
     },
     like: function like(limit) {
@@ -60,8 +61,10 @@ exports.default = {
                                             switch (_context.prev = _context.next) {
                                                 case 0:
                                                     _context.next = 2;
-                                                    return _user2.default.insertMany(newUsers, function (err, users) {
-                                                        if (err) return reject(err);
+                                                    return _user2.default.collection.insertMany(newUsers, {
+                                                        ordered: false
+                                                    }, function (err, users) {
+                                                        // if (err) return reject(err);
                                                         console.log(newUsers.length + ' users were added to collection');
                                                         return resolve();
                                                     });

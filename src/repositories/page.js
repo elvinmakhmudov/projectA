@@ -49,7 +49,7 @@ export default {
 
     async insertMany(pageArr) {
         return new Promise(async function (resolve, reject) {
-            return await Page.insertMany(pageArr, function (err) {
+            return await Page.collection.insertMany(pageArr,{ordered:false}, function (err) {
                 if (err) reject(err);
                 console.log(pageArr.length + ' pages were added');
                 resolve();

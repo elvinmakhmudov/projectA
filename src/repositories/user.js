@@ -20,7 +20,7 @@ export default {
         }).limit(limit || config.batchUserLimitCount);
     },
 
-    unfollow(limit) {
+    unfollow(username, limit) {
         var d = new Date();
         d.setDate(d.getDate() - 7);
         let yesterdayInMseconds = Date.now() - d.getMilliseconds();
@@ -29,7 +29,8 @@ export default {
             reviewed: true,
             followed_at: {
                 $lte: yesterdayInMseconds
-            }
+            },
+            followed_by: username
         }).limit(limit || config.batchUserLimitCount);
     },
 
@@ -42,8 +43,10 @@ export default {
 
     async insertMany(newUsers) {
         return new Promise(async function (resolve, reject) {
-            await User.insertMany(newUsers, function (err, users) {
-                if (err) return reject(err);
+            await User.collection.insertMany(newUsers, {
+                ordered: false
+            }, function (err, users) {
+                // if (err) return reject(err);
                 console.log(newUsers.length + ' users were added to collection');
                 return resolve();
             });
@@ -61,7 +64,7 @@ export default {
                     reviewed_at: Date.now(),
                     followed_by: by
                 }
-            }, function(err, users) {
+            }, function (err, users) {
                 if (err) return reject(err);
                 return resolve();
             });
@@ -78,7 +81,7 @@ export default {
                     reviewed: true,
                     reviewed_at: Date.now(),
                 }
-            }, function(err, users) {
+            }, function (err, users) {
                 if (err) return reject(err);
                 return resolve();
             });
@@ -89,7 +92,7 @@ export default {
         return User.remove({
             username: user.username
         }, function (err) {
-             if (err) console.log(err);
+            if (err) console.log(err);
             console.log(user.username + ' was removed');
         })
     },
