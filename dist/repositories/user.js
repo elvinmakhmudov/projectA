@@ -21,7 +21,7 @@ exports.default = {
         return _user2.default.find({
             type: 'analyze',
             reviewed: false
-        });
+        }).limit(limit || config.batchUserLimitCount);
     },
     follow: function follow(limit) {
         return _user2.default.find({
@@ -32,11 +32,11 @@ exports.default = {
     unfollow: function unfollow(username, limit) {
         var d = new Date();
         d.setDate(d.getDate() - 7);
-        var yesterdayInMseconds = Date.now() - d.getMilliseconds();
+        var yesterdayInMseconds = Date.now() - d.getTime();
         return _user2.default.find({
             type: 'followed',
             reviewed: true,
-            followed_at: {
+            reviewed_at: {
                 $lte: yesterdayInMseconds
             },
             followed_by: username
@@ -118,7 +118,7 @@ exports.default = {
                                                             reviewed_at: Date.now(),
                                                             followed_by: by
                                                         }
-                                                    }, function (err, users) {
+                                                    }, function (err, user) {
                                                         if (err) return reject(err);
                                                         return resolve();
                                                     });
@@ -171,7 +171,7 @@ exports.default = {
                                                             reviewed: true,
                                                             reviewed_at: Date.now()
                                                         }
-                                                    }, function (err, users) {
+                                                    }, function (err, user) {
                                                         if (err) return reject(err);
                                                         return resolve();
                                                     });

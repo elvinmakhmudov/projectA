@@ -16,7 +16,7 @@ export default {
 
     async private(limit) {
         return new Promise(async function (resolve, reject) {
-            return await Page.findRandom({ reviewed: false, type: 'private' }, {}, { limit: limit || config.batchUserLimitCount }, function (err, results) {
+            return await Page.findRandom({type: 'private' }, {}, { limit: limit || config.batchUserLimitCount }, function (err, results) {
                 if (err) return reject(err);
                 return resolve(results);
             });
@@ -37,9 +37,8 @@ export default {
     async explore(limit) {
         var d = new Date();
         d.setDate(d.getDate() - config.oldestPageInDays);
-        let yesterdayInMseconds = Date.now() - d.getMilliseconds();
+        let yesterdayInMseconds = Date.now() - d.getTime();
         return Page.find({
-            reviewed: false,
             type: 'explore',
             reviewed_at: {
                 $lt: yesterdayInMseconds
@@ -87,7 +86,6 @@ export default {
                     }
                 }, function (err) {
                     if (err) reject(err);
-                    console.log('Page ' + page.username + ' was commented');
                     resolve();
                 });
         }.bind(this));

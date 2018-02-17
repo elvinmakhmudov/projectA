@@ -30,6 +30,10 @@ var _cookie = require('./models/cookie');
 
 var _cookie2 = _interopRequireDefault(_cookie);
 
+var _logger = require('./logger');
+
+var _logger2 = _interopRequireDefault(_logger);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -42,7 +46,8 @@ var _require = require('selenium-webdriver'),
     Builder = _require.Builder,
     By = _require.By,
     until = _require.until,
-    Key = _require.Key;
+    Key = _require.Key,
+    logging = _require.logging;
 
 var InstagramAPI = function () {
     function InstagramAPI(login, password, comments) {
@@ -51,12 +56,18 @@ var InstagramAPI = function () {
         this.login = login || config.instagram.login;
         this.password = password || config.instagram.password;
         this.comments = comments || config.comments;
+        this.logger = new _logger2.default(this.login);
     }
 
     _createClass(InstagramAPI, [{
         key: 'init',
         value: function init() {
             var options = config.headless ? new _chrome2.default.Options().headless() : new _chrome2.default.Options();
+            // let loggingPrefs = new logging.Preferences();
+            // loggingPrefs.setLevel(logging.Type.PERFORMANCE, logging.Level.OFF);
+            // options.setLoggingPrefs(loggingPrefs);
+            options.addArguments('--log-level=3');
+
             this.driver = new Builder().forBrowser(config.browser).setChromeOptions(options).build();
             this.dbase = _database2.default.init();
             return this;
@@ -91,7 +102,7 @@ var InstagramAPI = function () {
 
                                     _context.next = 9;
                                     return this.cookieLogIn(cookies).then(function () {
-                                        console.log(this.login + ' : Logged in with Cookies');
+                                        this.logger.update('Logged in with Cookies');
                                         return resolve();
                                     }.bind(this));
 
@@ -122,7 +133,7 @@ var InstagramAPI = function () {
                                     });
 
                                 case 21:
-                                    console.log(this.login + ' : Logged in');
+                                    this.logger.update('Logged in');
                                     //set cookies 
                                     _context.next = 24;
                                     return this.setCookies(this.login);
@@ -318,7 +329,7 @@ var InstagramAPI = function () {
                 this.driver.sleep(2000);
                 this.driver.findElement(By.partialLinkText('following')).click();
                 this.driver.sleep(2000);
-                console.log(this.login + ' : Getting followings');
+                this.logger.update('Getting followings');
                 var scrollElement = this.driver.wait(until.elementLocated(By.className('_2g7d5 notranslate _o5iw8')), config.timeout);
                 scrollElement.then(function () {
                     this.scrollFollowings(0).then(function () {
@@ -369,7 +380,7 @@ var InstagramAPI = function () {
     }, {
         key: 'goToUsername',
         value: function goToUsername(username) {
-            console.log(this.login + ' : Reviewing ' + username);
+            // this.logger.update('Reviewing ' + username);
             return this.driver.get(config.urls.main + username);
         }
     }, {
@@ -476,8 +487,8 @@ var InstagramAPI = function () {
             }().bind(this));
         }
     }, {
-        key: 'getRating',
-        value: function getRating(post) {
+        key: 'getRatingAndDate',
+        value: function getRatingAndDate(post) {
             return new Promise(function () {
                 var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(resolve, reject) {
                     var newUsers, comments, likes, dateattr, datetime, rating;
@@ -584,7 +595,10 @@ var InstagramAPI = function () {
                                     dateattr = _context9.t6;
                                     datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60));
                                     rating = Math.round(likes / datetime * 100) / 100;
-                                    return _context9.abrupt('return', resolve(rating));
+                                    return _context9.abrupt('return', resolve({
+                                        datetime: datetime,
+                                        rating: rating
+                                    }));
 
                                 case 45:
                                 case 'end':
@@ -641,7 +655,7 @@ var InstagramAPI = function () {
                                         break;
                                     }
 
-                                    return _context11.abrupt('return', reject('Post contains error-container or does not contain comments class.'));
+                                    return _context11.abrupt('return', reject('Post contains error-container or does not contain comments.'));
 
                                 case 13:
                                     ;
@@ -762,7 +776,7 @@ var InstagramAPI = function () {
                                                         break;
 
                                                     case 17:
-                                                        console.log(_this2.login + ' : New username is : ' + username);
+                                                        _this2.logger.update('New username is : ' + username);
 
                                                     case 18:
                                                         _context10.next = 23;
@@ -856,7 +870,7 @@ var InstagramAPI = function () {
 
                                                     case 7:
                                                         ;
-                                                        console.log(this.login + ' : Analyzing ' + user.username);
+                                                        this.logger.update('Analyzing ' + user.username);
                                                         //await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
                                                         _context12.next = 11;
                                                         return this.driver.findElements(By.className("_rf3jb"));
@@ -880,16 +894,18 @@ var InstagramAPI = function () {
                                                         _context12.t2 = _context12.sent;
 
                                                         if (!(_context12.t2 != 0)) {
-                                                            _context12.next = 22;
+                                                            _context12.next = 23;
                                                             break;
                                                         }
 
+                                                        this.logger.update('to follow');
                                                         return _context12.abrupt('return', resolve('follow'));
 
-                                                    case 22:
+                                                    case 23:
+                                                        this.logger.update('to like');
                                                         return _context12.abrupt('return', resolve('like'));
 
-                                                    case 23:
+                                                    case 25:
                                                     case 'end':
                                                         return _context12.stop();
                                                 }
@@ -963,7 +979,7 @@ var InstagramAPI = function () {
 
                                                     case 13:
                                                         ;
-                                                        console.log(this.login + ' : Following ' + user.username);
+                                                        this.logger.update('Following ' + user.username);
                                                         // await this.driver.wait(until.elementLocated(By.className("r9b8f")), config.timeout);
                                                         //follow
                                                         _context14.next = 17;
@@ -1061,7 +1077,7 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        console.log(this.login + ' : Unfollowing ' + user.username);
+                                                        this.logger.update('Unfollowing ' + user.username);
                                                         _context16.next = 15;
                                                         return this.driver.findElement(By.className('_t78yp')).click();
 
@@ -1236,7 +1252,7 @@ var InstagramAPI = function () {
                                                         break;
 
                                                     case 51:
-                                                        console.log(this.login + ' : liked posts of ' + user.username);
+                                                        this.logger.update('liked posts of ' + user.username);
                                                         return _context18.abrupt('return', resolve());
 
                                                     case 53:
@@ -1507,7 +1523,7 @@ var InstagramAPI = function () {
                                                                             if (!(username && (explorePages.length > 0 ? !explorePages.some(function (page) {
                                                                                 return page.username === username;
                                                                             }) : true))) {
-                                                                                _context22.next = 24;
+                                                                                _context22.next = 23;
                                                                                 break;
                                                                             }
 
@@ -1532,18 +1548,17 @@ var InstagramAPI = function () {
                                                                             return _context22.abrupt('return', 'continue');
 
                                                                         case 17:
-                                                                            _context22.t2 = console;
-                                                                            _context22.t3 = _this3.login + ' : new page is : ';
-                                                                            _context22.next = 21;
+                                                                            _context22.t2 = _this3.logger;
+                                                                            _context22.next = 20;
                                                                             return newPages[i].getText();
 
-                                                                        case 21:
-                                                                            _context22.t4 = _context22.sent;
-                                                                            _context22.t5 = _context22.t3 + _context22.t4;
+                                                                        case 20:
+                                                                            _context22.t3 = _context22.sent;
+                                                                            _context22.t4 = 'new page is : ' + _context22.t3;
 
-                                                                            _context22.t2.log.call(_context22.t2, _context22.t5);
+                                                                            _context22.t2.update.call(_context22.t2, _context22.t4);
 
-                                                                        case 24:
+                                                                        case 23:
                                                                         case 'end':
                                                                             return _context22.stop();
                                                                     }
@@ -1642,7 +1657,7 @@ var InstagramAPI = function () {
                             case 0:
                                 _context25.prev = 0;
 
-                                if (log) console.log(this.login + ' : SLEEPING FOR ' + seconds + ' SECONDS.');
+                                if (log) this.logger.update('SLEEPING FOR ' + seconds + ' SECONDS.');
                                 _context25.next = 4;
                                 return this.driver.sleep(seconds * 1000);
 

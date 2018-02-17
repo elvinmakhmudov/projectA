@@ -24,7 +24,7 @@ exports.default = {
                             d = new Date();
 
                             d.setDate(d.getDate() - 1);
-                            yesterdayInMseconds = Date.now() - d.getMilliseconds();
+                            yesterdayInMseconds = Date.now() - d.getTime();
                             _context.next = 5;
                             return _post2.default.find({
                                 type: 'comment',

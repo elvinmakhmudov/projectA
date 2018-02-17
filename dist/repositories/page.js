@@ -56,7 +56,7 @@ exports.default = {
                                             switch (_context2.prev = _context2.next) {
                                                 case 0:
                                                     _context2.next = 2;
-                                                    return _page2.default.findRandom({ reviewed: false, type: 'private' }, {}, { limit: limit || config.batchUserLimitCount }, function (err, results) {
+                                                    return _page2.default.findRandom({ type: 'private' }, {}, { limit: limit || config.batchUserLimitCount }, function (err, results) {
                                                         if (err) return reject(err);
                                                         return resolve(results);
                                                     });
@@ -101,9 +101,8 @@ exports.default = {
                             d = new Date();
 
                             d.setDate(d.getDate() - config.oldestPageInDays);
-                            yesterdayInMseconds = Date.now() - d.getMilliseconds();
+                            yesterdayInMseconds = Date.now() - d.getTime();
                             return _context4.abrupt('return', _page2.default.find({
-                                reviewed: false,
                                 type: 'explore',
                                 reviewed_at: {
                                     $lt: yesterdayInMseconds
@@ -250,7 +249,6 @@ exports.default = {
                                                         }
                                                     }, function (err) {
                                                         if (err) reject(err);
-                                                        console.log('Page ' + page.username + ' was commented');
                                                         resolve();
                                                     });
 

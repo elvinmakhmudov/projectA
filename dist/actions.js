@@ -24,6 +24,10 @@ var _counter = require('./counter');
 
 var _counter2 = _interopRequireDefault(_counter);
 
+var _logger = require('./logger');
+
+var _logger2 = _interopRequireDefault(_logger);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -65,7 +69,7 @@ exports.default = {
                             _context.prev = 15;
                             _context.t0 = _context['catch'](9);
 
-                            console.log(_context.t0);
+                            _logger2.default.update.call(_context.t0, this);
 
                         case 18:
                         case 'end':
@@ -97,7 +101,7 @@ exports.default = {
                                                     explorePages = void 0;
                                                     _context2.prev = 1;
                                                     _context2.next = 4;
-                                                    return _page2.default.explore(30);
+                                                    return _page2.default.explore(10);
 
                                                 case 4:
                                                     explorePages = _context2.sent;
@@ -110,7 +114,7 @@ exports.default = {
                                                     return _context2.abrupt('return', reject(this.login + ' : ERROR ON GETTINGS POSTS TO COMMENT. POSTS is undefined or posts.length is 0'));
 
                                                 case 7:
-                                                    console.log(this.login + ' : Pages to explore : ' + explorePages.length);
+                                                    _logger2.default.update.call(this, 'Pages to explore : ' + explorePages.length);
                                                     _context2.next = 10;
                                                     return _post2.default.explore();
 
@@ -123,7 +127,7 @@ exports.default = {
                                                     _context2.prev = 13;
                                                     _context2.t0 = _context2['catch'](1);
 
-                                                    console.log(_context2.t0);
+                                                    _logger2.default.update.call(this, _context2.t0);
 
                                                 case 16:
                                                     i = 0, k = 0;
@@ -145,7 +149,7 @@ exports.default = {
                                                 case 23:
                                                     posts = _context2.sent;
 
-                                                    console.log(this.login + ' : posts length is : ' + posts.length);
+                                                    _logger2.default.update.call(this, 'posts length is : ' + posts.length);
                                                     j = 0, l = 0;
 
                                                 case 26:
@@ -170,7 +174,7 @@ exports.default = {
                                                     _context2.prev = 35;
                                                     _context2.t1 = _context2['catch'](27);
 
-                                                    console.log(_context2.t1);
+                                                    _logger2.default.update.call(this, _context2.t1);
 
                                                 case 38:
                                                     j++;
@@ -183,7 +187,7 @@ exports.default = {
 
                                                 case 43:
                                                     k++;
-                                                    console.log(this.login + ' : New posts to comment size : ' + (_counter2.default.posts.toComment += l));
+                                                    _logger2.default.update.call(this, 'New posts to comment size : ' + (_counter2.default.posts.toComment += l));
                                                     _context2.next = 50;
                                                     break;
 
@@ -192,7 +196,7 @@ exports.default = {
                                                     _context2.t2 = _context2['catch'](18);
 
                                                     // await pagerepo.remove(explorePages[i])
-                                                    console.log(_context2.t2);
+                                                    _logger2.default.update.call(this, _context2.t2);
 
                                                 case 50:
                                                     _context2.next = 52;
@@ -205,7 +209,7 @@ exports.default = {
 
                                                 case 55:
                                                     // await pagerepo.insertMany(explorePages)
-                                                    console.log(this.login + ' : inserting explore pages');
+                                                    _logger2.default.update.call(this, 'Inserting explore pages');
                                                     return _context2.abrupt('return', resolve());
 
                                                 case 57:
@@ -264,14 +268,14 @@ exports.default = {
                                                     return _context4.abrupt('return', reject(this.login + ' : ERROR ON SAVING POSTS. POSTS is undefined or posts.length is 0'));
 
                                                 case 7:
-                                                    console.log(this.login + ' : Private page size is : ' + pages.length);
+                                                    _logger2.default.update.call(this, 'Private page size is : ' + pages.length);
                                                     _context4.next = 10;
                                                     return _post2.default.reviewed();
 
                                                 case 10:
                                                     postsReviewed = _context4.sent;
 
-                                                    console.log(this.login + ' : Reviewed posts size is : ' + postsReviewed.length);
+                                                    _logger2.default.update.call(this, 'Reviewed posts size is : ' + postsReviewed.length);
                                                     _context4.next = 17;
                                                     break;
 
@@ -279,7 +283,7 @@ exports.default = {
                                                     _context4.prev = 14;
                                                     _context4.t0 = _context4['catch'](1);
 
-                                                    console.log(_context4.t0);
+                                                    _logger2.default.update.call(this, _context4.t0);
 
                                                 case 17:
                                                     posts = void 0;
@@ -311,7 +315,7 @@ exports.default = {
 
                                                 case 29:
                                                     j++;
-                                                    console.log(this.login + ' : New posts to analyze size : ' + (_counter2.default.posts.toAnalyze += posts.length));
+                                                    _logger2.default.update.call(this, 'New posts to analyze size : ' + (_counter2.default.posts.toAnalyze += posts.length));
                                                     _context4.next = 35;
                                                     break;
 
@@ -374,7 +378,7 @@ exports.default = {
                                                     posts = void 0, users = void 0;
                                                     _context6.prev = 1;
                                                     _context6.next = 4;
-                                                    return _post2.default.analyze(10);
+                                                    return _post2.default.analyze(20);
 
                                                 case 4:
                                                     posts = _context6.sent;
@@ -387,7 +391,7 @@ exports.default = {
                                                     return _context6.abrupt('return', reject(this.login + ' : ERROR ON ANALYZING POSTS. POSTS is undefined or posts.length is 0'));
 
                                                 case 7:
-                                                    console.log(this.login + ' : Posts to analyze : ' + posts.length);
+                                                    _logger2.default.update.call(this, 'Posts to analyze : ' + posts.length);
                                                     _context6.next = 10;
                                                     return _user2.default.all();
 
@@ -410,12 +414,12 @@ exports.default = {
                                                     _context6.prev = 16;
                                                     _context6.t1 = _context6['catch'](1);
 
-                                                    console.log(_context6.t1);
+                                                    _logger2.default.update.call(this, _context6.t1);
 
                                                 case 19:
                                                     newUsers = [];
 
-                                                    console.log(this.login + ' : Analyzing posts.');
+                                                    _logger2.default.update.call(this, 'Analyzing posts.');
                                                     i = 0, j = 0;
 
                                                 case 22:
@@ -442,7 +446,7 @@ exports.default = {
                                                     _context6.prev = 32;
                                                     _context6.t2 = _context6['catch'](23);
 
-                                                    console.log(_context6.t2);
+                                                    _logger2.default.update.call(this, _context6.t2);
                                                     _context6.next = 37;
                                                     return _post2.default.remove(posts[i]);
 
@@ -462,8 +466,8 @@ exports.default = {
                                                     return _user2.default.insertMany(newUsers);
 
                                                 case 44:
-                                                    console.log(this.login + ' : ' + users.length + ' users found.');
-                                                    console.log(this.login + ' : New users to analyze size : ' + (_counter2.default.users.toAnalyze += newUsers.length));
+                                                    _logger2.default.update.call(this, users.length + ' users found.');
+                                                    _logger2.default.update.call(this, 'New users to analyze size : ' + (_counter2.default.users.toAnalyze += newUsers.length));
                                                     newUsers.length = 0;
                                                     users.length = 0;
                                                     _context6.next = 53;
@@ -473,7 +477,7 @@ exports.default = {
                                                     _context6.prev = 50;
                                                     _context6.t3 = _context6['catch'](41);
 
-                                                    console.log(_context6.t3);
+                                                    _logger2.default.update.call(this, _context6.t3);
 
                                                 case 53:
                                                     return _context6.abrupt('return', resolve());
@@ -521,7 +525,7 @@ exports.default = {
                                                     users = void 0;
                                                     _context8.prev = 1;
                                                     _context8.next = 4;
-                                                    return _user2.default.analyze(10);
+                                                    return _user2.default.analyze(20);
 
                                                 case 4:
                                                     _context8.t0 = _context8.sent;
@@ -544,7 +548,7 @@ exports.default = {
                                                     return _context8.abrupt('return', reject(this.login + ' : ERROR ON ANALYZING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0'));
 
                                                 case 10:
-                                                    console.log(this.login + ' : Users  to analyze : ' + users.length);
+                                                    _logger2.default.update.call(this, 'Users  to analyze : ' + users.length);
                                                     _context8.next = 16;
                                                     break;
 
@@ -552,7 +556,7 @@ exports.default = {
                                                     _context8.prev = 13;
                                                     _context8.t1 = _context8['catch'](1);
 
-                                                    console.log(_context8.t1);
+                                                    _logger2.default.update.call(this, _context8.t1);
 
                                                 case 16:
                                                     i = 0, j = 0;
@@ -581,7 +585,7 @@ exports.default = {
                                                     _context8.prev = 27;
                                                     _context8.t2 = _context8['catch'](18);
 
-                                                    console.log(_context8.t2);
+                                                    _logger2.default.update.call(this, _context8.t2);
                                                     _context8.next = 32;
                                                     return _user2.default.softDelete(users[i]);
 
@@ -591,7 +595,7 @@ exports.default = {
                                                     break;
 
                                                 case 35:
-                                                    console.log(this.login + ' : New users to analyze size : ' + (_counter2.default.users.analyzed += j));
+                                                    _logger2.default.update.call(this, 'New users to analyze size : ' + (_counter2.default.users.analyzed += j));
                                                     return _context8.abrupt('return', resolve());
 
                                                 case 37:
@@ -648,7 +652,7 @@ exports.default = {
                             return _context10.abrupt('return');
 
                         case 9:
-                            console.log(this.login + ' : Users  to follow : ' + users.length);
+                            _logger2.default.update.call(this, 'Users  to follow : ' + users.length);
                             _context10.next = 15;
                             break;
 
@@ -656,7 +660,7 @@ exports.default = {
                             _context10.prev = 12;
                             _context10.t0 = _context10['catch'](1);
 
-                            console.log(_context10.t0);
+                            _logger2.default.update.call(this, _context10.t0);
 
                         case 15:
                             i = 0, j = 0;
@@ -688,7 +692,7 @@ exports.default = {
                             return _user2.default.setType(users[i], 'error');
 
                         case 30:
-                            console.log(this.login + ' : Error following: ' + users[i].username);
+                            _logger2.default.update.call(this, 'Error following: ' + users[i].username);
 
                         case 31:
                             i++;
@@ -696,7 +700,7 @@ exports.default = {
                             break;
 
                         case 34:
-                            console.log(this.login + ' : New users to follow size : ' + (_counter2.default.users.followed += j));
+                            _logger2.default.update.call(this, 'New users to follow size : ' + (_counter2.default.users.followed += j));
 
                         case 35:
                         case 'end':
@@ -729,73 +733,69 @@ exports.default = {
                             users = _context11.sent;
 
                             if (!(typeof users === "undefined" || users.length === 0)) {
-                                _context11.next = 9;
+                                _context11.next = 7;
                                 break;
                             }
 
-                            _context11.next = 8;
-                            return this.instagram.sleep(config.sleepEveryIteration, true);
-
-                        case 8:
                             return _context11.abrupt('return');
 
-                        case 9:
-                            console.log(this.login + ' : Users  to unfollow : ' + users.length);
-                            _context11.next = 15;
+                        case 7:
+                            _logger2.default.update.call(this, 'Users  to unfollow : ' + users.length);
+                            _context11.next = 13;
                             break;
 
-                        case 12:
-                            _context11.prev = 12;
+                        case 10:
+                            _context11.prev = 10;
                             _context11.t0 = _context11['catch'](1);
 
-                            console.log(_context11.t0);
+                            _logger2.default.update.call(this, _context11.t0);
 
-                        case 15:
+                        case 13:
                             i = 0, j = 0;
 
-                        case 16:
+                        case 14:
                             if (!(j < users.length && i < users.length)) {
-                                _context11.next = 34;
+                                _context11.next = 32;
                                 break;
                             }
 
-                            _context11.prev = 17;
-                            _context11.next = 20;
+                            _context11.prev = 15;
+                            _context11.next = 18;
                             return this.instagram.unfollowUser(users[i]);
 
-                        case 20:
+                        case 18:
                             unfollowed = _context11.sent;
-                            _context11.next = 23;
+                            _context11.next = 21;
                             return _user2.default.setType(users[i], 'unfollowed');
 
-                        case 23:
+                        case 21:
                             j++;
-                            _context11.next = 31;
+                            _context11.next = 29;
                             break;
 
-                        case 26:
-                            _context11.prev = 26;
-                            _context11.t1 = _context11['catch'](17);
-                            _context11.next = 30;
+                        case 24:
+                            _context11.prev = 24;
+                            _context11.t1 = _context11['catch'](15);
+                            _context11.next = 28;
                             return _user2.default.setType(users[i], 'error');
 
-                        case 30:
-                            console.log(this.login + ' : Error unfollowing: ' + users[i].username);
+                        case 28:
+                            _logger2.default.update.call(this, 'Error unfollowing: ' + users[i].username);
 
-                        case 31:
+                        case 29:
                             i++;
-                            _context11.next = 16;
+                            _context11.next = 14;
                             break;
 
-                        case 34:
-                            console.log(this.login + ' : New users to unfollow size : ' + (_counter2.default.users.unfollowed += j));
+                        case 32:
+                            _logger2.default.update.call(this, 'New users to unfollow size : ' + (_counter2.default.users.unfollowed += j));
 
-                        case 35:
+                        case 33:
                         case 'end':
                             return _context11.stop();
                     }
                 }
-            }, _callee11, this, [[1, 12], [17, 26]]);
+            }, _callee11, this, [[1, 10], [15, 24]]);
         }));
 
         function unfollowUsers() {
@@ -831,7 +831,7 @@ exports.default = {
                             return _context12.abrupt('return');
 
                         case 9:
-                            console.log(this.login + ' : Users to like : ' + users.length);
+                            _logger2.default.update(this, 'Users to like : ' + users.length);
                             _context12.next = 15;
                             break;
 
@@ -839,7 +839,7 @@ exports.default = {
                             _context12.prev = 12;
                             _context12.t0 = _context12['catch'](1);
 
-                            console.log(_context12.t0);
+                            _logger2.default.update.call(this, _context12.t0);
 
                         case 15:
                             i = 0, j = 0;
@@ -870,7 +870,7 @@ exports.default = {
                             return _user2.default.softDelete(users[i]);
 
                         case 29:
-                            console.log(this.login + ' : Soft deleted: ' + users[i].username);
+                            _logger2.default.update.call(this, 'Soft deleted: ' + users[i].username);
 
                         case 30:
                             i++;
@@ -878,7 +878,7 @@ exports.default = {
                             break;
 
                         case 33:
-                            console.log(this.login + ' : Liked users size : ' + (_counter2.default.users.liked += j));
+                            _logger2.default.update.call(this, 'Liked users size : ' + (_counter2.default.users.liked += j));
 
                         case 34:
                         case 'end':
@@ -921,7 +921,7 @@ exports.default = {
                             return _context13.abrupt('return');
 
                         case 9:
-                            console.log(this.login + ' : Posts to comment : ' + posts.length);
+                            _logger2.default.update.call(this, 'Posts to comment : ' + posts.length);
                             _context13.next = 15;
                             break;
 
@@ -929,7 +929,7 @@ exports.default = {
                             _context13.prev = 12;
                             _context13.t0 = _context13['catch'](1);
 
-                            console.log(_context13.t0);
+                            _logger2.default.update.call(this, _context13.t0);
 
                         case 15:
                             i = 0, j = 0;
@@ -942,7 +942,7 @@ exports.default = {
 
                             _context13.prev = 17;
 
-                            console.log(this.login + ' : Commenting ' + (i + 1) + ' of ' + posts.length + ' posts.');
+                            _logger2.default.update.call(this, 'Commenting ' + (i + 1) + ' of ' + posts.length + ' posts.');
                             _context13.next = 21;
                             return this.instagram.commentPosts(posts[i]);
 
@@ -971,7 +971,7 @@ exports.default = {
                             break;
 
                         case 35:
-                            console.log(this.login + ' : Commented posts size : ' + (_counter2.default.posts.commented += j));
+                            _logger2.default.update.call(this, 'Commented posts size : ' + (_counter2.default.posts.commented += j));
 
                         case 36:
                         case 'end':

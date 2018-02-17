@@ -1,12 +1,12 @@
 import "babel-polyfill";
 let config = require('../config.json');
-import api from './InstagramAPI.js';
-import counter from './counter';
-import actions from './actions.js';
+import Counter from './counter';
+import Action from './action.js';
 import postrepo from './repositories/post';
 import userrepo from './repositories/user';
 import pagerepo from './repositories/page';
 import User from './models/user';
+import Logger from './logger';
 const async = require('async');
 
 let secondsInDay = 60 * 60 * config.workingHours;
@@ -15,182 +15,193 @@ class Automater {
         this.login = login || config.instagram.login;
         this.password = password || config.instagram.password;
         this.comments = comments || config.comments;
-        this.instagram = new api(login, password, comments).init();
+        this.counter = new Counter();
+        this.action = new Action(this.counter, this.login, this.password, this.comments);
+        this.logger = new Logger(this.login);
         return this;
     }
 
     async getFollowings() {
-        await this.instagram.logIn();
-        await this.instagram.goToProfile();
-        await this.instagram.getAndSaveFollowings();
+        await this.action.getFollowings();
     }
 
     async findNewPages() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
-            await actions.findNewPages.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration, true);
+            let explored = this.counter.pages.explored;
+            await this.action.findNewPages();
+            if (this.counter.pages.explored > explored)
+                await this.action.sleep(config.sleepEveryIteration, true);
         }
     }
 
     async getPostsToComment() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
-            await actions.getPostsToComment.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration, true);
+            this.action.getPostsToComment();
+            await this.action.sleep(config.sleepEveryIteration, true);
         }
     }
 
     async savePosts() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
-            await actions.savePosts.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration, true);
+            this.action.savePosts();
+            await this.action.sleep(config.sleepEveryIteration, true);
         }
     }
 
     async analyzePosts() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
-            await actions.analyzePosts.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration, true);
+            this.action.analyzePosts();
+            await this.action.sleep(config.sleepEveryIteration, true);
         }
     }
 
     async analyzeUsers() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
-            await actions.analyzeUsers.call(this);
-            await this.instagram.sleep(config.sleepEveryIteration, true);
+            this.action.analyzeUsers();
+            await this.action.sleep(config.sleepEveryIteration, true);
         }
     }
 
     async followUsers() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
-            await actions.followUsers.call(this);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay, true);
+            this.action.followUsers();
+            await this.action.sleep(secondsInDay * config.batchUserLimitCount / config.usersToFollowPerDay, true);
         }
     }
 
     async unfollowUsers() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
-            await actions.unfollowUsers.call(this);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay, true);
+            this.action.unfollowUsers();
+            await this.action.sleep(secondsInDay * config.batchUserLimitCount / config.usersToUnfollowPerDay, true);
         }
     }
 
     async likeUserPosts() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
-            await actions.likeUserPosts.call(this);
-            await this.instagram.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / config.usersToLikePerDay, true);
+            this.action.likeUserPosts();
+            await this.action.sleep(secondsInDay * config.userPostsToLike * config.batchUserLimitCount / config.usersToLikePerDay, true);
         }
     }
 
     async commentPosts() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
-            await actions.commentPosts.call(this);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / config.pagesToCommentPerDay, true);
+            this.action.commentPosts();
+            await this.action.sleep(secondsInDay * config.batchUserLimitCount / config.pagesToCommentPerDay, true);
         }
     }
 
     async triplePageActions() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
 
-            let liked = counter.users.liked;
-            do {
-                await actions.likeUserPosts.call(this);
-                console.log(this.login + ' : Liking user posts is done.');
+            let liked = this.counter.users.liked;
+            // do {
+            await this.action.likeUserPosts();
+            // }
+            // while (liked >= this.counter.users.liked);
+            if (this.counter.users.liked > liked) {
+                this.logger.update('LIKED ' + (this.counter.users.liked - liked) + ' USERS');
+                await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
             }
-            while (liked >= counter.users.liked);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
 
 
-            let followed = counter.users.followed;
-            do {
-                await actions.followUsers.call(this);
-                console.log(this.login + ' : Following users is done');
+            let followed = this.counter.users.followed;
+            // do {
+            await this.action.followUsers();
+            // }
+            // while (followed >= this.counter.users.followed);
+            if (this.counter.users.followed > followed) {
+                this.logger.update('FOLLOWED ' + (this.counter.users.followed - followed) + ' USERS');
+                await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
             }
-            while (followed >= counter.users.followed);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
 
+            let commented = this.counter.posts.commented;
+            // do {
+            await this.action.commentPosts();
+            // } while (commented >= this.counter.posts.commented);
+            if (this.counter.posts.commented > commented) {
+                this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS');
+                await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
+            }
 
-            let commented = counter.posts.commented;
-            do {
-                await actions.commentPosts.call(this);
-                console.log(this.login + ' : Commenting posts is done.');
-            } while (commented >= counter.posts.commented);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
-
-            let unfollowed = counter.users.unfollowed;
-            do {
-                await actions.unfollowUsers.call(this);
-                console.log(this.login + ' : Unfollowing users is done.');
-            } while (unfollowed >= counter.users.unfollowed);
-            await this.instagram.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
+            // let unfollowed = this.counter.users.unfollowed;
+            // do {
+            //     await actions.unfollowUsers.call(this);
+            // } while (unfollowed >= this.counter.users.unfollowed);
+            //     this.logger.update('Unfollowing users is done.');
+            // await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
 
 
             //sleep the rest of the time after working hours
-            // await this.instagram.sleep((24 - config.workingHours) * 60 * 60);
+            // await this.action.sleep((24 - config.workingHours) * 60 * 60);
         }
     }
     async tripleAnalyzator() {
-        await this.instagram.logIn();
+        await this.action.logIn();
         while (true) {
+            let usersToAnalyze = this.counter.users.toAnalyze;
+            // do {
+            try {
+                await this.action.analyzePosts();
+            } catch (e) {
+                this.logger.update(e);
+            }
+            // } while (usersToAnalyze >= this.counter.users.toAnalyze);
+            if (this.counter.users.toAnalyze > usersToAnalyze) {
+                this.logger.update('ADDED ' + (this.counter.users.toAnalyze - usersToAnalyze) + ' USERS TO ANALYZE');
+                await this.action.sleep(config.sleepEveryIteration, true);
+            }
 
-            let usersToAnalyze = counter.users.toAnalyze;
-            do {
-                try {
-                    await actions.analyzePosts.call(this);
-                } catch (e) {
-                    console.log(e);
-                    break;
-                }
-            } while (usersToAnalyze >= counter.users.toAnalyze);
-            console.log(this.login + ' : Analyzing posts is done.')
-            await this.instagram.sleep(config.sleepEveryIteration, true);
+            let analyzed = this.counter.users.analyzed;
+            // do {
+            try {
+                await this.action.analyzeUsers();
+            } catch (e) {
+                this.logger.update(e);
+            }
+            // } while (analyzed >= this.counter.users.analyzed);
+            if (this.counter.users.analyzed > analyzed) {
+                this.logger.update('ANALYZED ' + (this.counter.users.analyzed - analyzed) + ' USERS');
+                await this.action.sleep(config.sleepEveryIteration, true);
+            }
 
-            let analyzed = counter.users.analyzed;
-            do {
-                try {
-                    await actions.analyzeUsers.call(this);
-                } catch (e) {
-                    console.log(e);
-                    break;
-                }
-            } while (analyzed >= counter.users.analyzed);
-            console.log(this.login + ' : Analyzing users is done.')
-            await this.instagram.sleep(config.sleepEveryIteration, true);
+            let postsToAnalyze = this.counter.posts.toAnalyze;
+            // do {
+            try {
+                await this.action.savePosts();
+            } catch (e) {
+                this.logger.update(e);
+            }
+            // } while (postsToAnalyze >= this.counter.posts.toAnalyze);
+            if (this.counter.posts.toAnalyze > postsToAnalyze) {
+                this.logger.update('ADDED ' + (this.counter.posts.toAnalyze - postsToAnalyze) + 'POSTS TO ANALYZE');
+                await this.action.sleep(config.sleepEveryIteration, true);
+            }
 
-            let postsToAnalyze = counter.posts.toAnalyze;
-            do {
-                try {
-                    await actions.savePosts.call(this);
-                } catch (e) {
-                    console.log(e);
-                    break;
-                }
-            } while (postsToAnalyze >= counter.posts.toAnalyze);
-            console.log(this.login + ' : Save posts is done.')
-            await this.instagram.sleep(config.sleepEveryIteration, true);
+            let toComment = this.counter.posts.toComment;
+            // do {
+            try {
+                await this.action.getPostsToComment();
+            } catch (e) {
+                this.logger.update(e);
+                break;
+            }
+            // } while (toComment >= this.counter.posts.toComment);
+            if (this.counter.posts.toComment > toComment) {
+                this.logger.update('Get posts to comment is done.')
+                await this.action.sleep(config.sleepEveryIteration, true);
+            }
 
-            let toComment = counter.posts.toComment;
-            do {
-                try {
-                    await actions.getPostsToComment.call(this);
-                } catch (e) {
-                    console.log(e);
-                    break;
-                }
-            } while (toComment >= counter.posts.toComment);
-            console.log(this.login + ' : Get posts to comment is done.')
-            await this.instagram.sleep(config.sleepEveryIteration, true);
-
-            // await this.instagram.sleep((24 - config.workingHours) * 60 * 60);
+            // await this.action.sleep((24 - config.workingHours) * 60 * 60);
         }
     }
 }

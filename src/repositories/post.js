@@ -5,7 +5,7 @@ export default {
     async comment(limit) {
         var d = new Date();
         d.setDate(d.getDate() - 1);
-        let yesterdayInMseconds = Date.now() - d.getMilliseconds();
+        let yesterdayInMseconds = Date.now() - d.getTime();
         let posts = await Post.find({
             type: 'comment',
             reviewed: false

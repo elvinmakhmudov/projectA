@@ -3,7 +3,8 @@ const {
     Builder,
     By,
     until,
-    Key
+    Key,
+    logging
 } = require('selenium-webdriver');
 import chrome from 'selenium-webdriver/chrome';
 import db from './database/database.js';
@@ -11,16 +12,23 @@ import Page from './models/page';
 import Post from './models/post';
 import User from './models/user';
 import Cookie from './models/cookie';
+import Logger from './logger';
 
 class InstagramAPI {
     constructor(login, password, comments) {
         this.login = login || config.instagram.login;
         this.password = password || config.instagram.password;
         this.comments = comments || config.comments;
+        this.logger = new Logger(this.login);
     }
 
     init() {
         let options = config.headless ? new chrome.Options().headless() : new chrome.Options();
+        // let loggingPrefs = new logging.Preferences();
+        // loggingPrefs.setLevel(logging.Type.PERFORMANCE, logging.Level.OFF);
+        // options.setLoggingPrefs(loggingPrefs);
+        options.addArguments('--log-level=3');
+
         this.driver = new Builder()
             .forBrowser(config.browser)
             .setChromeOptions(options)
@@ -38,7 +46,7 @@ class InstagramAPI {
             });
             if (cookies.length !== 0) {
                 await this.cookieLogIn(cookies).then(function () {
-                    console.log(this.login + ' : Logged in with Cookies');
+                    this.logger.update('Logged in with Cookies');
                     return resolve();
                 }.bind(this))
             } else {
@@ -47,7 +55,7 @@ class InstagramAPI {
                 await driver.findElement(By.name('password')).sendKeys(this.password);
                 await driver.findElement(By.className('_qv64e _gexxb _4tgw8 _njrw0')).click();
                 await driver.sleep(2000).then(() => resolve());
-                console.log(this.login + ' : Logged in');
+                this.logger.update('Logged in');
                 //set cookies 
                 await this.setCookies(this.login)
             }
@@ -97,7 +105,7 @@ class InstagramAPI {
             this.driver.sleep(2000);
             this.driver.findElement(By.partialLinkText('following')).click();
             this.driver.sleep(2000);
-            console.log(this.login + ' : Getting followings');
+            this.logger.update('Getting followings');
             let scrollElement = this.driver.wait(until.elementLocated(By.className('_2g7d5 notranslate _o5iw8')), config.timeout);
             scrollElement.then(function () {
                 this.scrollFollowings(0).then(function () {
@@ -142,7 +150,7 @@ class InstagramAPI {
     }
 
     goToUsername(username) {
-        console.log(this.login + ' : Reviewing ' + username);
+        // this.logger.update('Reviewing ' + username);
         return this.driver.get(config.urls.main + username);
     }
 
@@ -174,7 +182,7 @@ class InstagramAPI {
         }.bind(this));
     }
 
-    getRating(post) {
+    getRatingAndDate(post) {
         return new Promise(async function (resolve, reject) {
             // let posts = await this.dbase.getPostsToAnalyze();
             // let users = await this.dbase.getUsersToAnalyze() || [];
@@ -191,7 +199,10 @@ class InstagramAPI {
             let dateattr = await this.driver.findElements(By.className("_p29ma")) != 0 ? await this.driver.findElement(By.className("_p29ma")).getAttribute('datetime') : 0;
             let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60));
             let rating = Math.round(likes / datetime * 100) / 100;
-            return resolve(rating);
+            return resolve({
+                datetime,
+                rating
+            });
         }.bind(this));
     }
 
@@ -204,7 +215,7 @@ class InstagramAPI {
             await this.driver.get(post.url);
             //if page has been removed then break
             if (await this.driver.findElements(By.className("error-container")) != 0 || await this.driver.findElements(By.className("_ezgzd")) == 0) {
-                return reject('Post contains error-container or does not contain comments class.');
+                return reject('Post contains error-container or does not contain comments.');
             };
             await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
             let comments = await this.driver.findElements(By.className("_ezgzd"));
@@ -232,7 +243,7 @@ class InstagramAPI {
                                 type: 'analyze'
                             }));
                         }
-                        console.log(this.login + ' : New username is : ' + username);
+                        this.logger.update('New username is : ' + username);
                     }
                 } catch (e) {
                     console.log(e);
@@ -259,14 +270,16 @@ class InstagramAPI {
             if (await this.driver.findElements(By.className("error-container")) != 0) {
                 return reject();
             };
-            console.log(this.login + ' : Analyzing ' + user.username);
+            this.logger.update('Analyzing ' + user.username);
             //await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
             if (await this.driver.findElements(By.className("_rf3jb")) == 0) {
                 return reject();
             };
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
+                this.logger.update('to follow');
                 return resolve('follow');
             } else {
+                this.logger.update('to like');
                 return resolve('like');
             }
         }.bind(this));
@@ -278,7 +291,7 @@ class InstagramAPI {
             if ((await this.driver.findElements(By.className("error-container")) != 0) || (await this.driver.findElements(By.className("_rf3jb")) == 0)) {
                 return reject();
             };
-            console.log(this.login + ' : Following ' + user.username);
+            this.logger.update('Following ' + user.username);
             // await this.driver.wait(until.elementLocated(By.className("r9b8f")), config.timeout);
             //follow
             if (await this.driver.findElements(By.className("_gexxb")) != 0) {
@@ -302,7 +315,7 @@ class InstagramAPI {
                 return reject();
             };
             if (await this.driver.findElements(By.className("_t78yp")) != 0) {
-                console.log(this.login + ' : Unfollowing ' + user.username);
+                this.logger.update('Unfollowing ' + user.username);
                 await this.driver.findElement(By.className('_t78yp')).click();
                 await this.sleep(1);
                 return resolve();
@@ -339,7 +352,7 @@ class InstagramAPI {
                     await this.sleep(2);
                 };
             }
-            console.log(this.login + ' : liked posts of ' + user.username);
+            this.logger.update('liked posts of ' + user.username);
             return resolve();
         }.bind(this));
     }
@@ -404,7 +417,7 @@ class InstagramAPI {
                         } catch (e) {
                             continue;
                         }
-                        console.log(this.login + ' : new page is : ' + await newPages[i].getText());
+                        this.logger.update('new page is : ' + await newPages[i].getText());
                     }
                 }
                 try {
@@ -419,7 +432,7 @@ class InstagramAPI {
 
     async sleep(seconds, log = false) {
         try {
-            if (log) console.log(this.login + ' : SLEEPING FOR ' + seconds + ' SECONDS.');
+            if (log) this.logger.update('SLEEPING FOR ' + seconds + ' SECONDS.');
             await this.driver.sleep(seconds * 1000)
         } catch (e) {
             console.log(e);

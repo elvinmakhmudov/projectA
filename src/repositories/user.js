@@ -10,7 +10,7 @@ export default {
         return User.find({
             type: 'analyze',
             reviewed: false
-        });
+        }).limit(limit || config.batchUserLimitCount);
     },
 
     follow(limit) {
@@ -23,11 +23,11 @@ export default {
     unfollow(username, limit) {
         var d = new Date();
         d.setDate(d.getDate() - 7);
-        let yesterdayInMseconds = Date.now() - d.getMilliseconds();
+        let yesterdayInMseconds = Date.now() - d.getTime();
         return User.find({
             type: 'followed',
             reviewed: true,
-            followed_at: {
+            reviewed_at: {
                 $lte: yesterdayInMseconds
             },
             followed_by: username
@@ -64,7 +64,7 @@ export default {
                     reviewed_at: Date.now(),
                     followed_by: by
                 }
-            }, function (err, users) {
+            }, function (err, user) {
                 if (err) return reject(err);
                 return resolve();
             });
@@ -81,7 +81,7 @@ export default {
                     reviewed: true,
                     reviewed_at: Date.now(),
                 }
-            }, function (err, users) {
+            }, function (err, user) {
                 if (err) return reject(err);
                 return resolve();
             });
