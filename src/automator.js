@@ -113,106 +113,100 @@ class Automater {
     async triplePageActions() {
         await this.action.logIn();
 
-        let errors = 0;
+        let started = new Date();
         while (true) {
+
             let liked = this.counter.users.liked;
-            // do {
             await this.action.likeUserPosts();
-            // }
-            // while (liked >= this.counter.users.liked);
             if (this.counter.users.liked > liked) {
-                this.logger.update('LIKED ' + (this.counter.users.liked - liked) + ' USERS');
+                this.logger.update('LIKED ' + (this.counter.users.liked - liked) + ' USERS.');
                 await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
             }
 
-
             let followed = this.counter.users.followed;
-            // do {
             await this.action.followUsers();
-            // }
-            // while (followed >= this.counter.users.followed);
             if (this.counter.users.followed > followed) {
-                this.logger.update('FOLLOWED ' + (this.counter.users.followed - followed) + ' USERS');
+                this.logger.update('FOLLOWED ' + (this.counter.users.followed - followed) + ' USERS.');
                 await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
             }
 
             let commented = this.counter.posts.commented;
-            // do {
             await this.action.commentPosts();
-            // } while (commented >= this.counter.posts.commented);
             if (this.counter.posts.commented > commented) {
-                this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS');
+                this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS.');
                 await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
             }
 
-            // let unfollowed = this.counter.users.unfollowed;
-            // do {
-            //     await actions.unfollowUsers.call(this);
-            // } while (unfollowed >= this.counter.users.unfollowed);
-            //     this.logger.update('Unfollowing users is done.');
-            // await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
-
+            let unfollowed = this.counter.users.unfollowed;
+            await this.action.unfollowUsers();
+            if (this.counter.users.unfollowed > unfollowed) {
+                this.logger.update('UNFOLLOWED ' + (this.counter.users.unfollowed - unfollowed) + ' USERS.');
+                await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
+            }
 
             //sleep the rest of the time after working hours
-            // await this.action.sleep((24 - config.workingHours) * 60 * 60);
+            if (Math.round((Date.now() - started) / (1000 * 60 * 60)) >= config.workingHours) {
+                this.logger.update('LONG SLEEP');
+                await this.action.sleep((24 - config.workingHours) * 60 * 60);
+                started = new Date();
+            }
         }
     }
     async tripleAnalyzator() {
         await this.action.logIn();
+        let started = new Date();
         while (true) {
             let usersToAnalyze = this.counter.users.toAnalyze;
-            // do {
             try {
                 await this.action.analyzePosts();
             } catch (e) {
                 this.logger.update(e);
             }
-            // } while (usersToAnalyze >= this.counter.users.toAnalyze);
             if (this.counter.users.toAnalyze > usersToAnalyze) {
-                this.logger.update('ADDED ' + (this.counter.users.toAnalyze - usersToAnalyze) + ' USERS TO ANALYZE');
+                this.logger.update('ADDED ' + (this.counter.users.toAnalyze - usersToAnalyze) + ' USERS TO ANALYZE.');
                 await this.action.sleep(config.sleepEveryIteration, true);
             }
 
             let analyzed = this.counter.users.analyzed;
-            // do {
             try {
                 await this.action.analyzeUsers();
             } catch (e) {
                 this.logger.update(e);
             }
-            // } while (analyzed >= this.counter.users.analyzed);
             if (this.counter.users.analyzed > analyzed) {
-                this.logger.update('ANALYZED ' + (this.counter.users.analyzed - analyzed) + ' USERS');
+                this.logger.update('ANALYZED ' + (this.counter.users.analyzed - analyzed) + ' USERS.');
                 await this.action.sleep(config.sleepEveryIteration, true);
             }
 
             let postsToAnalyze = this.counter.posts.toAnalyze;
-            // do {
             try {
                 await this.action.savePosts();
             } catch (e) {
                 this.logger.update(e);
             }
-            // } while (postsToAnalyze >= this.counter.posts.toAnalyze);
             if (this.counter.posts.toAnalyze > postsToAnalyze) {
-                this.logger.update('ADDED ' + (this.counter.posts.toAnalyze - postsToAnalyze) + 'POSTS TO ANALYZE');
+                this.logger.update('ADDED ' + (this.counter.posts.toAnalyze - postsToAnalyze) + 'POSTS TO ANALYZE.');
                 await this.action.sleep(config.sleepEveryIteration, true);
             }
 
             let toComment = this.counter.posts.toComment;
-            // do {
             try {
                 await this.action.getPostsToComment();
             } catch (e) {
                 this.logger.update(e);
             }
-            // } while (toComment >= this.counter.posts.toComment);
             if (this.counter.posts.toComment > toComment) {
                 this.logger.update('Get posts to comment is done.')
                 await this.action.sleep(config.sleepEveryIteration, true);
             }
 
-            // await this.action.sleep((24 - config.workingHours) * 60 * 60);
+            
+            //sleep the rest of the time after working hours
+            if (Math.round((Date.now() - started) / (1000 * 60 * 60)) >= config.workingHours) {
+                this.logger.update('LONG SLEEP');
+                await this.action.sleep((24 - config.workingHours) * 60 * 60);
+                started = new Date();
+            }
         }
     }
 }

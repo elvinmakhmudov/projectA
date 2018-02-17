@@ -5,8 +5,7 @@ export default {
     async comment(limit) {
         return new Promise(async function (resolve, reject) {
             var d = new Date();
-            d.setDate(d.getDate() - 1);
-            let yesterdayInMseconds = Date.now() - d.getTime();
+            let yesterdayInMseconds = d.setDate(d.getDate() - 7);
             let posts = await Post.findRandom({
                 type: 'comment',
                 reviewed: false

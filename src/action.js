@@ -62,8 +62,7 @@ export default class Action {
                         try {
                             //set yesterday since epoch in mseconds
                             var d = new Date();
-                            d.setDate(d.getDate() - config.oldestPageInDays);
-                            let yesterdayInMseconds = Date.now() - d.getTime();
+                            let yesterdayInMseconds = d.setDate(d.getDate() - 7);
                             let data = await this.instagram.getRatingAndDate(posts[j]);
                             posts[j].rating = data.rating;
                             posts[j].datetime = data.datetime;
@@ -198,6 +197,7 @@ export default class Action {
         try {
             users = await userrepo.follow();
             if ((typeof users === "undefined") || users.length === 0) {
+                this.logger.update('ERROR ON FOLLOWING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0');
                 // await this.instagram.sleep(config.sleepEveryIteration, true);
                 return;
             }
@@ -229,14 +229,15 @@ export default class Action {
         // await this.instagram.unfollowUsers();
         let users;
         try {
-            users = await userrepo.unfollow(this.instagram.login);
+            users = await userrepo.unfollow(this.login);
             if ((typeof users === "undefined") || users.length === 0) {
+                throw 'ERROR ON UNFOLLOWING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0';
                 // await this.instagram.sleep(config.sleepEveryIteration, true);
-                return;
             }
             this.logger.update('Users  to unfollow : ' + users.length);
         } catch (e) {
             this.logger.update(e);
+            return;
         }
         var errors = 0;
         for (var i = 0, j = 0; j < users.length && i < users.length; i++) {

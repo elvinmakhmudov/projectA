@@ -17,10 +17,6 @@ export default {
                 if (err) return reject(err);
                 return resolve(results);
             });
-            // return User.find({
-            //     type: 'analyze',
-            //     reviewed: false
-            // }).limit(limit || config.batchUserLimitCount);
         })
     },
 
@@ -36,17 +32,12 @@ export default {
                 return resolve(results);
             });
         });
-        // return User.find({
-        //     type: 'follow',
-        //     reviewed: true
-        // }).limit(limit || config.batchUserLimitCount);
     },
 
     unfollow(username, limit) {
         return new Promise(function (resolve, reject) {
             var d = new Date();
-            d.setDate(d.getDate() - 7);
-            let yesterdayInMseconds = Date.now() - d.getTime();
+            let yesterdayInMseconds = d.setDate(d.getDate() - 7);
             return User.findRandom({
                 type: 'followed',
                 reviewed: true,
@@ -61,21 +52,10 @@ export default {
                 return resolve(results);
             });
         });
-        // return User.find({ type: 'followed',
-        //     reviewed: true,
-        //     reviewed_at: {
-        //         $lte: yesterdayInMseconds
-        //     },
-        //     followed_by: username
-        // }).limit(limit || config.batchUserLimitCount);
     },
 
     like(limit) {
         return new Promise(function (resolve, reject) {
-            // return User.find({
-            //     type: 'like',
-            //     reviewed: true
-            // }).limit(limit || config.batchUserLimitCount);
             return User.findRandom({
                 type: 'like',
                 reviewed: true

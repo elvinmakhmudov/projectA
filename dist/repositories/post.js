@@ -28,10 +28,8 @@ exports.default = {
                                             switch (_context2.prev = _context2.next) {
                                                 case 0:
                                                     d = new Date();
-
-                                                    d.setDate(d.getDate() - 1);
-                                                    yesterdayInMseconds = Date.now() - d.getTime();
-                                                    _context2.next = 5;
+                                                    yesterdayInMseconds = d.setDate(d.getDate() - 7);
+                                                    _context2.next = 4;
                                                     return _post2.default.findRandom({
                                                         type: 'comment',
                                                         reviewed: false
@@ -83,10 +81,10 @@ exports.default = {
                                                         };
                                                     }());
 
-                                                case 5:
+                                                case 4:
                                                     posts = _context2.sent;
 
-                                                case 6:
+                                                case 5:
                                                 case 'end':
                                                     return _context2.stop();
                                             }

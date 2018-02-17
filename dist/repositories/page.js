@@ -109,9 +109,7 @@ exports.default = {
                                             switch (_context4.prev = _context4.next) {
                                                 case 0:
                                                     d = new Date();
-
-                                                    d.setDate(d.getDate() - config.oldestPageInDays);
-                                                    yesterdayInMseconds = Date.now() - d.getTime();
+                                                    yesterdayInMseconds = d.setDate(d.getDate() - 7);
                                                     return _context4.abrupt('return', _page2.default.findRandom({
                                                         type: 'explore',
                                                         reviewed_at: {
@@ -124,7 +122,7 @@ exports.default = {
                                                         return resolve(results);
                                                     }));
 
-                                                case 4:
+                                                case 3:
                                                 case 'end':
                                                     return _context4.stop();
                                             }

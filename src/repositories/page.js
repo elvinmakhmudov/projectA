@@ -41,8 +41,7 @@ export default {
     async explore(limit) {
         return new Promise(async function (resolve, reject) {
             var d = new Date();
-            d.setDate(d.getDate() - config.oldestPageInDays);
-            let yesterdayInMseconds = Date.now() - d.getTime();
+            let yesterdayInMseconds = d.setDate(d.getDate() - 7);
             return Page.findRandom({
                 type: 'explore',
                 reviewed_at: {
