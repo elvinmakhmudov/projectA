@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var random = require('mongoose-simple-random');
 
 var postSchema = new Schema({
     url: {
@@ -24,5 +25,7 @@ var postSchema = new Schema({
     likes: Number,
     rating: Number
 });
+
+postSchema.plugin(random);
 
 module.exports = mongoose.model('Post', postSchema);;

@@ -3,41 +3,53 @@ import Post from '../models/post';
 
 export default {
     async comment(limit) {
-        var d = new Date();
-        d.setDate(d.getDate() - 1);
-        let yesterdayInMseconds = Date.now() - d.getTime();
-        let posts = await Post.find({
-            type: 'comment',
-            reviewed: false
-        }).populate({
-            path: 'page',
-            match: {
-                $or: [{
-                    commented_times: {
-                        $lt: config.maxCommentForPageInDay
+        return new Promise(async function (resolve, reject) {
+            var d = new Date();
+            d.setDate(d.getDate() - 1);
+            let yesterdayInMseconds = Date.now() - d.getTime();
+            let posts = await Post.findRandom({
+                type: 'comment',
+                reviewed: false
+            }, {}, {
+                limit: limit || config.batchUserLimitCount,
+                sort: {
+                    rating: -1
+                },
+                populate: {
+                    path: 'page',
+                    match: {
+                        $or: [{
+                            commented_times: {
+                                $lt: config.maxCommentForPageInDay
+                            }
+                        }, {
+                            commented_at: {
+                                $lt: yesterdayInMseconds
+                            }
+                        }]
                     }
-                }, {
-                    commented_at: {
-                        $lt: yesterdayInMseconds
-                    }
-                }]
-            }
-        }).sort({
-            rating: -1
-        }).limit(limit || config.batchUserLimitCount);
-        posts = await posts.filter(function (post) {
-            return post.page.length != [] ? true : false;
+                }
+            }, async function (err, posts) {
+                posts = await posts.filter(function (post) {
+                    return post.page.length != [] ? true : false;
+                });
+                resolve(posts);
+            });
         });
-        return posts;
     },
 
     async analyze(limit) {
-        return await Post.find({
-            type: 'analyze',
-            reviewed: false
-        }).sort({
-            rating: -1
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(function (resolve, reject) {
+            return Post.findRandom({
+                type: 'analyze',
+                reviewed: false
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
     },
 
     async explore(limit) {
@@ -78,7 +90,6 @@ export default {
             url: post.url
         }, function (err) {
             if (err) console.log(err);
-            console.log('Post was removed');
         })
     },
 

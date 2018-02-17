@@ -18,35 +18,82 @@ exports.default = {
         return _user2.default.find({});
     },
     analyze: function analyze(limit) {
-        return _user2.default.find({
-            type: 'analyze',
-            reviewed: false
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(function (resolve, reject) {
+            return _user2.default.findRandom({
+                type: 'analyze',
+                reviewed: false
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+            // return User.find({
+            //     type: 'analyze',
+            //     reviewed: false
+            // }).limit(limit || config.batchUserLimitCount);
+        });
     },
     follow: function follow(limit) {
-        return _user2.default.find({
-            type: 'follow',
-            reviewed: true
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(function (resolve, reject) {
+            return _user2.default.findRandom({
+                type: 'follow',
+                reviewed: true
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
+        // return User.find({
+        //     type: 'follow',
+        //     reviewed: true
+        // }).limit(limit || config.batchUserLimitCount);
     },
     unfollow: function unfollow(username, limit) {
-        var d = new Date();
-        d.setDate(d.getDate() - 7);
-        var yesterdayInMseconds = Date.now() - d.getTime();
-        return _user2.default.find({
-            type: 'followed',
-            reviewed: true,
-            reviewed_at: {
-                $lte: yesterdayInMseconds
-            },
-            followed_by: username
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(function (resolve, reject) {
+            var d = new Date();
+            d.setDate(d.getDate() - 7);
+            var yesterdayInMseconds = Date.now() - d.getTime();
+            return _user2.default.findRandom({
+                type: 'followed',
+                reviewed: true,
+                reviewed_at: {
+                    $lte: yesterdayInMseconds
+                },
+                followed_by: username
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
+        // return User.find({ type: 'followed',
+        //     reviewed: true,
+        //     reviewed_at: {
+        //         $lte: yesterdayInMseconds
+        //     },
+        //     followed_by: username
+        // }).limit(limit || config.batchUserLimitCount);
     },
     like: function like(limit) {
-        return _user2.default.find({
-            type: 'like',
-            reviewed: true
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(function (resolve, reject) {
+            // return User.find({
+            //     type: 'like',
+            //     reviewed: true
+            // }).limit(limit || config.batchUserLimitCount);
+            return _user2.default.findRandom({
+                type: 'like',
+                reviewed: true
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
     },
     insertMany: function () {
         var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(newUsers) {
@@ -65,7 +112,6 @@ exports.default = {
                                                         ordered: false
                                                     }, function (err, users) {
                                                         // if (err) return reject(err);
-                                                        console.log(newUsers.length + ' users were added to collection');
                                                         return resolve();
                                                     });
 

@@ -90,7 +90,7 @@ var Automater = function () {
         key: 'findNewPages',
         value: function () {
             var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-                var explored;
+                var errors, explored;
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
                         switch (_context2.prev = _context2.next) {
@@ -99,34 +99,63 @@ var Automater = function () {
                                 return this.action.logIn();
 
                             case 2:
+                                errors = 0;
+
+                            case 3:
                                 if (!true) {
-                                    _context2.next = 11;
+                                    _context2.next = 24;
                                     break;
                                 }
 
-                                explored = this.counter.pages.explored;
-                                _context2.next = 6;
-                                return this.action.findNewPages();
+                                _context2.prev = 4;
 
-                            case 6:
-                                if (!(this.counter.pages.explored > explored)) {
+                                if (!(errors >= config.maxErrors)) {
                                     _context2.next = 9;
                                     break;
                                 }
 
-                                _context2.next = 9;
+                                _context2.next = 8;
                                 return this.action.sleep(config.sleepEveryIteration, true);
 
+                            case 8:
+                                errors = 0;
+
                             case 9:
-                                _context2.next = 2;
+                                explored = this.counter.pages.explored;
+                                _context2.next = 12;
+                                return this.action.findNewPages();
+
+                            case 12:
+                                if (!(this.counter.pages.explored > explored)) {
+                                    _context2.next = 15;
+                                    break;
+                                }
+
+                                _context2.next = 15;
+                                return this.action.sleep(config.sleepEveryIteration, true);
+
+                            case 15:
+                                errors = 0;
+                                _context2.next = 22;
                                 break;
 
-                            case 11:
+                            case 18:
+                                _context2.prev = 18;
+                                _context2.t0 = _context2['catch'](4);
+
+                                this.logger.update(_context2.t0);
+                                errors++;
+
+                            case 22:
+                                _context2.next = 3;
+                                break;
+
+                            case 24:
                             case 'end':
                                 return _context2.stop();
                         }
                     }
-                }, _callee2, this);
+                }, _callee2, this, [[4, 18]]);
             }));
 
             function findNewPages() {
@@ -451,7 +480,7 @@ var Automater = function () {
         key: 'triplePageActions',
         value: function () {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
-                var liked, followed, commented;
+                var errors, liked, followed, commented;
                 return regeneratorRuntime.wrap(function _callee11$(_context11) {
                     while (1) {
                         switch (_context11.prev = _context11.next) {
@@ -460,66 +489,69 @@ var Automater = function () {
                                 return this.action.logIn();
 
                             case 2:
+                                errors = 0;
+
+                            case 3:
                                 if (!true) {
-                                    _context11.next = 26;
+                                    _context11.next = 27;
                                     break;
                                 }
 
                                 liked = this.counter.users.liked;
                                 // do {
 
-                                _context11.next = 6;
+                                _context11.next = 7;
                                 return this.action.likeUserPosts();
 
-                            case 6:
+                            case 7:
                                 if (!(this.counter.users.liked > liked)) {
-                                    _context11.next = 10;
+                                    _context11.next = 11;
                                     break;
                                 }
 
                                 this.logger.update('LIKED ' + (this.counter.users.liked - liked) + ' USERS');
-                                _context11.next = 10;
+                                _context11.next = 11;
                                 return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
 
-                            case 10:
+                            case 11:
                                 followed = this.counter.users.followed;
                                 // do {
 
-                                _context11.next = 13;
+                                _context11.next = 14;
                                 return this.action.followUsers();
 
-                            case 13:
+                            case 14:
                                 if (!(this.counter.users.followed > followed)) {
-                                    _context11.next = 17;
+                                    _context11.next = 18;
                                     break;
                                 }
 
                                 this.logger.update('FOLLOWED ' + (this.counter.users.followed - followed) + ' USERS');
-                                _context11.next = 17;
+                                _context11.next = 18;
                                 return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
 
-                            case 17:
+                            case 18:
                                 commented = this.counter.posts.commented;
                                 // do {
 
-                                _context11.next = 20;
+                                _context11.next = 21;
                                 return this.action.commentPosts();
 
-                            case 20:
+                            case 21:
                                 if (!(this.counter.posts.commented > commented)) {
-                                    _context11.next = 24;
+                                    _context11.next = 25;
                                     break;
                                 }
 
                                 this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS');
-                                _context11.next = 24;
+                                _context11.next = 25;
                                 return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
 
-                            case 24:
-                                _context11.next = 2;
+                            case 25:
+                                _context11.next = 3;
                                 break;
 
-                            case 26:
+                            case 27:
                             case 'end':
                                 return _context11.stop();
                         }
@@ -547,7 +579,7 @@ var Automater = function () {
 
                             case 2:
                                 if (!true) {
-                                    _context12.next = 58;
+                                    _context12.next = 57;
                                     break;
                                 }
 
@@ -643,7 +675,7 @@ var Automater = function () {
                                 return this.action.getPostsToComment();
 
                             case 46:
-                                _context12.next = 52;
+                                _context12.next = 51;
                                 break;
 
                             case 48:
@@ -651,23 +683,22 @@ var Automater = function () {
                                 _context12.t3 = _context12['catch'](43);
 
                                 this.logger.update(_context12.t3);
-                                return _context12.abrupt('break', 58);
 
-                            case 52:
+                            case 51:
                                 if (!(this.counter.posts.toComment > toComment)) {
-                                    _context12.next = 56;
+                                    _context12.next = 55;
                                     break;
                                 }
 
                                 this.logger.update('Get posts to comment is done.');
-                                _context12.next = 56;
+                                _context12.next = 55;
                                 return this.action.sleep(config.sleepEveryIteration, true);
 
-                            case 56:
+                            case 55:
                                 _context12.next = 2;
                                 break;
 
-                            case 58:
+                            case 57:
                             case 'end':
                                 return _context12.stop();
                         }

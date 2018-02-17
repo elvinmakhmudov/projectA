@@ -56,7 +56,11 @@ exports.default = {
                                             switch (_context2.prev = _context2.next) {
                                                 case 0:
                                                     _context2.next = 2;
-                                                    return _page2.default.findRandom({ type: 'private' }, {}, { limit: limit || config.batchUserLimitCount }, function (err, results) {
+                                                    return _page2.default.findRandom({
+                                                        type: 'private'
+                                                    }, {}, {
+                                                        limit: limit || config.batchUserLimitCount
+                                                    }, function (err, results) {
                                                         if (err) return reject(err);
                                                         return resolve(results);
                                                     });
@@ -92,29 +96,53 @@ exports.default = {
         return _private;
     }(),
     explore: function () {
-        var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(limit) {
-            var d, yesterdayInMseconds;
-            return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(limit) {
+            return regeneratorRuntime.wrap(function _callee5$(_context5) {
                 while (1) {
-                    switch (_context4.prev = _context4.next) {
+                    switch (_context5.prev = _context5.next) {
                         case 0:
-                            d = new Date();
+                            return _context5.abrupt('return', new Promise(function () {
+                                var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(resolve, reject) {
+                                    var d, yesterdayInMseconds;
+                                    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                                        while (1) {
+                                            switch (_context4.prev = _context4.next) {
+                                                case 0:
+                                                    d = new Date();
 
-                            d.setDate(d.getDate() - config.oldestPageInDays);
-                            yesterdayInMseconds = Date.now() - d.getTime();
-                            return _context4.abrupt('return', _page2.default.find({
-                                type: 'explore',
-                                reviewed_at: {
-                                    $lt: yesterdayInMseconds
-                                }
-                            }, {}, { limit: limit || limit }));
+                                                    d.setDate(d.getDate() - config.oldestPageInDays);
+                                                    yesterdayInMseconds = Date.now() - d.getTime();
+                                                    return _context4.abrupt('return', _page2.default.findRandom({
+                                                        type: 'explore',
+                                                        reviewed_at: {
+                                                            $lt: yesterdayInMseconds
+                                                        }
+                                                    }, {}, {
+                                                        limit: limit || config.batchUserLimitCount
+                                                    }, function (err, results) {
+                                                        if (err) return reject(err);
+                                                        return resolve(results);
+                                                    }));
 
-                        case 4:
+                                                case 4:
+                                                case 'end':
+                                                    return _context4.stop();
+                                            }
+                                        }
+                                    }, _callee4, this);
+                                }));
+
+                                return function (_x7, _x8) {
+                                    return _ref5.apply(this, arguments);
+                                };
+                            }()));
+
+                        case 1:
                         case 'end':
-                            return _context4.stop();
+                            return _context5.stop();
                     }
                 }
-            }, _callee4, this);
+            }, _callee5, this);
         }));
 
         function explore(_x6) {
@@ -124,67 +152,69 @@ exports.default = {
         return explore;
     }(),
     insertMany: function () {
-        var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(pageArr) {
-            return regeneratorRuntime.wrap(function _callee6$(_context6) {
+        var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(pageArr) {
+            return regeneratorRuntime.wrap(function _callee7$(_context7) {
                 while (1) {
-                    switch (_context6.prev = _context6.next) {
+                    switch (_context7.prev = _context7.next) {
                         case 0:
-                            return _context6.abrupt('return', new Promise(function () {
-                                var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(resolve, reject) {
-                                    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                            return _context7.abrupt('return', new Promise(function () {
+                                var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee6$(_context6) {
                                         while (1) {
-                                            switch (_context5.prev = _context5.next) {
+                                            switch (_context6.prev = _context6.next) {
                                                 case 0:
-                                                    _context5.next = 2;
-                                                    return _page2.default.collection.insertMany(pageArr, { ordered: false }, function (err) {
+                                                    _context6.next = 2;
+                                                    return _page2.default.collection.insertMany(pageArr, {
+                                                        ordered: false
+                                                    }, function (err) {
                                                         if (err) reject(err);
                                                         console.log(pageArr.length + ' pages were added');
                                                         resolve();
                                                     });
 
                                                 case 2:
-                                                    return _context5.abrupt('return', _context5.sent);
+                                                    return _context6.abrupt('return', _context6.sent);
 
                                                 case 3:
                                                 case 'end':
-                                                    return _context5.stop();
+                                                    return _context6.stop();
                                             }
                                         }
-                                    }, _callee5, this);
+                                    }, _callee6, this);
                                 }));
 
-                                return function (_x8, _x9) {
-                                    return _ref6.apply(this, arguments);
+                                return function (_x10, _x11) {
+                                    return _ref7.apply(this, arguments);
                                 };
                             }()));
 
                         case 1:
                         case 'end':
-                            return _context6.stop();
+                            return _context7.stop();
                     }
                 }
-            }, _callee6, this);
+            }, _callee7, this);
         }));
 
-        function insertMany(_x7) {
-            return _ref5.apply(this, arguments);
+        function insertMany(_x9) {
+            return _ref6.apply(this, arguments);
         }
 
         return insertMany;
     }(),
     setReviewed: function () {
-        var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(page) {
-            return regeneratorRuntime.wrap(function _callee8$(_context8) {
+        var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(page) {
+            return regeneratorRuntime.wrap(function _callee9$(_context9) {
                 while (1) {
-                    switch (_context8.prev = _context8.next) {
+                    switch (_context9.prev = _context9.next) {
                         case 0:
-                            return _context8.abrupt('return', new Promise(function () {
-                                var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(resolve, reject) {
-                                    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+                            return _context9.abrupt('return', new Promise(function () {
+                                var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee8$(_context8) {
                                         while (1) {
-                                            switch (_context7.prev = _context7.next) {
+                                            switch (_context8.prev = _context8.next) {
                                                 case 0:
-                                                    _context7.next = 2;
+                                                    _context8.next = 2;
                                                     return _page2.default.update({
                                                         username: page.username
                                                     }, {
@@ -199,44 +229,44 @@ exports.default = {
 
                                                 case 2:
                                                 case 'end':
-                                                    return _context7.stop();
+                                                    return _context8.stop();
                                             }
                                         }
-                                    }, _callee7, this);
+                                    }, _callee8, this);
                                 }));
 
-                                return function (_x11, _x12) {
-                                    return _ref8.apply(this, arguments);
+                                return function (_x13, _x14) {
+                                    return _ref9.apply(this, arguments);
                                 };
                             }()));
 
                         case 1:
                         case 'end':
-                            return _context8.stop();
+                            return _context9.stop();
                     }
                 }
-            }, _callee8, this);
+            }, _callee9, this);
         }));
 
-        function setReviewed(_x10) {
-            return _ref7.apply(this, arguments);
+        function setReviewed(_x12) {
+            return _ref8.apply(this, arguments);
         }
 
         return setReviewed;
     }(),
     setCommented: function () {
-        var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(page) {
-            return regeneratorRuntime.wrap(function _callee10$(_context10) {
+        var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(page) {
+            return regeneratorRuntime.wrap(function _callee11$(_context11) {
                 while (1) {
-                    switch (_context10.prev = _context10.next) {
+                    switch (_context11.prev = _context11.next) {
                         case 0:
-                            return _context10.abrupt('return', new Promise(function () {
-                                var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(resolve, reject) {
-                                    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+                            return _context11.abrupt('return', new Promise(function () {
+                                var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee10$(_context10) {
                                         while (1) {
-                                            switch (_context9.prev = _context9.next) {
+                                            switch (_context10.prev = _context10.next) {
                                                 case 0:
-                                                    _context9.next = 2;
+                                                    _context10.next = 2;
                                                     return _page2.default.update({
                                                         username: page.username
                                                     }, {
@@ -254,27 +284,27 @@ exports.default = {
 
                                                 case 2:
                                                 case 'end':
-                                                    return _context9.stop();
+                                                    return _context10.stop();
                                             }
                                         }
-                                    }, _callee9, this);
+                                    }, _callee10, this);
                                 }));
 
-                                return function (_x14, _x15) {
-                                    return _ref10.apply(this, arguments);
+                                return function (_x16, _x17) {
+                                    return _ref11.apply(this, arguments);
                                 };
                             }().bind(this)));
 
                         case 1:
                         case 'end':
-                            return _context10.stop();
+                            return _context11.stop();
                     }
                 }
-            }, _callee10, this);
+            }, _callee11, this);
         }));
 
-        function setCommented(_x13) {
-            return _ref9.apply(this, arguments);
+        function setCommented(_x15) {
+            return _ref10.apply(this, arguments);
         }
 
         return setCommented;

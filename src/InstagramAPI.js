@@ -237,7 +237,7 @@ class InstagramAPI {
                     //get the users which are not author of post and which are not duplicate
                     if ((username !== post.username) && ((users.length > 0) ? (!users.some(user => user.username === username)) : true) && ((newUsers.length > 0) ? (!newUsers.some((user) => user.username === username)) : true)) {
                         for (let k = 0; k < config.toExclude.length; k++) {
-                            if (username.indexOf(config.toExclude[k]) !== -1) throw (this.login + ' : ERROR, STRING COTNAINS FORBIDDEN WORD');
+                            if (username.indexOf(config.toExclude[k]) !== -1) throw ('ERROR, STRING COTNAINS FORBIDDEN WORD');
                             newUsers.push(await new User({
                                 username,
                                 type: 'analyze'
@@ -246,7 +246,7 @@ class InstagramAPI {
                         this.logger.update('New username is : ' + username);
                     }
                 } catch (e) {
-                    console.log(e);
+                    this.logger.update(e);
                 }
             }
             return resolve({
@@ -270,16 +270,16 @@ class InstagramAPI {
             if (await this.driver.findElements(By.className("error-container")) != 0) {
                 return reject();
             };
-            this.logger.update('Analyzing ' + user.username);
+            // this.logger.update('Analyzing ' + user.username);
             //await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
             if (await this.driver.findElements(By.className("_rf3jb")) == 0) {
                 return reject();
             };
             if (await this.driver.findElements(By.className("_kcrwx")) != 0) {
-                this.logger.update('to follow');
+                // this.logger.update('to follow');
                 return resolve('follow');
             } else {
-                this.logger.update('to like');
+                // this.logger.update('to like');
                 return resolve('like');
             }
         }.bind(this));

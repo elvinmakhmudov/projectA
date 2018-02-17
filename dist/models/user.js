@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var random = require('mongoose-simple-random');
 
 var userSchema = new Schema({
     username: {
@@ -29,5 +30,7 @@ var userSchema = new Schema({
         default: false
     }
 });
+
+userSchema.plugin(random);
 
 module.exports = mongoose.model('User', userSchema);;

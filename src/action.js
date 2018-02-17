@@ -30,12 +30,12 @@ export default class Action {
         let oldExplorePages = await pagerepo.explore();
         let posts;
         await this.instagram.goToUsername((oldExplorePages.length > 0) ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
-        try {
-            let explorePages = await this.instagram.explorePage(oldExplorePages);
-            this.counter.pages.explored++;
-        } catch (e) {
-            this.logger.update(e);
-        }
+        // try {
+        let explorePages = await this.instagram.explorePage(oldExplorePages);
+        this.counter.pages.explored++;
+        // } catch (e) {
+        // this.logger.update(e);
+        // }
     }
     async getPostsToComment() {
         return new Promise(async function (resolve, reject) {
@@ -177,6 +177,7 @@ export default class Action {
             } catch (e) {
                 this.logger.update(e);
             }
+            this.logger.update('Analyzing users');
             for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
                 try {
                     let type = await this.instagram.getUserType(users[i]);
@@ -204,14 +205,21 @@ export default class Action {
         } catch (e) {
             this.logger.update(e);
         }
+        var errors = 0;
         for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
+            // try {
             try {
+                if (errors >= config.maxErrors) {
+                    await this.sleep(config.sleepEveryIteration, true);
+                    break;
+                }
                 let followed = await this.instagram.followUser(users[i]);
                 await userrepo.setFollowed(users[i], this.instagram.login);
                 j++;
             } catch (e) {
                 await userrepo.setType(users[i], 'error');
                 this.logger.update('Error following: ' + users[i].username);
+                errors++;
             }
         }
         this.logger.update('New users to follow size : ' + (this.counter.users.followed += j));
@@ -230,14 +238,20 @@ export default class Action {
         } catch (e) {
             this.logger.update(e);
         }
+        var errors = 0;
         for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             try {
+                if (errors >= config.maxErrors) {
+                    await this.sleep(config.sleepEveryIteration, true);
+                    break;
+                }
                 let unfollowed = await this.instagram.unfollowUser(users[i]);
                 await userrepo.setType(users[i], 'unfollowed');
                 j++;
             } catch (e) {
                 await userrepo.setType(users[i], 'error');
                 this.logger.update('Error unfollowing: ' + users[i].username);
+                errors++;
             }
         }
         this.logger.update('New users to unfollow size : ' + (this.counter.users.unfollowed += j));
@@ -255,14 +269,20 @@ export default class Action {
         } catch (e) {
             this.logger.update(e);
         }
+        var errors = 0;
         for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             try {
+                if (errors >= config.maxErrors) {
+                    await this.sleep(config.sleepEveryIteration, true);
+                    break;
+                }
                 await this.instagram.likeUserPosts(users[i]);
                 await userrepo.setType(users[i], 'liked');
                 j++;
             } catch (e) {
                 await userrepo.softDelete(users[i]);
                 this.logger.update('Soft deleted: ' + users[i].username);
+                errors++;
             }
         }
         this.logger.update('Liked users size : ' + (this.counter.users.liked += j));
@@ -280,8 +300,13 @@ export default class Action {
         } catch (e) {
             this.logger.update(e);
         }
+        var errors = 0;
         for (var i = 0, j = 0; j < posts.length && i < posts.length; i++) {
             try {
+                if (errors >= config.maxErrors) {
+                    await this.sleep(config.sleepEveryIteration, true);
+                    break;
+                }
                 this.logger.update('Commenting ' + (i + 1) + ' of ' + posts.length + ' posts.')
                 await this.instagram.commentPosts(posts[i]);
                 await postrepo.setType(posts[i], 'commented');
@@ -289,6 +314,7 @@ export default class Action {
                 j++;
             } catch (e) {
                 await postrepo.remove(posts[i]);
+                errors++;
             }
         }
         this.logger.update('Commented posts size : ' + (this.counter.posts.commented += j));

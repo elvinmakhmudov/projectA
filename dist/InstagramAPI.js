@@ -755,7 +755,7 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        throw _this2.login + ' : ERROR, STRING COTNAINS FORBIDDEN WORD';
+                                                        throw 'ERROR, STRING COTNAINS FORBIDDEN WORD';
 
                                                     case 9:
                                                         _context10.t0 = newUsers;
@@ -786,7 +786,7 @@ var InstagramAPI = function () {
                                                         _context10.prev = 20;
                                                         _context10.t2 = _context10['catch'](3);
 
-                                                        console.log(_context10.t2);
+                                                        _this2.logger.update(_context10.t2);
 
                                                     case 23:
                                                     case 'end':
@@ -870,42 +870,40 @@ var InstagramAPI = function () {
 
                                                     case 7:
                                                         ;
-                                                        this.logger.update('Analyzing ' + user.username);
+                                                        // this.logger.update('Analyzing ' + user.username);
                                                         //await this.driver.wait(until.elementLocated(By.className("_rf3jb")), config.timeout);
-                                                        _context12.next = 11;
+                                                        _context12.next = 10;
                                                         return this.driver.findElements(By.className("_rf3jb"));
 
-                                                    case 11:
+                                                    case 10:
                                                         _context12.t1 = _context12.sent;
 
                                                         if (!(_context12.t1 == 0)) {
-                                                            _context12.next = 14;
+                                                            _context12.next = 13;
                                                             break;
                                                         }
 
                                                         return _context12.abrupt('return', reject());
 
-                                                    case 14:
+                                                    case 13:
                                                         ;
-                                                        _context12.next = 17;
+                                                        _context12.next = 16;
                                                         return this.driver.findElements(By.className("_kcrwx"));
 
-                                                    case 17:
+                                                    case 16:
                                                         _context12.t2 = _context12.sent;
 
                                                         if (!(_context12.t2 != 0)) {
-                                                            _context12.next = 23;
+                                                            _context12.next = 21;
                                                             break;
                                                         }
 
-                                                        this.logger.update('to follow');
                                                         return _context12.abrupt('return', resolve('follow'));
 
-                                                    case 23:
-                                                        this.logger.update('to like');
+                                                    case 21:
                                                         return _context12.abrupt('return', resolve('like'));
 
-                                                    case 25:
+                                                    case 22:
                                                     case 'end':
                                                         return _context12.stop();
                                                 }

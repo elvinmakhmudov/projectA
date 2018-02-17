@@ -16,7 +16,11 @@ export default {
 
     async private(limit) {
         return new Promise(async function (resolve, reject) {
-            return await Page.findRandom({type: 'private' }, {}, { limit: limit || config.batchUserLimitCount }, function (err, results) {
+            return await Page.findRandom({
+                type: 'private'
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
                 if (err) return reject(err);
                 return resolve(results);
             });
@@ -35,20 +39,29 @@ export default {
     },
 
     async explore(limit) {
-        var d = new Date();
-        d.setDate(d.getDate() - config.oldestPageInDays);
-        let yesterdayInMseconds = Date.now() - d.getTime();
-        return Page.find({
-            type: 'explore',
-            reviewed_at: {
-                $lt: yesterdayInMseconds
-            },
-        }, {}, { limit: limit || limit });
+        return new Promise(async function (resolve, reject) {
+            var d = new Date();
+            d.setDate(d.getDate() - config.oldestPageInDays);
+            let yesterdayInMseconds = Date.now() - d.getTime();
+            return Page.findRandom({
+                type: 'explore',
+                reviewed_at: {
+                    $lt: yesterdayInMseconds
+                },
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
     },
 
     async insertMany(pageArr) {
         return new Promise(async function (resolve, reject) {
-            return await Page.collection.insertMany(pageArr,{ordered:false}, function (err) {
+            return await Page.collection.insertMany(pageArr, {
+                ordered: false
+            }, function (err) {
                 if (err) reject(err);
                 console.log(pageArr.length + ' pages were added');
                 resolve();
@@ -61,14 +74,14 @@ export default {
             await Page.update({
                 username: page.username
             }, {
-                    $set: {
-                        reviewed: true,
-                        reviewed_at: Date.now()
-                    }
-                }, function (err, page) {
-                    if (err) reject(err);
-                    resolve();
-                });
+                $set: {
+                    reviewed: true,
+                    reviewed_at: Date.now()
+                }
+            }, function (err, page) {
+                if (err) reject(err);
+                resolve();
+            });
         });
     },
 
@@ -77,17 +90,17 @@ export default {
             await Page.update({
                 username: page.username
             }, {
-                    $set: {
-                        type: 'commented',
-                        reviewed: true,
-                        reviewed_at: Date.now(),
-                        commented_at: Date.now(),
-                        commented_times: Number(Number(page.commented_times) >= Number(config.maxCommentForPageInDay)) ? 1 : (Number(page.commented_times) + 1)
-                    }
-                }, function (err) {
-                    if (err) reject(err);
-                    resolve();
-                });
+                $set: {
+                    type: 'commented',
+                    reviewed: true,
+                    reviewed_at: Date.now(),
+                    commented_at: Date.now(),
+                    commented_times: Number(Number(page.commented_times) >= Number(config.maxCommentForPageInDay)) ? 1 : (Number(page.commented_times) + 1)
+                }
+            }, function (err) {
+                if (err) reject(err);
+                resolve();
+            });
         }.bind(this));
     }
 }

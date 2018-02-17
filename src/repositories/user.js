@@ -7,38 +7,85 @@ export default {
     },
 
     analyze(limit) {
-        return User.find({
-            type: 'analyze',
-            reviewed: false
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(function (resolve, reject) {
+            return User.findRandom({
+                type: 'analyze',
+                reviewed: false
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+            // return User.find({
+            //     type: 'analyze',
+            //     reviewed: false
+            // }).limit(limit || config.batchUserLimitCount);
+        })
     },
 
     follow(limit) {
-        return User.find({
-            type: 'follow',
-            reviewed: true
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(function (resolve, reject) {
+            return User.findRandom({
+                type: 'follow',
+                reviewed: true
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
+        // return User.find({
+        //     type: 'follow',
+        //     reviewed: true
+        // }).limit(limit || config.batchUserLimitCount);
     },
 
     unfollow(username, limit) {
-        var d = new Date();
-        d.setDate(d.getDate() - 7);
-        let yesterdayInMseconds = Date.now() - d.getTime();
-        return User.find({
-            type: 'followed',
-            reviewed: true,
-            reviewed_at: {
-                $lte: yesterdayInMseconds
-            },
-            followed_by: username
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(function (resolve, reject) {
+            var d = new Date();
+            d.setDate(d.getDate() - 7);
+            let yesterdayInMseconds = Date.now() - d.getTime();
+            return User.findRandom({
+                type: 'followed',
+                reviewed: true,
+                reviewed_at: {
+                    $lte: yesterdayInMseconds
+                },
+                followed_by: username
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
+        // return User.find({ type: 'followed',
+        //     reviewed: true,
+        //     reviewed_at: {
+        //         $lte: yesterdayInMseconds
+        //     },
+        //     followed_by: username
+        // }).limit(limit || config.batchUserLimitCount);
     },
 
     like(limit) {
-        return User.find({
-            type: 'like',
-            reviewed: true
-        }).limit(limit || config.batchUserLimitCount);
+        return new Promise(function (resolve, reject) {
+            // return User.find({
+            //     type: 'like',
+            //     reviewed: true
+            // }).limit(limit || config.batchUserLimitCount);
+            return User.findRandom({
+                type: 'like',
+                reviewed: true
+            }, {}, {
+                limit: limit || config.batchUserLimitCount
+            }, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
     },
 
     async insertMany(newUsers) {
@@ -47,7 +94,6 @@ export default {
                 ordered: false
             }, function (err, users) {
                 // if (err) return reject(err);
-                console.log(newUsers.length + ' users were added to collection');
                 return resolve();
             });
         });

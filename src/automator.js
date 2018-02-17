@@ -27,11 +27,22 @@ class Automater {
 
     async findNewPages() {
         await this.action.logIn();
+        let errors = 0;
         while (true) {
-            let explored = this.counter.pages.explored;
-            await this.action.findNewPages();
-            if (this.counter.pages.explored > explored)
-                await this.action.sleep(config.sleepEveryIteration, true);
+            try {
+                if (errors >= config.maxErrors) {
+                    await this.action.sleep(config.sleepEveryIteration, true);
+                    errors = 0;
+                }
+                let explored = this.counter.pages.explored;
+                await this.action.findNewPages();
+                if (this.counter.pages.explored > explored)
+                    await this.action.sleep(config.sleepEveryIteration, true);
+                errors = 0;
+            } catch (e) {
+                this.logger.update(e);
+                errors++;
+            }
         }
     }
 
@@ -101,8 +112,9 @@ class Automater {
 
     async triplePageActions() {
         await this.action.logIn();
-        while (true) {
 
+        let errors = 0;
+        while (true) {
             let liked = this.counter.users.liked;
             // do {
             await this.action.likeUserPosts();
@@ -193,7 +205,6 @@ class Automater {
                 await this.action.getPostsToComment();
             } catch (e) {
                 this.logger.update(e);
-                break;
             }
             // } while (toComment >= this.counter.posts.toComment);
             if (this.counter.posts.toComment > toComment) {
