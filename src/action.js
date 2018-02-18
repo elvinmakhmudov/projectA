@@ -29,12 +29,15 @@ export default class Action {
         let postsReviewed = await postrepo.reviewed();
         let allPages = await pagerepo.all();
         let oldExplorePages = await pagerepo.explore();
-        let posts;
-        await this.instagram.goToUsername(!(typeof oldExplorePages === "undefined") || (oldExplorePages.length !== 0) ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
+        await this.instagram.goToUsername(!(typeof oldExplorePages === "undefined") && (oldExplorePages.length !== 0) ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
         // try {
-        let explorePages = await this.instagram.explorePage(allPages,oldExplorePages);
-        await pagerepo.insertMany(explorePages);
-        this.counter.pages.explored++;
+        let explorePages = await this.instagram.explorePage(allPages);
+        if (explorePages.length > 0) {
+            await pagerepo.insertMany(explorePages);
+            this.counter.pages.explored++;
+        } else {
+            throw 'NEW PAGES HAVE NOT BEEN FOUND';
+        }
         // } catch (e) {
         // this.logger.update(e);
         // }
@@ -76,9 +79,10 @@ export default class Action {
                             this.logger.update(e);
                         }
                     }
-                    console.log('freshposts size ' +freshPosts.length);
-                    await postrepo.insertMany(freshPosts);
-                    k++;
+                    if (freshPosts.length > 0) {
+                        await postrepo.insertMany(freshPosts);
+                        k++;
+                    }
                     // this.logger.update('New posts to comment size : ' + (this.counter.posts.toComment += l));
                 } catch (e) {
                     // await pagerepo.remove(explorePages[i])
@@ -261,7 +265,7 @@ export default class Action {
             return;
             // await this.instagram.sleep(config.sleepEveryIteration, true);
         }
-        this.logger.update(this, 'Users to like : ' + users.length);
+        this.logger.update('Users to like : ' + users.length);
         var errors = 0;
         for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             try {

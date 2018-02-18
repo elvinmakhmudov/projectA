@@ -135,7 +135,7 @@ var Action = function () {
         key: 'findNewPages',
         value: function () {
             var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-                var postsReviewed, allPages, oldExplorePages, posts, explorePages;
+                var postsReviewed, allPages, oldExplorePages, explorePages;
                 return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
                         switch (_context4.prev = _context4.next) {
@@ -155,26 +155,33 @@ var Action = function () {
 
                             case 8:
                                 oldExplorePages = _context4.sent;
-                                posts = void 0;
-                                _context4.next = 12;
-                                return this.instagram.goToUsername(!(typeof oldExplorePages === "undefined") || oldExplorePages.length !== 0 ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
+                                _context4.next = 11;
+                                return this.instagram.goToUsername(!(typeof oldExplorePages === "undefined") && oldExplorePages.length !== 0 ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
 
-                            case 12:
-                                _context4.next = 14;
-                                return this.instagram.explorePage(allPages, oldExplorePages);
+                            case 11:
+                                _context4.next = 13;
+                                return this.instagram.explorePage(allPages);
 
-                            case 14:
+                            case 13:
                                 explorePages = _context4.sent;
+
+                                if (!(explorePages.length > 0)) {
+                                    _context4.next = 20;
+                                    break;
+                                }
+
                                 _context4.next = 17;
                                 return _page2.default.insertMany(explorePages);
 
                             case 17:
                                 this.counter.pages.explored++;
-                                // } catch (e) {
-                                // this.logger.update(e);
-                                // }
+                                _context4.next = 21;
+                                break;
 
-                            case 18:
+                            case 20:
+                                throw 'NEW PAGES HAVE NOT BEEN FOUND';
+
+                            case 21:
                             case 'end':
                                 return _context4.stop();
                         }
@@ -304,13 +311,18 @@ var Action = function () {
                                                         break;
 
                                                     case 48:
-                                                        console.log('freshposts size ' + freshPosts.length);
+                                                        if (!(freshPosts.length > 0)) {
+                                                            _context5.next = 52;
+                                                            break;
+                                                        }
+
                                                         _context5.next = 51;
                                                         return _post2.default.insertMany(freshPosts);
 
                                                     case 51:
                                                         k++;
-                                                        // this.logger.update('New posts to comment size : ' + (this.counter.posts.toComment += l));
+
+                                                    case 52:
                                                         _context5.next = 57;
                                                         break;
 

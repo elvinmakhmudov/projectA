@@ -390,7 +390,7 @@ var InstagramAPI = function () {
                 var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(resolve, reject) {
                     var _this = this;
 
-                    var posts, postsArr, _loop, i;
+                    var posts, postsArr, _loop, i, _ret;
 
                     return regeneratorRuntime.wrap(function _callee7$(_context8) {
                         while (1) {
@@ -422,7 +422,7 @@ var InstagramAPI = function () {
                                     posts = _context8.sent;
                                     postsArr = [];
                                     _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop(i) {
-                                        var url;
+                                        var url, commentSize;
                                         return regeneratorRuntime.wrap(function _loop$(_context7) {
                                             while (1) {
                                                 switch (_context7.prev = _context7.next) {
@@ -436,11 +436,43 @@ var InstagramAPI = function () {
                                                         if (!(postsAnalyze.length > 0 ? !postsAnalyze.some(function (post) {
                                                             return post.url === url;
                                                         }) : true)) {
-                                                            _context7.next = 6;
+                                                            _context7.next = 18;
                                                             break;
                                                         }
 
                                                         _context7.next = 6;
+                                                        return _this.driver.actions().mouseMove(posts[i]).perform();
+
+                                                    case 6:
+                                                        _context7.next = 8;
+                                                        return _this.driver.findElements(By.css('._3apjk span'));
+
+                                                    case 8:
+                                                        _context7.t0 = _context7.sent;
+
+                                                        if (!(_context7.t0 == 0)) {
+                                                            _context7.next = 11;
+                                                            break;
+                                                        }
+
+                                                        return _context7.abrupt('return', 'continue');
+
+                                                    case 11:
+                                                        _context7.next = 13;
+                                                        return _this.driver.findElement(By.css('._3apjk span')).getText();
+
+                                                    case 13:
+                                                        commentSize = _context7.sent;
+
+                                                        if (!(commentSize === 0)) {
+                                                            _context7.next = 16;
+                                                            break;
+                                                        }
+
+                                                        return _context7.abrupt('return', 'continue');
+
+                                                    case 16:
+                                                        _context7.next = 18;
                                                         return postsArr.push(new _post2.default({
                                                             'url': url,
                                                             'username': page.username,
@@ -448,7 +480,7 @@ var InstagramAPI = function () {
                                                             'page': page._id
                                                         }));
 
-                                                    case 6:
+                                                    case 18:
                                                     case 'end':
                                                         return _context7.stop();
                                                 }
@@ -459,21 +491,31 @@ var InstagramAPI = function () {
 
                                 case 12:
                                     if (!(i < posts.length && i < config.postsToReview)) {
-                                        _context8.next = 17;
+                                        _context8.next = 20;
                                         break;
                                     }
 
                                     return _context8.delegateYield(_loop(i), 't1', 14);
 
                                 case 14:
+                                    _ret = _context8.t1;
+
+                                    if (!(_ret === 'continue')) {
+                                        _context8.next = 17;
+                                        break;
+                                    }
+
+                                    return _context8.abrupt('continue', 17);
+
+                                case 17:
                                     i++;
                                     _context8.next = 12;
                                     break;
 
-                                case 17:
+                                case 20:
                                     return _context8.abrupt('return', resolve(postsArr));
 
-                                case 18:
+                                case 21:
                                 case 'end':
                                     return _context8.stop();
                             }
@@ -755,7 +797,7 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        throw 'ERROR, STRING COTNAINS FORBIDDEN WORD';
+                                                        throw 'String ' + username + ' was excluded';
 
                                                     case 9:
                                                         _context10.t0 = newUsers;
@@ -1404,97 +1446,79 @@ var InstagramAPI = function () {
                                                         _context23.t0 = _context23.sent;
 
                                                         if (!(_context23.t0 == 0)) {
-                                                            _context23.next = 20;
+                                                            _context23.next = 7;
                                                             break;
                                                         }
 
-                                                        _context23.next = 6;
-                                                        return this.driver.findElements(By.className("_t78yp"));
-
-                                                    case 6:
-                                                        _context23.t1 = _context23.sent;
-
-                                                        if (!(_context23.t1 == 0)) {
-                                                            _context23.next = 14;
-                                                            break;
-                                                        }
-
-                                                        _context23.next = 10;
-                                                        return this.driver.navigate().refresh();
-
-                                                    case 10:
-                                                        _context23.next = 12;
-                                                        return this.sleep(2);
-
-                                                    case 12:
-                                                        _context23.next = 18;
+                                                        reject('ERROR EXPLORING PAGES');
+                                                        //follow
+                                                        // if (await this.driver.findElements(By.className("_t78yp")) == 0) {
+                                                        //     //click follow button
+                                                        //     // await this.driver.findElement(By.className('_gexxb')).click();
+                                                        //     //wait until requested text
+                                                        //     // await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+                                                        //     await this.driver.navigate().refresh();
+                                                        //     await this.sleep(2);
+                                                        // } else {
+                                                        //     await this.driver.navigate().refresh();
+                                                        //     await this.sleep(2);
+                                                        // }
+                                                        _context23.next = 8;
                                                         break;
 
-                                                    case 14:
-                                                        _context23.next = 16;
-                                                        return this.driver.navigate().refresh();
+                                                    case 7:
+                                                        return _context23.abrupt('break', 10);
 
-                                                    case 16:
-                                                        _context23.next = 18;
-                                                        return this.sleep(2);
-
-                                                    case 18:
-                                                        _context23.next = 21;
-                                                        break;
-
-                                                    case 20:
-                                                        return _context23.abrupt('break', 23);
-
-                                                    case 21:
+                                                    case 8:
                                                         ;
 
-                                                    case 22:
+                                                    case 9:
                                                         if (true) {
                                                             _context23.next = 0;
                                                             break;
                                                         }
 
-                                                    case 23:
-                                                        _context23.next = 25;
+                                                    case 10:
+                                                        _context23.next = 12;
                                                         return this.driver.findElement(By.className('_4tgw8')).click();
 
-                                                    case 25:
-                                                        _context23.next = 27;
+                                                    case 12:
+                                                        _context23.next = 14;
                                                         return this.sleep(1);
 
-                                                    case 27:
+                                                    case 14:
                                                         tmpPages = [];
                                                         next = true;
 
-                                                    case 29:
-                                                        _context23.next = 31;
+                                                    case 16:
+                                                        _context23.next = 18;
                                                         return this.driver.findElements(By.className("_r48jm"));
 
-                                                    case 31:
-                                                        _context23.t2 = _context23.sent;
+                                                    case 18:
+                                                        _context23.t1 = _context23.sent;
 
-                                                        if (!(_context23.t2 != 0)) {
-                                                            _context23.next = 36;
+                                                        if (!(_context23.t1 != 0)) {
+                                                            _context23.next = 23;
                                                             break;
                                                         }
 
-                                                        _context23.t3 = true;
-                                                        _context23.next = 37;
+                                                        _context23.t2 = true;
+                                                        _context23.next = 24;
                                                         break;
 
-                                                    case 36:
-                                                        _context23.t3 = false;
+                                                    case 23:
+                                                        _context23.t2 = false;
 
-                                                    case 37:
-                                                        next = _context23.t3;
-                                                        _context23.next = 40;
+                                                    case 24:
+                                                        next = _context23.t2;
+                                                        _context23.next = 27;
                                                         return this.sleep(2);
 
-                                                    case 40:
-                                                        _context23.next = 42;
+                                                    case 27:
+                                                        _context23.next = 29;
                                                         return this.driver.findElements(By.className('_2g7d5'));
 
-                                                    case 42:
+                                                    case 29:
                                                         newPages = _context23.sent;
                                                         _loop3 = /*#__PURE__*/regeneratorRuntime.mark(function _loop3(i) {
                                                             var username, newPage;
@@ -1519,6 +1543,8 @@ var InstagramAPI = function () {
                                                                             username = _context22.t0;
 
                                                                             if (!(username && (allPages.length > 0 ? !allPages.some(function (page) {
+                                                                                return page.username === username;
+                                                                            }) : true) && (tmpPages.length > 0 ? !tmpPages.some(function (page) {
                                                                                 return page.username === username;
                                                                             }) : true))) {
                                                                                 _context22.next = 17;
@@ -1556,111 +1582,111 @@ var InstagramAPI = function () {
                                                         });
                                                         i = 0;
 
-                                                    case 45:
+                                                    case 32:
                                                         if (!(i < newPages.length)) {
-                                                            _context23.next = 53;
+                                                            _context23.next = 40;
                                                             break;
                                                         }
 
-                                                        return _context23.delegateYield(_loop3(i), 't4', 47);
+                                                        return _context23.delegateYield(_loop3(i), 't3', 34);
 
-                                                    case 47:
-                                                        _ret3 = _context23.t4;
+                                                    case 34:
+                                                        _ret3 = _context23.t3;
 
                                                         if (!(_ret3 === 'continue')) {
-                                                            _context23.next = 50;
+                                                            _context23.next = 37;
                                                             break;
                                                         }
 
-                                                        return _context23.abrupt('continue', 50);
+                                                        return _context23.abrupt('continue', 37);
 
-                                                    case 50:
+                                                    case 37:
                                                         i++;
-                                                        _context23.next = 45;
+                                                        _context23.next = 32;
                                                         break;
 
-                                                    case 53:
-                                                        _context23.prev = 53;
+                                                    case 40:
+                                                        _context23.prev = 40;
 
                                                         if (!next) {
-                                                            _context23.next = 57;
+                                                            _context23.next = 44;
                                                             break;
                                                         }
 
-                                                        _context23.next = 57;
+                                                        _context23.next = 44;
                                                         return this.driver.findElement(By.className('_r48jm')).click();
 
-                                                    case 57:
-                                                        _context23.next = 62;
+                                                    case 44:
+                                                        _context23.next = 49;
                                                         break;
 
-                                                    case 59:
-                                                        _context23.prev = 59;
-                                                        _context23.t5 = _context23['catch'](53);
-                                                        return _context23.abrupt('break', 63);
+                                                    case 46:
+                                                        _context23.prev = 46;
+                                                        _context23.t4 = _context23['catch'](40);
+                                                        return _context23.abrupt('break', 50);
 
-                                                    case 62:
+                                                    case 49:
                                                         if (next && tmpPages.length < 10) {
-                                                            _context23.next = 29;
+                                                            _context23.next = 16;
                                                             break;
                                                         }
 
-                                                    case 63:
+                                                    case 50:
                                                         pages = [];
                                                         j = 0;
 
-                                                    case 65:
+                                                    case 52:
                                                         if (!(j < tmpPages.length)) {
-                                                            _context23.next = 85;
+                                                            _context23.next = 72;
                                                             break;
                                                         }
 
                                                         _username = tmpPages[j].username;
-                                                        _context23.next = 69;
+                                                        _context23.next = 56;
                                                         return this.driver.get(config.urls.main + _username);
 
-                                                    case 69:
-                                                        _context23.prev = 69;
-                                                        _context23.next = 72;
+                                                    case 56:
+                                                        _context23.prev = 56;
+                                                        _context23.next = 59;
                                                         return this.driver.findElement(By.partialLinkText('followers')).findElement(By.className('_fd86t')).getAttribute('title').then(function (follows) {
                                                             return follows.replace(',', '');
                                                         });
 
-                                                    case 72:
+                                                    case 59:
                                                         followers = _context23.sent;
 
                                                         if (!(followers < 50000)) {
-                                                            _context23.next = 75;
+                                                            _context23.next = 62;
                                                             break;
                                                         }
 
-                                                        return _context23.abrupt('continue', 82);
+                                                        return _context23.abrupt('continue', 69);
 
-                                                    case 75:
+                                                    case 62:
                                                         this.logger.update('new page is : ' + tmpPages[j].username);
                                                         pages.push(tmpPages[j]);
-                                                        _context23.next = 82;
+                                                        _context23.next = 69;
                                                         break;
 
-                                                    case 79:
-                                                        _context23.prev = 79;
-                                                        _context23.t6 = _context23['catch'](69);
-                                                        return _context23.abrupt('continue', 82);
+                                                    case 66:
+                                                        _context23.prev = 66;
+                                                        _context23.t5 = _context23['catch'](56);
+                                                        return _context23.abrupt('continue', 69);
 
-                                                    case 82:
+                                                    case 69:
                                                         j++;
-                                                        _context23.next = 65;
+                                                        _context23.next = 52;
                                                         break;
 
-                                                    case 85:
+                                                    case 72:
                                                         return _context23.abrupt('return', resolve(pages));
 
-                                                    case 86:
+                                                    case 73:
                                                     case 'end':
                                                         return _context23.stop();
                                                 }
                                             }
-                                        }, _callee20, this, [[53, 59], [69, 79]]);
+                                        }, _callee20, this, [[40, 46], [56, 66]]);
                                     }));
 
                                     return function (_x31, _x32) {

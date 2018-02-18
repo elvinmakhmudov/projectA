@@ -103,7 +103,7 @@ var Automater = function () {
 
                             case 3:
                                 if (!true) {
-                                    _context2.next = 24;
+                                    _context2.next = 23;
                                     break;
                                 }
 
@@ -135,27 +135,26 @@ var Automater = function () {
                                 return this.action.sleep(config.sleepEveryIteration, true);
 
                             case 15:
-                                errors = 0;
-                                _context2.next = 22;
+                                _context2.next = 21;
                                 break;
 
-                            case 18:
-                                _context2.prev = 18;
+                            case 17:
+                                _context2.prev = 17;
                                 _context2.t0 = _context2['catch'](4);
 
                                 this.logger.update(_context2.t0);
                                 errors++;
 
-                            case 22:
+                            case 21:
                                 _context2.next = 3;
                                 break;
 
-                            case 24:
+                            case 23:
                             case 'end':
                                 return _context2.stop();
                         }
                     }
-                }, _callee2, this, [[4, 18]]);
+                }, _callee2, this, [[4, 17]]);
             }));
 
             function findNewPages() {

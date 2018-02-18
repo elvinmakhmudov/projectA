@@ -170,6 +170,10 @@ class InstagramAPI {
             for (let i = 0; i < posts.length && i < config.postsToReview; i++) {
                 let url = await posts[i].getAttribute('href');
                 if ((postsAnalyze.length > 0) ? !postsAnalyze.some(post => post.url === url) : true) {
+                    await this.driver.actions().mouseMove(posts[i]).perform();
+                    if (await this.driver.findElements(By.css('._3apjk span')) == 0) continue;
+                    let commentSize = await this.driver.findElement(By.css('._3apjk span')).getText();
+                    if (commentSize === 0) continue;
                     await postsArr.push(new Post({
                         'url': url,
                         'username': page.username,
@@ -237,7 +241,7 @@ class InstagramAPI {
                     //get the users which are not author of post and which are not duplicate
                     if ((username !== post.username) && ((users.length > 0) ? (!users.some(user => user.username === username)) : true) && ((newUsers.length > 0) ? (!newUsers.some((user) => user.username === username)) : true)) {
                         for (let k = 0; k < config.toExclude.length; k++) {
-                            if (username.indexOf(config.toExclude[k]) !== -1) throw ('ERROR, STRING COTNAINS FORBIDDEN WORD');
+                            if (username.indexOf(config.toExclude[k]) !== -1) throw ('String ' + username + ' was excluded');
                             newUsers.push(await new User({
                                 username,
                                 type: 'analyze'
@@ -380,18 +384,19 @@ class InstagramAPI {
             do {
                 // await this.driver.wait(until.elementLocated(By.className("_4tgw8")), config.timeout);
                 if (await this.driver.findElements(By.className("_4tgw8")) == 0) {
+                    reject('ERROR EXPLORING PAGES');
                     //follow
-                    if (await this.driver.findElements(By.className("_t78yp")) == 0) {
-                        //click follow button
-                        // await this.driver.findElement(By.className('_gexxb')).click();
-                        //wait until requested text
-                        // await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
-                        await this.driver.navigate().refresh();
-                        await this.sleep(2);
-                    } else {
-                        await this.driver.navigate().refresh();
-                        await this.sleep(2);
-                    }
+                    // if (await this.driver.findElements(By.className("_t78yp")) == 0) {
+                    //     //click follow button
+                    //     // await this.driver.findElement(By.className('_gexxb')).click();
+                    //     //wait until requested text
+                    //     // await this.driver.wait(until.elementLocated(By.className("_t78yp")), config.timeout);
+                    //     await this.driver.navigate().refresh();
+                    //     await this.sleep(2);
+                    // } else {
+                    //     await this.driver.navigate().refresh();
+                    //     await this.sleep(2);
+                    // }
                 } else {
                     break;
                 };
@@ -406,7 +411,7 @@ class InstagramAPI {
                 let newPages = await this.driver.findElements(By.className('_2g7d5'));
                 for (let i = 0; i < newPages.length; i++) {
                     let username = await newPages[i].getText() || false;
-                    if (username && ((allPages.length > 0) ? !allPages.some(page => page.username === username) : true)) {
+                    if (username && ((allPages.length > 0) ? !allPages.some(page => page.username === username) : true) && ((tmpPages.length > 0) ? !tmpPages.some(page => page.username === username) : true)) {
                         try {
                             // if () {
                             let newPage = await new Page({

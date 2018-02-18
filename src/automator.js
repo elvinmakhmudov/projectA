@@ -38,7 +38,6 @@ class Automater {
                 await this.action.findNewPages();
                 if (this.counter.pages.explored > explored)
                     await this.action.sleep(config.sleepEveryIteration, true);
-                errors = 0;
             } catch (e) {
                 this.logger.update(e);
                 errors++;
