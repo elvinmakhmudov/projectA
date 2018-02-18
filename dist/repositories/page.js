@@ -95,7 +95,7 @@ exports.default = {
 
         return _private;
     }(),
-    explore: function () {
+    all: function () {
         var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(limit) {
             return regeneratorRuntime.wrap(function _callee5$(_context5) {
                 while (1) {
@@ -103,26 +103,16 @@ exports.default = {
                         case 0:
                             return _context5.abrupt('return', new Promise(function () {
                                 var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(resolve, reject) {
-                                    var d, yesterdayInMseconds;
                                     return regeneratorRuntime.wrap(function _callee4$(_context4) {
                                         while (1) {
                                             switch (_context4.prev = _context4.next) {
                                                 case 0:
-                                                    d = new Date();
-                                                    yesterdayInMseconds = d.setDate(d.getDate() - 1);
-                                                    return _context4.abrupt('return', _page2.default.findRandom({
-                                                        type: 'explore',
-                                                        reviewed_at: {
-                                                            $lt: yesterdayInMseconds
-                                                        }
-                                                    }, {}, {
-                                                        limit: limit || config.batchUserLimitCount
-                                                    }, function (err, results) {
+                                                    return _context4.abrupt('return', _page2.default.find({}, function (err, results) {
                                                         if (err) return reject(err);
                                                         return resolve(results);
                                                     }));
 
-                                                case 3:
+                                                case 1:
                                                 case 'end':
                                                     return _context4.stop();
                                             }
@@ -143,35 +133,38 @@ exports.default = {
             }, _callee5, this);
         }));
 
-        function explore(_x6) {
+        function all(_x6) {
             return _ref4.apply(this, arguments);
         }
 
-        return explore;
+        return all;
     }(),
-    insertMany: function () {
-        var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(pageArr) {
+    explore: function () {
+        var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(limit) {
             return regeneratorRuntime.wrap(function _callee7$(_context7) {
                 while (1) {
                     switch (_context7.prev = _context7.next) {
                         case 0:
                             return _context7.abrupt('return', new Promise(function () {
                                 var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(resolve, reject) {
+                                    var d, yesterdayInMseconds;
                                     return regeneratorRuntime.wrap(function _callee6$(_context6) {
                                         while (1) {
                                             switch (_context6.prev = _context6.next) {
                                                 case 0:
-                                                    _context6.next = 2;
-                                                    return _page2.default.collection.insertMany(pageArr, {
-                                                        ordered: false
-                                                    }, function (err) {
-                                                        if (err) reject(err);
-                                                        console.log(pageArr.length + ' pages were added');
-                                                        resolve();
-                                                    });
-
-                                                case 2:
-                                                    return _context6.abrupt('return', _context6.sent);
+                                                    d = new Date();
+                                                    yesterdayInMseconds = d.setDate(d.getDate() - 1);
+                                                    return _context6.abrupt('return', _page2.default.findRandom({
+                                                        type: 'explore',
+                                                        reviewed_at: {
+                                                            $lt: yesterdayInMseconds
+                                                        }
+                                                    }, {}, {
+                                                        limit: limit || config.batchUserLimitCount
+                                                    }, function (err, results) {
+                                                        if (err) return reject(err);
+                                                        return resolve(results);
+                                                    }));
 
                                                 case 3:
                                                 case 'end':
@@ -194,14 +187,14 @@ exports.default = {
             }, _callee7, this);
         }));
 
-        function insertMany(_x9) {
+        function explore(_x9) {
             return _ref6.apply(this, arguments);
         }
 
-        return insertMany;
+        return explore;
     }(),
-    setReviewed: function () {
-        var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(page) {
+    insertMany: function () {
+        var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(pageArr) {
             return regeneratorRuntime.wrap(function _callee9$(_context9) {
                 while (1) {
                     switch (_context9.prev = _context9.next) {
@@ -213,19 +206,18 @@ exports.default = {
                                             switch (_context8.prev = _context8.next) {
                                                 case 0:
                                                     _context8.next = 2;
-                                                    return _page2.default.update({
-                                                        username: page.username
-                                                    }, {
-                                                        $set: {
-                                                            reviewed: true,
-                                                            reviewed_at: Date.now()
-                                                        }
-                                                    }, function (err, page) {
+                                                    return _page2.default.collection.insertMany(pageArr, {
+                                                        ordered: false
+                                                    }, function (err) {
                                                         if (err) reject(err);
+                                                        console.log(pageArr.length + ' pages were added');
                                                         resolve();
                                                     });
 
                                                 case 2:
+                                                    return _context8.abrupt('return', _context8.sent);
+
+                                                case 3:
                                                 case 'end':
                                                     return _context8.stop();
                                             }
@@ -246,13 +238,13 @@ exports.default = {
             }, _callee9, this);
         }));
 
-        function setReviewed(_x12) {
+        function insertMany(_x12) {
             return _ref8.apply(this, arguments);
         }
 
-        return setReviewed;
+        return insertMany;
     }(),
-    setCommented: function () {
+    setReviewed: function () {
         var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(page) {
             return regeneratorRuntime.wrap(function _callee11$(_context11) {
                 while (1) {
@@ -265,6 +257,58 @@ exports.default = {
                                             switch (_context10.prev = _context10.next) {
                                                 case 0:
                                                     _context10.next = 2;
+                                                    return _page2.default.update({
+                                                        username: page.username
+                                                    }, {
+                                                        $set: {
+                                                            reviewed: true,
+                                                            reviewed_at: Date.now()
+                                                        }
+                                                    }, function (err, page) {
+                                                        if (err) reject(err);
+                                                        resolve();
+                                                    });
+
+                                                case 2:
+                                                case 'end':
+                                                    return _context10.stop();
+                                            }
+                                        }
+                                    }, _callee10, this);
+                                }));
+
+                                return function (_x16, _x17) {
+                                    return _ref11.apply(this, arguments);
+                                };
+                            }()));
+
+                        case 1:
+                        case 'end':
+                            return _context11.stop();
+                    }
+                }
+            }, _callee11, this);
+        }));
+
+        function setReviewed(_x15) {
+            return _ref10.apply(this, arguments);
+        }
+
+        return setReviewed;
+    }(),
+    setCommented: function () {
+        var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(page) {
+            return regeneratorRuntime.wrap(function _callee13$(_context13) {
+                while (1) {
+                    switch (_context13.prev = _context13.next) {
+                        case 0:
+                            return _context13.abrupt('return', new Promise(function () {
+                                var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(resolve, reject) {
+                                    return regeneratorRuntime.wrap(function _callee12$(_context12) {
+                                        while (1) {
+                                            switch (_context12.prev = _context12.next) {
+                                                case 0:
+                                                    _context12.next = 2;
                                                     return _page2.default.update({
                                                         username: page.username
                                                     }, {
@@ -282,27 +326,27 @@ exports.default = {
 
                                                 case 2:
                                                 case 'end':
-                                                    return _context10.stop();
+                                                    return _context12.stop();
                                             }
                                         }
-                                    }, _callee10, this);
+                                    }, _callee12, this);
                                 }));
 
-                                return function (_x16, _x17) {
-                                    return _ref11.apply(this, arguments);
+                                return function (_x19, _x20) {
+                                    return _ref13.apply(this, arguments);
                                 };
                             }().bind(this)));
 
                         case 1:
                         case 'end':
-                            return _context11.stop();
+                            return _context13.stop();
                     }
                 }
-            }, _callee11, this);
+            }, _callee13, this);
         }));
 
-        function setCommented(_x15) {
-            return _ref10.apply(this, arguments);
+        function setCommented(_x18) {
+            return _ref12.apply(this, arguments);
         }
 
         return setCommented;

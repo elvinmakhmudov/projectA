@@ -375,7 +375,7 @@ class InstagramAPI {
         }.bind(this));
     }
 
-    async explorePage(explorePages) {
+    async explorePage(allPages) {
         return new Promise(async function (resolve, reject) {
             do {
                 // await this.driver.wait(until.elementLocated(By.className("_4tgw8")), config.timeout);
@@ -398,7 +398,7 @@ class InstagramAPI {
             } while (true);
             await this.driver.findElement(By.className('_4tgw8')).click();
             await this.sleep(1);
-            let pages = [];
+            let tmpPages = [];
             let next = true;
             do {
                 next = (await this.driver.findElements(By.className("_r48jm")) != 0) ? true : false;
@@ -406,26 +406,41 @@ class InstagramAPI {
                 let newPages = await this.driver.findElements(By.className('_2g7d5'));
                 for (let i = 0; i < newPages.length; i++) {
                     let username = await newPages[i].getText() || false;
-                    if (username && ((explorePages.length > 0) ? !explorePages.some(page => page.username === username) : true)) {
+                    if (username && ((allPages.length > 0) ? !allPages.some(page => page.username === username) : true)) {
                         try {
+                            // if () {
                             let newPage = await new Page({
                                 username,
                                 type: 'explore',
                                 reviewed: false
-                            }).save();
-                            pages.push(newPage);
+                            });
+                            // }).save();
+                            tmpPages.push(newPage);
+                            // }
                         } catch (e) {
                             continue;
                         }
-                        this.logger.update('new page is : ' + await newPages[i].getText());
                     }
                 }
                 try {
                     if (next) await this.driver.findElement(By.className('_r48jm')).click();
                 } catch (e) {
-                    return reject(e);
+                    break;
                 }
-            } while (next && pages.length < 40);
+            } while (next && tmpPages.length < 10);
+            let pages = [];
+            for (let j = 0; j < tmpPages.length; j++) {
+                let username = tmpPages[j].username;
+                await this.driver.get(config.urls.main + username);
+                try {
+                    let followers = await this.driver.findElement(By.partialLinkText('followers')).findElement(By.className('_fd86t')).getAttribute('title').then(follows => follows.replace(',', ''));
+                    if (followers < 50000) continue;
+                    this.logger.update('new page is : ' + tmpPages[j].username);
+                    pages.push(tmpPages[j]);
+                } catch (e) {
+                    continue;
+                }
+            }
             return resolve(pages);
         }.bind(this));
     }

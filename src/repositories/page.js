@@ -27,6 +27,15 @@ export default {
         });
     },
 
+    async all(limit) {
+        return new Promise(async function (resolve, reject) {
+            return Page.find({}, function (err, results) {
+                if (err) return reject(err);
+                return resolve(results);
+            });
+        });
+    },
+
     async explore(limit) {
         return new Promise(async function (resolve, reject) {
             var d = new Date();

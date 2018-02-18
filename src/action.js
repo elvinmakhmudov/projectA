@@ -27,11 +27,13 @@ export default class Action {
     }
     async findNewPages() {
         let postsReviewed = await postrepo.reviewed();
+        let allPages = await pagerepo.all();
         let oldExplorePages = await pagerepo.explore();
         let posts;
         await this.instagram.goToUsername(!(typeof oldExplorePages === "undefined") || (oldExplorePages.length !== 0) ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
         // try {
-        let explorePages = await this.instagram.explorePage(oldExplorePages);
+        let explorePages = await this.instagram.explorePage(allPages,oldExplorePages);
+        await pagerepo.insertMany(explorePages);
         this.counter.pages.explored++;
         // } catch (e) {
         // this.logger.update(e);

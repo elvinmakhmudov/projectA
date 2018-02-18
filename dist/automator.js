@@ -650,7 +650,7 @@ var Automater = function () {
         key: 'tripleAnalyzator',
         value: function () {
             var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
-                var started, toComment;
+                var started, usersToAnalyze, analyzed, postsToAnalyze, toComment;
                 return regeneratorRuntime.wrap(function _callee12$(_context12) {
                     while (1) {
                         switch (_context12.prev = _context12.next) {
@@ -663,47 +663,14 @@ var Automater = function () {
 
                             case 3:
                                 if (!true) {
-                                    _context12.next = 24;
+                                    _context12.next = 63;
                                     break;
                                 }
 
-                                // let usersToAnalyze = this.counter.users.toAnalyze;
-                                // try {
-                                //     await this.action.analyzePosts();
-                                // } catch (e) {
-                                //     this.logger.update(e);
-                                // }
-                                // if (this.counter.users.toAnalyze > usersToAnalyze) {
-                                //     this.logger.update('ADDED ' + (this.counter.users.toAnalyze - usersToAnalyze) + ' USERS TO ANALYZE.');
-                                //     await this.action.sleep(config.sleepEveryIteration, true);
-                                // }
-
-                                // let analyzed = this.counter.users.analyzed;
-                                // try {
-                                //     await this.action.analyzeUsers();
-                                // } catch (e) {
-                                //     this.logger.update(e);
-                                // }
-                                // if (this.counter.users.analyzed > analyzed) {
-                                //     this.logger.update('ANALYZED ' + (this.counter.users.analyzed - analyzed) + ' USERS.');
-                                //     await this.action.sleep(config.sleepEveryIteration, true);
-                                // }
-
-                                // let postsToAnalyze = this.counter.posts.toAnalyze;
-                                // try {
-                                //     await this.action.savePosts();
-                                // } catch (e) {
-                                //     this.logger.update(e);
-                                // }
-                                // if (this.counter.posts.toAnalyze > postsToAnalyze) {
-                                //     this.logger.update('ADDED ' + (this.counter.posts.toAnalyze - postsToAnalyze) + 'POSTS TO ANALYZE.');
-                                //     await this.action.sleep(config.sleepEveryIteration, true);
-                                // }
-
-                                toComment = this.counter.posts.toComment;
+                                usersToAnalyze = this.counter.users.toAnalyze;
                                 _context12.prev = 5;
                                 _context12.next = 8;
-                                return this.action.getPostsToComment();
+                                return this.action.analyzePosts();
 
                             case 8:
                                 _context12.next = 13;
@@ -716,38 +683,116 @@ var Automater = function () {
                                 this.logger.update(_context12.t0);
 
                             case 13:
-                                if (!(this.counter.posts.toComment > toComment)) {
+                                if (!(this.counter.users.toAnalyze > usersToAnalyze)) {
                                     _context12.next = 17;
                                     break;
                                 }
 
-                                this.logger.update('Get posts to comment is done.');
+                                this.logger.update('ADDED ' + (this.counter.users.toAnalyze - usersToAnalyze) + ' USERS TO ANALYZE.');
                                 _context12.next = 17;
                                 return this.action.sleep(config.sleepEveryIteration, true);
 
                             case 17:
+                                analyzed = this.counter.users.analyzed;
+                                _context12.prev = 18;
+                                _context12.next = 21;
+                                return this.action.analyzeUsers();
+
+                            case 21:
+                                _context12.next = 26;
+                                break;
+
+                            case 23:
+                                _context12.prev = 23;
+                                _context12.t1 = _context12['catch'](18);
+
+                                this.logger.update(_context12.t1);
+
+                            case 26:
+                                if (!(this.counter.users.analyzed > analyzed)) {
+                                    _context12.next = 30;
+                                    break;
+                                }
+
+                                this.logger.update('ANALYZED ' + (this.counter.users.analyzed - analyzed) + ' USERS.');
+                                _context12.next = 30;
+                                return this.action.sleep(config.sleepEveryIteration, true);
+
+                            case 30:
+                                postsToAnalyze = this.counter.posts.toAnalyze;
+                                _context12.prev = 31;
+                                _context12.next = 34;
+                                return this.action.savePosts();
+
+                            case 34:
+                                _context12.next = 39;
+                                break;
+
+                            case 36:
+                                _context12.prev = 36;
+                                _context12.t2 = _context12['catch'](31);
+
+                                this.logger.update(_context12.t2);
+
+                            case 39:
+                                if (!(this.counter.posts.toAnalyze > postsToAnalyze)) {
+                                    _context12.next = 43;
+                                    break;
+                                }
+
+                                this.logger.update('ADDED ' + (this.counter.posts.toAnalyze - postsToAnalyze) + 'POSTS TO ANALYZE.');
+                                _context12.next = 43;
+                                return this.action.sleep(config.sleepEveryIteration, true);
+
+                            case 43:
+                                toComment = this.counter.posts.toComment;
+                                _context12.prev = 44;
+                                _context12.next = 47;
+                                return this.action.getPostsToComment();
+
+                            case 47:
+                                _context12.next = 52;
+                                break;
+
+                            case 49:
+                                _context12.prev = 49;
+                                _context12.t3 = _context12['catch'](44);
+
+                                this.logger.update(_context12.t3);
+
+                            case 52:
+                                if (!(this.counter.posts.toComment > toComment)) {
+                                    _context12.next = 56;
+                                    break;
+                                }
+
+                                this.logger.update('Get posts to comment is done.');
+                                _context12.next = 56;
+                                return this.action.sleep(config.sleepEveryIteration, true);
+
+                            case 56:
                                 if (!(Math.round((Date.now() - started) / (1000 * 60 * 60)) >= config.workingHours)) {
-                                    _context12.next = 22;
+                                    _context12.next = 61;
                                     break;
                                 }
 
                                 this.logger.update('LONG SLEEP');
-                                _context12.next = 21;
+                                _context12.next = 60;
                                 return this.action.sleep((24 - config.workingHours) * 60 * 60);
 
-                            case 21:
+                            case 60:
                                 started = new Date();
 
-                            case 22:
+                            case 61:
                                 _context12.next = 3;
                                 break;
 
-                            case 24:
+                            case 63:
                             case 'end':
                                 return _context12.stop();
                         }
                     }
-                }, _callee12, this, [[5, 10]]);
+                }, _callee12, this, [[5, 10], [18, 23], [31, 36], [44, 49]]);
             }));
 
             function tripleAnalyzator() {

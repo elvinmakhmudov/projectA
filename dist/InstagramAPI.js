@@ -1382,7 +1382,7 @@ var InstagramAPI = function () {
     }, {
         key: 'explorePage',
         value: function () {
-            var _ref20 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee21(explorePages) {
+            var _ref20 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee21(allPages) {
                 return regeneratorRuntime.wrap(function _callee21$(_context24) {
                     while (1) {
                         switch (_context24.prev = _context24.next) {
@@ -1391,7 +1391,7 @@ var InstagramAPI = function () {
                                     var _ref21 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee20(resolve, reject) {
                                         var _this3 = this;
 
-                                        var pages, next, newPages, _loop3, i, _ret3;
+                                        var tmpPages, next, newPages, _loop3, i, _ret3, pages, j, _username, followers;
 
                                         return regeneratorRuntime.wrap(function _callee20$(_context23) {
                                             while (1) {
@@ -1463,7 +1463,7 @@ var InstagramAPI = function () {
                                                         return this.sleep(1);
 
                                                     case 27:
-                                                        pages = [];
+                                                        tmpPages = [];
                                                         next = true;
 
                                                     case 29:
@@ -1518,10 +1518,10 @@ var InstagramAPI = function () {
                                                                         case 5:
                                                                             username = _context22.t0;
 
-                                                                            if (!(username && (explorePages.length > 0 ? !explorePages.some(function (page) {
+                                                                            if (!(username && (allPages.length > 0 ? !allPages.some(function (page) {
                                                                                 return page.username === username;
                                                                             }) : true))) {
-                                                                                _context22.next = 23;
+                                                                                _context22.next = 17;
                                                                                 break;
                                                                             }
 
@@ -1531,12 +1531,14 @@ var InstagramAPI = function () {
                                                                                 username: username,
                                                                                 type: 'explore',
                                                                                 reviewed: false
-                                                                            }).save();
+                                                                            });
 
                                                                         case 10:
                                                                             newPage = _context22.sent;
 
-                                                                            pages.push(newPage);
+                                                                            // }).save();
+                                                                            tmpPages.push(newPage);
+                                                                            // }
                                                                             _context22.next = 17;
                                                                             break;
 
@@ -1546,17 +1548,6 @@ var InstagramAPI = function () {
                                                                             return _context22.abrupt('return', 'continue');
 
                                                                         case 17:
-                                                                            _context22.t2 = _this3.logger;
-                                                                            _context22.next = 20;
-                                                                            return newPages[i].getText();
-
-                                                                        case 20:
-                                                                            _context22.t3 = _context22.sent;
-                                                                            _context22.t4 = 'new page is : ' + _context22.t3;
-
-                                                                            _context22.t2.update.call(_context22.t2, _context22.t4);
-
-                                                                        case 23:
                                                                         case 'end':
                                                                             return _context22.stop();
                                                                     }
@@ -1606,23 +1597,70 @@ var InstagramAPI = function () {
                                                     case 59:
                                                         _context23.prev = 59;
                                                         _context23.t5 = _context23['catch'](53);
-                                                        return _context23.abrupt('return', reject(_context23.t5));
+                                                        return _context23.abrupt('break', 63);
 
                                                     case 62:
-                                                        if (next && pages.length < 40) {
+                                                        if (next && tmpPages.length < 10) {
                                                             _context23.next = 29;
                                                             break;
                                                         }
 
                                                     case 63:
+                                                        pages = [];
+                                                        j = 0;
+
+                                                    case 65:
+                                                        if (!(j < tmpPages.length)) {
+                                                            _context23.next = 85;
+                                                            break;
+                                                        }
+
+                                                        _username = tmpPages[j].username;
+                                                        _context23.next = 69;
+                                                        return this.driver.get(config.urls.main + _username);
+
+                                                    case 69:
+                                                        _context23.prev = 69;
+                                                        _context23.next = 72;
+                                                        return this.driver.findElement(By.partialLinkText('followers')).findElement(By.className('_fd86t')).getAttribute('title').then(function (follows) {
+                                                            return follows.replace(',', '');
+                                                        });
+
+                                                    case 72:
+                                                        followers = _context23.sent;
+
+                                                        if (!(followers < 50000)) {
+                                                            _context23.next = 75;
+                                                            break;
+                                                        }
+
+                                                        return _context23.abrupt('continue', 82);
+
+                                                    case 75:
+                                                        this.logger.update('new page is : ' + tmpPages[j].username);
+                                                        pages.push(tmpPages[j]);
+                                                        _context23.next = 82;
+                                                        break;
+
+                                                    case 79:
+                                                        _context23.prev = 79;
+                                                        _context23.t6 = _context23['catch'](69);
+                                                        return _context23.abrupt('continue', 82);
+
+                                                    case 82:
+                                                        j++;
+                                                        _context23.next = 65;
+                                                        break;
+
+                                                    case 85:
                                                         return _context23.abrupt('return', resolve(pages));
 
-                                                    case 64:
+                                                    case 86:
                                                     case 'end':
                                                         return _context23.stop();
                                                 }
                                             }
-                                        }, _callee20, this, [[53, 59]]);
+                                        }, _callee20, this, [[53, 59], [69, 79]]);
                                     }));
 
                                     return function (_x31, _x32) {

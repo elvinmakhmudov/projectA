@@ -94,7 +94,6 @@ export default {
 
     async insertMany(postsArr) {
         return new Promise(async function (resolve, reject) {
-            console.log('postarr size ' +postsArr.length);
             return await Post.collection.insertMany(postsArr, {
                 ordered: false
             }, function (err) {

@@ -289,8 +289,7 @@ exports.default = {
                                         while (1) {
                                             switch (_context9.prev = _context9.next) {
                                                 case 0:
-                                                    console.log('postarr size ' + postsArr.length);
-                                                    _context9.next = 3;
+                                                    _context9.next = 2;
                                                     return _post2.default.collection.insertMany(postsArr, {
                                                         ordered: false
                                                     }, function (err) {
@@ -298,10 +297,10 @@ exports.default = {
                                                         return resolve();
                                                     });
 
-                                                case 3:
+                                                case 2:
                                                     return _context9.abrupt('return', _context9.sent);
 
-                                                case 4:
+                                                case 3:
                                                 case 'end':
                                                     return _context9.stop();
                                             }
