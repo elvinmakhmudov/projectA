@@ -46,7 +46,7 @@ export default class Action {
         return new Promise(async function (resolve, reject) {
             let explorePages;
             try {
-                explorePages = await pagerepo.explore(10);
+                explorePages = await pagerepo.explore(20);
                 if ((typeof explorePages === "undefined") || explorePages.length === 0) {
                     // await this.instagram.sleep(config.sleepEveryIteration, true);
                     return reject('ERROR ON GETTINGS POSTS TO COMMENT. EXPLORE PAGES is undefined or explorepages.length is 0');
@@ -99,7 +99,7 @@ export default class Action {
         return new Promise(async function (resolve, reject) {
             let pages, postsReviewed;
             try {
-                pages = await pagerepo.private(20);
+                pages = await pagerepo.private(40);
                 if ((typeof pages === "undefined") || pages.length === 0) {
                     // await this.instagram.sleep(config.sleepEveryIteration, true);
                     return reject(this.instagram.login + ' : ERROR ON SAVING POSTS. POSTS is undefined or posts.length is 0');

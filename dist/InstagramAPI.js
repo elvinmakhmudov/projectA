@@ -464,7 +464,7 @@ var InstagramAPI = function () {
                                                     case 13:
                                                         commentSize = _context7.sent;
 
-                                                        if (!(commentSize === 0)) {
+                                                        if (!(commentSize == 0)) {
                                                             _context7.next = 16;
                                                             break;
                                                         }

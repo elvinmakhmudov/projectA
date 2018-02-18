@@ -147,18 +147,15 @@ exports.default = {
                         case 0:
                             return _context7.abrupt('return', new Promise(function () {
                                 var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(resolve, reject) {
-                                    var d, yesterdayInMseconds;
                                     return regeneratorRuntime.wrap(function _callee6$(_context6) {
                                         while (1) {
                                             switch (_context6.prev = _context6.next) {
                                                 case 0:
-                                                    d = new Date();
-                                                    yesterdayInMseconds = d.setDate(d.getDate() - 1);
                                                     return _context6.abrupt('return', _page2.default.findRandom({
-                                                        type: 'explore',
-                                                        reviewed_at: {
-                                                            $lt: yesterdayInMseconds
-                                                        }
+                                                        type: 'explore'
+                                                        // reviewed_at: {
+                                                        //     $lt: yesterdayInMseconds
+                                                        // },
                                                     }, {}, {
                                                         limit: limit || config.batchUserLimitCount
                                                     }, function (err, results) {
@@ -166,7 +163,7 @@ exports.default = {
                                                         return resolve(results);
                                                     }));
 
-                                                case 3:
+                                                case 1:
                                                 case 'end':
                                                     return _context6.stop();
                                             }

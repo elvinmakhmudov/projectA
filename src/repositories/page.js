@@ -38,13 +38,13 @@ export default {
 
     async explore(limit) {
         return new Promise(async function (resolve, reject) {
-            var d = new Date();
-            let yesterdayInMseconds = d.setDate(d.getDate() - 1);
+            // var d = new Date();
+            // let yesterdayInMseconds = d.setDate(d.getDate() - 1);
             return Page.findRandom({
                 type: 'explore',
-                reviewed_at: {
-                    $lt: yesterdayInMseconds
-                },
+                // reviewed_at: {
+                //     $lt: yesterdayInMseconds
+                // },
             }, {}, {
                 limit: limit || config.batchUserLimitCount
             }, function (err, results) {

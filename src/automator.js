@@ -27,7 +27,7 @@ class Automater {
 
     async findNewPages() {
         await this.action.logIn();
-        let errors = 0;
+        var errors = 0;
         while (true) {
             try {
                 if (errors >= config.maxErrors) {

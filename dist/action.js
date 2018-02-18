@@ -213,7 +213,7 @@ var Action = function () {
                                                         explorePages = void 0;
                                                         _context5.prev = 1;
                                                         _context5.next = 4;
-                                                        return _page2.default.explore(10);
+                                                        return _page2.default.explore(20);
 
                                                     case 4:
                                                         explorePages = _context5.sent;
@@ -392,7 +392,7 @@ var Action = function () {
                                                         pages = void 0, postsReviewed = void 0;
                                                         _context7.prev = 1;
                                                         _context7.next = 4;
-                                                        return _page2.default.private(20);
+                                                        return _page2.default.private(40);
 
                                                     case 4:
                                                         pages = _context7.sent;
@@ -977,7 +977,7 @@ var Action = function () {
                                 throw 'ERROR ON LIKING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0';
 
                             case 7:
-                                this.logger.update(this, 'Users to like : ' + users.length);
+                                this.logger.update('Users to like : ' + users.length);
                                 errors = 0;
                                 i = 0, j = 0;
 

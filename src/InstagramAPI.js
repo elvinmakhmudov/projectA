@@ -173,7 +173,7 @@ class InstagramAPI {
                     await this.driver.actions().mouseMove(posts[i]).perform();
                     if (await this.driver.findElements(By.css('._3apjk span')) == 0) continue;
                     let commentSize = await this.driver.findElement(By.css('._3apjk span')).getText();
-                    if (commentSize === 0) continue;
+                    if (commentSize == 0) continue;
                     await postsArr.push(new Post({
                         'url': url,
                         'username': page.username,
