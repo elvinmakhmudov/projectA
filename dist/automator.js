@@ -493,12 +493,12 @@ var Automater = function () {
 
                             case 4:
                                 if (!true) {
-                                    _context11.next = 72;
+                                    _context11.next = 73;
                                     break;
                                 }
 
                                 if (!(errors > config.maxErrors)) {
-                                    _context11.next = 9;
+                                    _context11.next = 10;
                                     break;
                                 }
 
@@ -507,136 +507,139 @@ var Automater = function () {
                                 return this.action.sleep(config.sleepEveryIteration, true);
 
                             case 9:
+                                errors = 0;
+
+                            case 10:
                                 liked = this.counter.users.liked;
-                                _context11.prev = 10;
-                                _context11.next = 13;
+                                _context11.prev = 11;
+                                _context11.next = 14;
                                 return this.action.likeUserPosts();
 
-                            case 13:
-                                _context11.next = 19;
+                            case 14:
+                                _context11.next = 20;
                                 break;
 
-                            case 15:
-                                _context11.prev = 15;
-                                _context11.t0 = _context11['catch'](10);
+                            case 16:
+                                _context11.prev = 16;
+                                _context11.t0 = _context11['catch'](11);
 
                                 this.logger.update(_context11.t0);
                                 errors++;
 
-                            case 19:
+                            case 20:
                                 if (!(this.counter.users.liked > liked)) {
-                                    _context11.next = 23;
+                                    _context11.next = 24;
                                     break;
                                 }
 
                                 this.logger.update('LIKED ' + (this.counter.users.liked - liked) + ' USERS.');
-                                _context11.next = 23;
+                                _context11.next = 24;
                                 return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
 
-                            case 23:
+                            case 24:
                                 followed = this.counter.users.followed;
-                                _context11.prev = 24;
-                                _context11.next = 27;
+                                _context11.prev = 25;
+                                _context11.next = 28;
                                 return this.action.followUsers();
 
-                            case 27:
-                                _context11.next = 33;
+                            case 28:
+                                _context11.next = 34;
                                 break;
 
-                            case 29:
-                                _context11.prev = 29;
-                                _context11.t1 = _context11['catch'](24);
+                            case 30:
+                                _context11.prev = 30;
+                                _context11.t1 = _context11['catch'](25);
 
                                 this.logger.update(_context11.t1);
                                 errors++;
 
-                            case 33:
+                            case 34:
                                 if (!(this.counter.users.followed > followed)) {
-                                    _context11.next = 37;
+                                    _context11.next = 38;
                                     break;
                                 }
 
                                 this.logger.update('FOLLOWED ' + (this.counter.users.followed - followed) + ' USERS.');
-                                _context11.next = 37;
+                                _context11.next = 38;
                                 return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
 
-                            case 37:
+                            case 38:
                                 commented = this.counter.posts.commented;
-                                _context11.prev = 38;
-                                _context11.next = 41;
+                                _context11.prev = 39;
+                                _context11.next = 42;
                                 return this.action.commentPosts();
 
-                            case 41:
-                                _context11.next = 47;
+                            case 42:
+                                _context11.next = 48;
                                 break;
 
-                            case 43:
-                                _context11.prev = 43;
-                                _context11.t2 = _context11['catch'](38);
+                            case 44:
+                                _context11.prev = 44;
+                                _context11.t2 = _context11['catch'](39);
 
                                 this.logger.update(_context11.t2);
                                 errors++;
 
-                            case 47:
+                            case 48:
                                 if (!(this.counter.posts.commented > commented)) {
-                                    _context11.next = 51;
+                                    _context11.next = 52;
                                     break;
                                 }
 
                                 this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS.');
-                                _context11.next = 51;
+                                _context11.next = 52;
                                 return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
 
-                            case 51:
+                            case 52:
                                 unfollowed = this.counter.users.unfollowed;
-                                _context11.prev = 52;
-                                _context11.next = 55;
+                                _context11.prev = 53;
+                                _context11.next = 56;
                                 return this.action.unfollowUsers();
 
-                            case 55:
-                                _context11.next = 61;
+                            case 56:
+                                _context11.next = 62;
                                 break;
 
-                            case 57:
-                                _context11.prev = 57;
-                                _context11.t3 = _context11['catch'](52);
+                            case 58:
+                                _context11.prev = 58;
+                                _context11.t3 = _context11['catch'](53);
 
                                 this.logger.update(_context11.t3);
                                 errors++;
 
-                            case 61:
+                            case 62:
                                 if (!(this.counter.users.unfollowed > unfollowed)) {
-                                    _context11.next = 65;
+                                    _context11.next = 66;
                                     break;
                                 }
 
                                 this.logger.update('UNFOLLOWED ' + (this.counter.users.unfollowed - unfollowed) + ' USERS.');
-                                _context11.next = 65;
+                                _context11.next = 66;
                                 return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
 
-                            case 65:
+                            case 66:
                                 if (!(Math.round((Date.now() - started) / (1000 * 60 * 60)) >= config.workingHours)) {
-                                    _context11.next = 70;
+                                    _context11.next = 71;
                                     break;
                                 }
 
                                 this.logger.update('LONG SLEEP');
-                                _context11.next = 69;
+                                _context11.next = 70;
                                 return this.action.sleep((24 - config.workingHours) * 60 * 60);
 
-                            case 69:
+                            case 70:
                                 started = new Date();
 
-                            case 70:
+                            case 71:
                                 _context11.next = 4;
                                 break;
 
-                            case 72:
+                            case 73:
                             case 'end':
                                 return _context11.stop();
                         }
                     }
-                }, _callee11, this, [[10, 15], [24, 29], [38, 43], [52, 57]]);
+                }, _callee11, this, [[11, 16], [25, 30], [39, 44], [53, 58]]);
             }));
 
             function triplePageActions() {

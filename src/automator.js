@@ -118,6 +118,7 @@ class Automater {
             if (errors > config.maxErrors) {
                 this.logger.update('SLEEPING AFTER ERRORS');
                 await this.action.sleep(config.sleepEveryIteration, true);
+                errors = 0;
             }
 
             let liked = this.counter.users.liked;
