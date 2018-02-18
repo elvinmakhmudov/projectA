@@ -114,31 +114,56 @@ class Automater {
         await this.action.logIn();
 
         let started = new Date();
+        var errors = 0;
         while (true) {
+            if (errors > config.maxErrors) {
+                this.logger.update('SLEEPING AFTER ERRORS');
+                await this.action.sleep(config.sleepEveryIteration, true);
+            }
 
             let liked = this.counter.users.liked;
-            await this.action.likeUserPosts();
+            try {
+                await this.action.likeUserPosts();
+            } catch (e) {
+                this.logger.update(e);
+                errors++;
+            }
             if (this.counter.users.liked > liked) {
                 this.logger.update('LIKED ' + (this.counter.users.liked - liked) + ' USERS.');
                 await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToLikePerDay * config.userPostsToLike * 4), true);
             }
 
             let followed = this.counter.users.followed;
-            await this.action.followUsers();
+            try {
+                await this.action.followUsers();
+            } catch (e) {
+                this.logger.update(e);
+                errors++;
+            }
             if (this.counter.users.followed > followed) {
                 this.logger.update('FOLLOWED ' + (this.counter.users.followed - followed) + ' USERS.');
                 await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
             }
 
             let commented = this.counter.posts.commented;
-            await this.action.commentPosts();
+            try {
+                await this.action.commentPosts();
+            } catch (e) {
+                this.logger.update(e);
+                errors++;
+            }
             if (this.counter.posts.commented > commented) {
                 this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS.');
                 await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
             }
 
             let unfollowed = this.counter.users.unfollowed;
-            await this.action.unfollowUsers();
+            try {
+                await this.action.unfollowUsers();
+            } catch (e) {
+                this.logger.update(e);
+                errors++;
+            }
             if (this.counter.users.unfollowed > unfollowed) {
                 this.logger.update('UNFOLLOWED ' + (this.counter.users.unfollowed - unfollowed) + ' USERS.');
                 await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
@@ -200,7 +225,7 @@ class Automater {
                 await this.action.sleep(config.sleepEveryIteration, true);
             }
 
-            
+
             //sleep the rest of the time after working hours
             if (Math.round((Date.now() - started) / (1000 * 60 * 60)) >= config.workingHours) {
                 this.logger.update('LONG SLEEP');
@@ -208,6 +233,11 @@ class Automater {
                 started = new Date();
             }
         }
+    }
+
+    sleep(seconds) {
+        this.action.sleep(seconds, true);
+        return this;
     }
 }
 

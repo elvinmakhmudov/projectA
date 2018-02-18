@@ -200,7 +200,7 @@ class InstagramAPI {
             let datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60));
             let rating = Math.round(likes / datetime * 100) / 100;
             return resolve({
-                datetime,
+                date: new Date(dateattr).getTime(),
                 rating
             });
         }.bind(this));

@@ -152,7 +152,7 @@ var Action = function () {
                                 oldExplorePages = _context4.sent;
                                 posts = void 0;
                                 _context4.next = 9;
-                                return this.instagram.goToUsername(oldExplorePages.length > 0 ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
+                                return this.instagram.goToUsername(!(typeof oldExplorePages === "undefined") || oldExplorePages.length !== 0 ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
 
                             case 9:
                                 _context4.next = 11;
@@ -190,7 +190,7 @@ var Action = function () {
                             case 0:
                                 return _context6.abrupt('return', new Promise(function () {
                                     var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(resolve, reject) {
-                                        var explorePages, oldPosts, i, k, posts, freshPosts, j, l, d, yesterdayInMseconds, data;
+                                        var explorePages, oldPosts, i, k, freshPosts, posts, j, l, d, yesterdayInMseconds, data;
                                         return regeneratorRuntime.wrap(function _callee5$(_context5) {
                                             while (1) {
                                                 switch (_context5.prev = _context5.next) {
@@ -231,23 +231,23 @@ var Action = function () {
 
                                                     case 17:
                                                         if (!(k < explorePages.length && i < explorePages.length)) {
-                                                            _context5.next = 61;
+                                                            _context5.next = 62;
                                                             break;
                                                         }
 
-                                                        _context5.prev = 18;
-                                                        _context5.next = 21;
+                                                        freshPosts = [];
+                                                        _context5.prev = 19;
+                                                        _context5.next = 22;
                                                         return this.instagram.goToUsername(explorePages[i].username);
 
-                                                    case 21:
-                                                        _context5.next = 23;
+                                                    case 22:
+                                                        _context5.next = 24;
                                                         return this.instagram.getNewPosts(explorePages[i], oldPosts, 'comment');
 
-                                                    case 23:
+                                                    case 24:
                                                         posts = _context5.sent;
 
                                                         this.logger.update('posts length is : ' + posts.length);
-                                                        freshPosts = [];
                                                         j = 0, l = 0;
 
                                                     case 27:
@@ -260,7 +260,7 @@ var Action = function () {
 
                                                         //set yesterday since epoch in mseconds
                                                         d = new Date();
-                                                        yesterdayInMseconds = d.setDate(d.getDate() - 7);
+                                                        yesterdayInMseconds = d.setDate(d.getDate() - 3);
                                                         _context5.next = 33;
                                                         return this.instagram.getRatingAndDate(posts[j]);
 
@@ -268,10 +268,10 @@ var Action = function () {
                                                         data = _context5.sent;
 
                                                         posts[j].rating = data.rating;
-                                                        posts[j].datetime = data.datetime;
+                                                        posts[j].date = data.date;
                                                         //if post is old, skip it
 
-                                                        if (!(data.datetime < yesterdayInMseconds)) {
+                                                        if (!(data.date < yesterdayInMseconds)) {
                                                             _context5.next = 38;
                                                             break;
                                                         }
@@ -296,42 +296,43 @@ var Action = function () {
                                                         break;
 
                                                     case 48:
-                                                        _context5.next = 50;
+                                                        console.log('freshposts size ' + freshPosts.length);
+                                                        _context5.next = 51;
                                                         return _post2.default.insertMany(freshPosts);
 
-                                                    case 50:
+                                                    case 51:
                                                         k++;
                                                         // this.logger.update('New posts to comment size : ' + (this.counter.posts.toComment += l));
-                                                        _context5.next = 56;
+                                                        _context5.next = 57;
                                                         break;
 
-                                                    case 53:
-                                                        _context5.prev = 53;
-                                                        _context5.t2 = _context5['catch'](18);
+                                                    case 54:
+                                                        _context5.prev = 54;
+                                                        _context5.t2 = _context5['catch'](19);
 
                                                         // await pagerepo.remove(explorePages[i])
                                                         this.logger.update(_context5.t2);
 
-                                                    case 56:
-                                                        _context5.next = 58;
+                                                    case 57:
+                                                        _context5.next = 59;
                                                         return _page2.default.setReviewed(explorePages[i]);
 
-                                                    case 58:
+                                                    case 59:
                                                         i++;
                                                         _context5.next = 17;
                                                         break;
 
-                                                    case 61:
+                                                    case 62:
                                                         // await pagerepo.insertMany(explorePages)
                                                         this.logger.update('Inserting explore pages');
                                                         return _context5.abrupt('return', resolve());
 
-                                                    case 63:
+                                                    case 64:
                                                     case 'end':
                                                         return _context5.stop();
                                                 }
                                             }
-                                        }, _callee5, this, [[1, 13], [18, 53], [28, 42]]);
+                                        }, _callee5, this, [[1, 13], [19, 54], [28, 42]]);
                                     }));
 
                                     return function (_x3, _x4) {
@@ -755,94 +756,81 @@ var Action = function () {
                         switch (_context13.prev = _context13.next) {
                             case 0:
                                 users = void 0;
-                                _context13.prev = 1;
-                                _context13.next = 4;
+                                _context13.next = 3;
                                 return _user2.default.follow();
 
-                            case 4:
+                            case 3:
                                 users = _context13.sent;
 
                                 if (!(typeof users === "undefined" || users.length === 0)) {
-                                    _context13.next = 8;
+                                    _context13.next = 7;
                                     break;
                                 }
 
-                                this.logger.update('ERROR ON FOLLOWING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0');
-                                // await this.instagram.sleep(config.sleepEveryIteration, true);
-                                return _context13.abrupt('return');
+                                throw 'ERROR ON FOLLOWING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0';
 
-                            case 8:
+                            case 7:
                                 this.logger.update('Users  to follow : ' + users.length);
-                                _context13.next = 14;
-                                break;
-
-                            case 11:
-                                _context13.prev = 11;
-                                _context13.t0 = _context13['catch'](1);
-
-                                this.logger.update(_context13.t0);
-
-                            case 14:
                                 errors = 0;
                                 i = 0, j = 0;
 
-                            case 16:
+                            case 10:
                                 if (!(j < users.length && i < users.length)) {
-                                    _context13.next = 39;
+                                    _context13.next = 33;
                                     break;
                                 }
 
-                                _context13.prev = 17;
+                                _context13.prev = 11;
 
                                 if (!(errors >= config.maxErrors)) {
-                                    _context13.next = 22;
+                                    _context13.next = 16;
                                     break;
                                 }
 
-                                _context13.next = 21;
+                                _context13.next = 15;
                                 return this.sleep(config.sleepEveryIteration, true);
 
-                            case 21:
-                                return _context13.abrupt('break', 39);
+                            case 15:
+                                return _context13.abrupt('break', 33);
 
-                            case 22:
-                                _context13.next = 24;
+                            case 16:
+                                _context13.next = 18;
                                 return this.instagram.followUser(users[i]);
 
-                            case 24:
+                            case 18:
                                 followed = _context13.sent;
-                                _context13.next = 27;
+                                _context13.next = 21;
                                 return _user2.default.setFollowed(users[i], this.instagram.login);
 
-                            case 27:
+                            case 21:
                                 j++;
-                                _context13.next = 36;
+                                _context13.next = 30;
                                 break;
 
-                            case 30:
-                                _context13.prev = 30;
-                                _context13.t1 = _context13['catch'](17);
-                                _context13.next = 34;
+                            case 24:
+                                _context13.prev = 24;
+                                _context13.t0 = _context13['catch'](11);
+                                _context13.next = 28;
                                 return _user2.default.setType(users[i], 'error');
 
-                            case 34:
+                            case 28:
                                 this.logger.update('Error following: ' + users[i].username);
                                 errors++;
 
-                            case 36:
+                            case 30:
                                 i++;
-                                _context13.next = 16;
+                                _context13.next = 10;
                                 break;
 
-                            case 39:
+                            case 33:
                                 this.logger.update('New users to follow size : ' + (this.counter.users.followed += j));
 
-                            case 40:
+                            case 34:
                             case 'end':
                                 return _context13.stop();
                         }
                     }
-                }, _callee13, this, [[1, 11], [17, 30]]);
+                }, _callee13, this, [[11, 24]]);
             }));
 
             function followUsers() {
@@ -862,11 +850,10 @@ var Action = function () {
                             case 0:
                                 // await this.instagram.unfollowUsers();
                                 users = void 0;
-                                _context14.prev = 1;
-                                _context14.next = 4;
+                                _context14.next = 3;
                                 return _user2.default.unfollow(this.login);
 
-                            case 4:
+                            case 3:
                                 users = _context14.sent;
 
                                 if (!(typeof users === "undefined" || users.length === 0)) {
@@ -878,77 +865,66 @@ var Action = function () {
 
                             case 7:
                                 this.logger.update('Users  to unfollow : ' + users.length);
-                                _context14.next = 14;
-                                break;
-
-                            case 10:
-                                _context14.prev = 10;
-                                _context14.t0 = _context14['catch'](1);
-
-                                this.logger.update(_context14.t0);
-                                return _context14.abrupt('return');
-
-                            case 14:
                                 errors = 0;
                                 i = 0, j = 0;
 
-                            case 16:
+                            case 10:
                                 if (!(j < users.length && i < users.length)) {
-                                    _context14.next = 39;
+                                    _context14.next = 33;
                                     break;
                                 }
 
-                                _context14.prev = 17;
+                                _context14.prev = 11;
 
                                 if (!(errors >= config.maxErrors)) {
-                                    _context14.next = 22;
+                                    _context14.next = 16;
                                     break;
                                 }
 
-                                _context14.next = 21;
+                                _context14.next = 15;
                                 return this.sleep(config.sleepEveryIteration, true);
 
-                            case 21:
-                                return _context14.abrupt('break', 39);
+                            case 15:
+                                return _context14.abrupt('break', 33);
 
-                            case 22:
-                                _context14.next = 24;
+                            case 16:
+                                _context14.next = 18;
                                 return this.instagram.unfollowUser(users[i]);
 
-                            case 24:
+                            case 18:
                                 unfollowed = _context14.sent;
-                                _context14.next = 27;
+                                _context14.next = 21;
                                 return _user2.default.setType(users[i], 'unfollowed');
 
-                            case 27:
+                            case 21:
                                 j++;
-                                _context14.next = 36;
+                                _context14.next = 30;
                                 break;
 
-                            case 30:
-                                _context14.prev = 30;
-                                _context14.t1 = _context14['catch'](17);
-                                _context14.next = 34;
+                            case 24:
+                                _context14.prev = 24;
+                                _context14.t0 = _context14['catch'](11);
+                                _context14.next = 28;
                                 return _user2.default.setType(users[i], 'error');
 
-                            case 34:
+                            case 28:
                                 this.logger.update('Error unfollowing: ' + users[i].username);
                                 errors++;
 
-                            case 36:
+                            case 30:
                                 i++;
-                                _context14.next = 16;
+                                _context14.next = 10;
                                 break;
 
-                            case 39:
+                            case 33:
                                 this.logger.update('New users to unfollow size : ' + (this.counter.users.unfollowed += j));
 
-                            case 40:
+                            case 34:
                             case 'end':
                                 return _context14.stop();
                         }
                     }
-                }, _callee14, this, [[1, 10], [17, 30]]);
+                }, _callee14, this, [[11, 24]]);
             }));
 
             function unfollowUsers() {
@@ -967,11 +943,10 @@ var Action = function () {
                         switch (_context15.prev = _context15.next) {
                             case 0:
                                 users = void 0;
-                                _context15.prev = 1;
-                                _context15.next = 4;
+                                _context15.next = 3;
                                 return _user2.default.like();
 
-                            case 4:
+                            case 3:
                                 users = _context15.sent;
 
                                 if (!(typeof users === "undefined" || users.length === 0)) {
@@ -979,79 +954,69 @@ var Action = function () {
                                     break;
                                 }
 
-                                return _context15.abrupt('return');
+                                throw 'ERROR ON LIKING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0';
 
                             case 7:
                                 this.logger.update(this, 'Users to like : ' + users.length);
-                                _context15.next = 13;
-                                break;
-
-                            case 10:
-                                _context15.prev = 10;
-                                _context15.t0 = _context15['catch'](1);
-
-                                this.logger.update(_context15.t0);
-
-                            case 13:
                                 errors = 0;
                                 i = 0, j = 0;
 
-                            case 15:
+                            case 10:
                                 if (!(j < users.length && i < users.length)) {
-                                    _context15.next = 37;
+                                    _context15.next = 32;
                                     break;
                                 }
 
-                                _context15.prev = 16;
+                                _context15.prev = 11;
 
                                 if (!(errors >= config.maxErrors)) {
-                                    _context15.next = 21;
+                                    _context15.next = 16;
                                     break;
                                 }
 
-                                _context15.next = 20;
+                                _context15.next = 15;
                                 return this.sleep(config.sleepEveryIteration, true);
 
-                            case 20:
-                                return _context15.abrupt('break', 37);
+                            case 15:
+                                return _context15.abrupt('break', 32);
 
-                            case 21:
-                                _context15.next = 23;
+                            case 16:
+                                _context15.next = 18;
                                 return this.instagram.likeUserPosts(users[i]);
 
-                            case 23:
-                                _context15.next = 25;
+                            case 18:
+                                _context15.next = 20;
                                 return _user2.default.setType(users[i], 'liked');
 
-                            case 25:
+                            case 20:
                                 j++;
-                                _context15.next = 34;
+                                _context15.next = 29;
                                 break;
 
-                            case 28:
-                                _context15.prev = 28;
-                                _context15.t1 = _context15['catch'](16);
-                                _context15.next = 32;
+                            case 23:
+                                _context15.prev = 23;
+                                _context15.t0 = _context15['catch'](11);
+                                _context15.next = 27;
                                 return _user2.default.softDelete(users[i]);
 
-                            case 32:
+                            case 27:
                                 this.logger.update('Soft deleted: ' + users[i].username);
                                 errors++;
 
-                            case 34:
+                            case 29:
                                 i++;
-                                _context15.next = 15;
+                                _context15.next = 10;
                                 break;
 
-                            case 37:
+                            case 32:
                                 this.logger.update('Liked users size : ' + (this.counter.users.liked += j));
 
-                            case 38:
+                            case 33:
                             case 'end':
                                 return _context15.stop();
                         }
                     }
-                }, _callee15, this, [[1, 10], [16, 28]]);
+                }, _callee15, this, [[11, 23]]);
             }));
 
             function likeUserPosts() {
@@ -1070,11 +1035,10 @@ var Action = function () {
                         switch (_context16.prev = _context16.next) {
                             case 0:
                                 posts = void 0;
-                                _context16.prev = 1;
-                                _context16.next = 4;
+                                _context16.next = 3;
                                 return _post2.default.comment();
 
-                            case 4:
+                            case 3:
                                 posts = _context16.sent;
 
                                 if (!(typeof posts === "undefined" || posts.length === 0)) {
@@ -1082,80 +1046,70 @@ var Action = function () {
                                     break;
                                 }
 
-                                return _context16.abrupt('return');
+                                throw 'ERROR ON COMMENTING POSTS. POSTS IS UNDEFINED OR POSTS LENGTH IS 0';
 
                             case 7:
                                 this.logger.update('Posts to comment : ' + posts.length);
-                                _context16.next = 13;
-                                break;
-
-                            case 10:
-                                _context16.prev = 10;
-                                _context16.t0 = _context16['catch'](1);
-
-                                this.logger.update(_context16.t0);
-
-                            case 13:
                                 errors = 0;
                                 i = 0, j = 0;
 
-                            case 15:
+                            case 10:
                                 if (!(j < posts.length && i < posts.length)) {
-                                    _context16.next = 37;
+                                    _context16.next = 32;
                                     break;
                                 }
 
-                                _context16.prev = 16;
+                                _context16.prev = 11;
 
                                 if (!(errors >= config.maxErrors)) {
-                                    _context16.next = 21;
+                                    _context16.next = 16;
                                     break;
                                 }
 
-                                _context16.next = 20;
+                                _context16.next = 15;
                                 return this.sleep(config.sleepEveryIteration, true);
 
-                            case 20:
-                                return _context16.abrupt('break', 37);
+                            case 15:
+                                return _context16.abrupt('break', 32);
 
-                            case 21:
+                            case 16:
                                 this.logger.update('Commenting ' + (i + 1) + ' of ' + posts.length + ' posts.');
-                                _context16.next = 24;
+                                _context16.next = 19;
                                 return this.instagram.commentPosts(posts[i]);
 
-                            case 24:
-                                _context16.next = 26;
+                            case 19:
+                                _context16.next = 21;
                                 return _post2.default.setType(posts[i], 'commented');
 
-                            case 26:
+                            case 21:
                                 // await pagerepo.setCommented(posts[i].page[0]);
                                 j++;
-                                _context16.next = 34;
+                                _context16.next = 29;
                                 break;
 
-                            case 29:
-                                _context16.prev = 29;
-                                _context16.t1 = _context16['catch'](16);
-                                _context16.next = 33;
+                            case 24:
+                                _context16.prev = 24;
+                                _context16.t0 = _context16['catch'](11);
+                                _context16.next = 28;
                                 return _post2.default.remove(posts[i]);
 
-                            case 33:
+                            case 28:
                                 errors++;
 
-                            case 34:
+                            case 29:
                                 i++;
-                                _context16.next = 15;
+                                _context16.next = 10;
                                 break;
 
-                            case 37:
+                            case 32:
                                 this.logger.update('Commented posts size : ' + (this.counter.posts.commented += j));
 
-                            case 38:
+                            case 33:
                             case 'end':
                                 return _context16.stop();
                         }
                     }
-                }, _callee16, this, [[1, 10], [16, 29]]);
+                }, _callee16, this, [[11, 24]]);
             }));
 
             function commentPosts() {

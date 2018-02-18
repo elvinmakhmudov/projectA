@@ -28,7 +28,7 @@ exports.default = {
                                             switch (_context2.prev = _context2.next) {
                                                 case 0:
                                                     d = new Date();
-                                                    yesterdayInMseconds = d.setDate(d.getDate() - 7);
+                                                    yesterdayInMseconds = d.setDate(d.getDate() - 1);
                                                     _context2.next = 4;
                                                     return _post2.default.findRandom({
                                                         type: 'comment',
@@ -289,7 +289,8 @@ exports.default = {
                                         while (1) {
                                             switch (_context9.prev = _context9.next) {
                                                 case 0:
-                                                    _context9.next = 2;
+                                                    console.log('postarr size ' + postsArr.length);
+                                                    _context9.next = 3;
                                                     return _post2.default.collection.insertMany(postsArr, {
                                                         ordered: false
                                                     }, function (err) {
@@ -297,10 +298,10 @@ exports.default = {
                                                         return resolve();
                                                     });
 
-                                                case 2:
+                                                case 3:
                                                     return _context9.abrupt('return', _context9.sent);
 
-                                                case 3:
+                                                case 4:
                                                 case 'end':
                                                     return _context9.stop();
                                             }

@@ -109,7 +109,7 @@ exports.default = {
                                             switch (_context4.prev = _context4.next) {
                                                 case 0:
                                                     d = new Date();
-                                                    yesterdayInMseconds = d.setDate(d.getDate() - 7);
+                                                    yesterdayInMseconds = d.setDate(d.getDate() - 1);
                                                     return _context4.abrupt('return', _page2.default.findRandom({
                                                         type: 'explore',
                                                         reviewed_at: {

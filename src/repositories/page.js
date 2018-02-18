@@ -25,23 +25,12 @@ export default {
                 return resolve(results);
             });
         });
-        // var d = new Date();
-        // d.setDate(d.getDate() - config.oldestPageInDays);
-        // let yesterdayInMseconds = Date.now() - d.getMilliseconds();
-        // Find "limit" random documents (defaults to array of 1)
-        // return Page.findRandom({
-        //     reviewed: false,
-        //     // reviewed_at: {
-        //     //     $lt: yesterdayInMseconds
-        //     // },
-        //     type: 'private'
-        // }).limit(limit || config.batchUserLimitCount);
     },
 
     async explore(limit) {
         return new Promise(async function (resolve, reject) {
             var d = new Date();
-            let yesterdayInMseconds = d.setDate(d.getDate() - 7);
+            let yesterdayInMseconds = d.setDate(d.getDate() - 1);
             return Page.findRandom({
                 type: 'explore',
                 reviewed_at: {

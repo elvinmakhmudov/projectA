@@ -596,7 +596,7 @@ var InstagramAPI = function () {
                                     datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60));
                                     rating = Math.round(likes / datetime * 100) / 100;
                                     return _context9.abrupt('return', resolve({
-                                        datetime: datetime,
+                                        date: new Date(dateattr).getTime(),
                                         rating: rating
                                     }));
 

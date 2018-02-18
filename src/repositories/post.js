@@ -5,7 +5,7 @@ export default {
     async comment(limit) {
         return new Promise(async function (resolve, reject) {
             var d = new Date();
-            let yesterdayInMseconds = d.setDate(d.getDate() - 7);
+            let yesterdayInMseconds = d.setDate(d.getDate() - 1);
             let posts = await Post.findRandom({
                 type: 'comment',
                 reviewed: false
@@ -94,6 +94,7 @@ export default {
 
     async insertMany(postsArr) {
         return new Promise(async function (resolve, reject) {
+            console.log('postarr size ' +postsArr.length);
             return await Post.collection.insertMany(postsArr, {
                 ordered: false
             }, function (err) {

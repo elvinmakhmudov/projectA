@@ -4,21 +4,22 @@
         "password": "password"
     },
     "browser": "chrome",
-    "headless":true,
+    "headless": true,
     "urls": {
         "main": "https://www.instagram.com/",
         "login": "https://www.instagram.com/accounts/login/"
     },
     "comments": [
-        ":)", ".", "...", ":))", "))", ")))", "Chox gozel.", "Super", "Ela", "<3", ":D", ":P", "Yaxwidi)", "İncredible", "Awesome", "Cool", "Amazing", "Woow", "Ваау", "Вау", "Vau", "Geweng", "Gozel", "Duzdu", "Choz gozeldi", "Норм", "Красиво", "Супер", "Klass", "Класс", "Мм))", "Norm", "Mm", "Hmm", "Mmm", "+", "++", "+++", "ok)"
+        ":)", ".", "...", ":))", "))", ")))", "Chox gozel.", "Super", "Ela", "<3", ":D", ":P", "Yaxwidi)", "İncredible", "Awesome", "Cool", "Amazing", "Woow", "Ваау", "Вау", "Vau", "Geweng", "Gozel", "Duzdu", "Choz gozeldi", "Норм", "Красиво", "Супер", "Klass", "Класс", "Мм))", "Norm", "Mm", "Hmm", "Mmm", "+", "++", "+++", "ok)", ":)))", "cox gozel", "maraqlidir", "hmmmmm", "heee", "xax", "ok))", ".........", "))))))))))", ":)", ":*", "xowum geldi", "salam))", "!!!", "xosh", "норм", "не плохо)", "красиво))", "хорошо))", "хорошая фотка)", "понравилось", "лайк!", "ela)", "bomba))", "geweng))", "ne yaxwi)", "aa))", "good))", "very nice))", "excellent))", "exceptional))", "fascinating))", "positive))", "superb))", "satisfying))", "wonderful))", "boss))", "nice))", "neat))", "great pic))", "i love it))", "looking good))", "i like it))", "wooow)))", "definetely like)"
     ],
     "toExclude": [
-        "online", "uwag", "store", "magaz", "boutique", "butik", "shop", "baku", "alem", "moda", "lady", "sport", "brend", "saat", "qab", "mobi", "etir", "tort", "perde", "dress", "bag", "anta", "geyim", "oriflame", "orjinal", "original", "turkey", "usa", "sumk", "lux", "xeber", "metbex","kosmetika","saglam","elan"
+        "online", "uwag", "store", "magaz", "boutique", "butik", "shop", "baku", "alem", "moda", "lady", "sport", "brend", "saat", "qab", "mobi", "etir", "tort", "perde", "dress", "bag", "anta", "geyim", "oriflame", "orjinal", "original", "turkey", "usa", "sumk", "lux", "xeber", "metbex", "kosmet", "saglam", "elan", "art", "sifar"
     ],
-    "workingHours": 10,
+    "workingHours": 12,
     "database": "automater",
     "mongoDb": "mongodb://localhost:27017/",
     "timeout": 10000,
+    "maxErrors": 5,
     "maxCommentForPageInDay": 3,
     "userPostsToLike": 3,
     "usersToLikePerDay": 250,

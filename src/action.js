@@ -29,7 +29,7 @@ export default class Action {
         let postsReviewed = await postrepo.reviewed();
         let oldExplorePages = await pagerepo.explore();
         let posts;
-        await this.instagram.goToUsername((oldExplorePages.length > 0) ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
+        await this.instagram.goToUsername(!(typeof oldExplorePages === "undefined") || (oldExplorePages.length !== 0) ? oldExplorePages[Math.floor(Math.random() * oldExplorePages.length)].username : "qizlargramm");
         // try {
         let explorePages = await this.instagram.explorePage(oldExplorePages);
         this.counter.pages.explored++;
@@ -52,28 +52,29 @@ export default class Action {
                 this.logger.update(e);
             }
             for (var i = 0, k = 0; k < explorePages.length && i < explorePages.length; i++) {
+                let freshPosts = [];
                 try {
                     await this.instagram.goToUsername(explorePages[i].username);
                     // let postsFor = await postrepo.postsFor(explorePages[i]);
                     let posts = await this.instagram.getNewPosts(explorePages[i], oldPosts, 'comment');
                     this.logger.update('posts length is : ' + posts.length);
-                    let freshPosts = [];
                     for (var j = 0, l = 0; j < posts.length && l < posts.length; j++) {
                         try {
                             //set yesterday since epoch in mseconds
                             var d = new Date();
-                            let yesterdayInMseconds = d.setDate(d.getDate() - 7);
+                            let yesterdayInMseconds = d.setDate(d.getDate() - 3);
                             let data = await this.instagram.getRatingAndDate(posts[j]);
                             posts[j].rating = data.rating;
-                            posts[j].datetime = data.datetime;
+                            posts[j].date = data.date;
                             //if post is old, skip it
-                            if (data.datetime < yesterdayInMseconds) continue;
+                            if (data.date < yesterdayInMseconds) continue;
                             freshPosts.push(posts[j])
                             l++;
                         } catch (e) {
                             this.logger.update(e);
                         }
                     }
+                    console.log('freshposts size ' +freshPosts.length);
                     await postrepo.insertMany(freshPosts);
                     k++;
                     // this.logger.update('New posts to comment size : ' + (this.counter.posts.toComment += l));
@@ -194,17 +195,13 @@ export default class Action {
 
     async followUsers() {
         let users;
-        try {
-            users = await userrepo.follow();
-            if ((typeof users === "undefined") || users.length === 0) {
-                this.logger.update('ERROR ON FOLLOWING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0');
-                // await this.instagram.sleep(config.sleepEveryIteration, true);
-                return;
-            }
-            this.logger.update('Users  to follow : ' + users.length);
-        } catch (e) {
-            this.logger.update(e);
+        users = await userrepo.follow();
+        if ((typeof users === "undefined") || users.length === 0) {
+            throw ('ERROR ON FOLLOWING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0');
+            return;
+            // await this.instagram.sleep(config.sleepEveryIteration, true);
         }
+        this.logger.update('Users  to follow : ' + users.length);
         var errors = 0;
         for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             // try {
@@ -228,17 +225,13 @@ export default class Action {
     async unfollowUsers() {
         // await this.instagram.unfollowUsers();
         let users;
-        try {
-            users = await userrepo.unfollow(this.login);
-            if ((typeof users === "undefined") || users.length === 0) {
-                throw 'ERROR ON UNFOLLOWING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0';
-                // await this.instagram.sleep(config.sleepEveryIteration, true);
-            }
-            this.logger.update('Users  to unfollow : ' + users.length);
-        } catch (e) {
-            this.logger.update(e);
+        users = await userrepo.unfollow(this.login);
+        if ((typeof users === "undefined") || users.length === 0) {
+            throw 'ERROR ON UNFOLLOWING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0';
             return;
+            // await this.instagram.sleep(config.sleepEveryIteration, true);
         }
+        this.logger.update('Users  to unfollow : ' + users.length);
         var errors = 0;
         for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             try {
@@ -260,16 +253,13 @@ export default class Action {
 
     async likeUserPosts() {
         let users;
-        try {
-            users = await userrepo.like();
-            if ((typeof users === "undefined") || users.length === 0) {
-                // await this.instagram.sleep(config.sleepEveryIteration, true);
-                return;
-            }
-            this.logger.update(this, 'Users to like : ' + users.length);
-        } catch (e) {
-            this.logger.update(e);
+        users = await userrepo.like();
+        if ((typeof users === "undefined") || users.length === 0) {
+            throw ('ERROR ON LIKING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0');
+            return;
+            // await this.instagram.sleep(config.sleepEveryIteration, true);
         }
+        this.logger.update(this, 'Users to like : ' + users.length);
         var errors = 0;
         for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
             try {
@@ -291,16 +281,13 @@ export default class Action {
 
     async commentPosts() {
         let posts;
-        try {
-            posts = await postrepo.comment();
-            if ((typeof posts === "undefined") || posts.length === 0) {
-                // await this.instagram.sleep(config.sleepEveryIteration, true);
-                return;
-            }
-            this.logger.update('Posts to comment : ' + posts.length);
-        } catch (e) {
-            this.logger.update(e);
+        posts = await postrepo.comment();
+        if ((typeof posts === "undefined") || posts.length === 0) {
+            throw ('ERROR ON COMMENTING POSTS. POSTS IS UNDEFINED OR POSTS LENGTH IS 0');
+            return;
+            // await this.instagram.sleep(config.sleepEveryIteration, true);
         }
+        this.logger.update('Posts to comment : ' + posts.length);
         var errors = 0;
         for (var i = 0, j = 0; j < posts.length && i < posts.length; i++) {
             try {

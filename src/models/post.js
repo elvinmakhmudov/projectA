@@ -23,6 +23,7 @@ var postSchema = new Schema({
         ref: 'Page'
     }],
     likes: Number,
+    date: Number,
     rating: Number
 });
 
