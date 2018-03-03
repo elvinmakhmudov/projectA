@@ -145,17 +145,17 @@ class Automater {
                 await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
             }
 
-            let commented = this.counter.posts.commented;
-            try {
-                await this.action.commentPosts();
-            } catch (e) {
-                this.logger.update(e);
-                errors++;
-            }
-            if (this.counter.posts.commented > commented) {
-                this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS.');
-                await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
-            }
+            // let commented = this.counter.posts.commented;
+            // try {
+            //     await this.action.commentPosts();
+            // } catch (e) {
+            //     this.logger.update(e);
+            //     errors++;
+            // }
+            // if (this.counter.posts.commented > commented) {
+            //     this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS.');
+            //     await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
+            // }
 
             let unfollowed = this.counter.users.unfollowed;
             try {
@@ -228,9 +228,13 @@ class Automater {
 
             //sleep the rest of the time after working hours
             if (Math.round((Date.now() - started) / (1000 * 60 * 60)) >= config.workingHours) {
-                this.logger.update('LONG SLEEP');
-                await this.action.sleep((24 - config.workingHours) * 60 * 60);
-                started = new Date();
+                try {
+                    this.logger.update('LONG SLEEP');
+                    await this.action.sleep((24 - config.workingHours) * 60 * 60);
+                    started = new Date();
+                } catch (e) {
+                    this.logger.update(e);
+                }
             }
         }
     }

@@ -213,7 +213,7 @@ var Action = function () {
                                                         explorePages = void 0;
                                                         _context5.prev = 1;
                                                         _context5.next = 4;
-                                                        return _page2.default.explore(20);
+                                                        return _page2.default.explore(80);
 
                                                     case 4:
                                                         explorePages = _context5.sent;
@@ -246,7 +246,7 @@ var Action = function () {
 
                                                     case 17:
                                                         if (!(k < explorePages.length && i < explorePages.length)) {
-                                                            _context5.next = 62;
+                                                            _context5.next = 66;
                                                             break;
                                                         }
 
@@ -267,7 +267,7 @@ var Action = function () {
 
                                                     case 27:
                                                         if (!(j < posts.length && l < posts.length)) {
-                                                            _context5.next = 48;
+                                                            _context5.next = 50;
                                                             break;
                                                         }
 
@@ -291,7 +291,7 @@ var Action = function () {
                                                             break;
                                                         }
 
-                                                        return _context5.abrupt('continue', 45);
+                                                        return _context5.abrupt('continue', 47);
 
                                                     case 38:
                                                         freshPosts.push(posts[j]);
@@ -306,53 +306,61 @@ var Action = function () {
                                                         this.logger.update(_context5.t1);
 
                                                     case 45:
+                                                        _context5.next = 47;
+                                                        return this.sleep(5);
+
+                                                    case 47:
                                                         j++;
                                                         _context5.next = 27;
                                                         break;
 
-                                                    case 48:
+                                                    case 50:
                                                         if (!(freshPosts.length > 0)) {
-                                                            _context5.next = 52;
+                                                            _context5.next = 54;
                                                             break;
                                                         }
 
-                                                        _context5.next = 51;
+                                                        _context5.next = 53;
                                                         return _post2.default.insertMany(freshPosts);
 
-                                                    case 51:
+                                                    case 53:
                                                         k++;
 
-                                                    case 52:
-                                                        _context5.next = 57;
+                                                    case 54:
+                                                        _context5.next = 59;
                                                         break;
 
-                                                    case 54:
-                                                        _context5.prev = 54;
+                                                    case 56:
+                                                        _context5.prev = 56;
                                                         _context5.t2 = _context5['catch'](19);
 
                                                         // await pagerepo.remove(explorePages[i])
                                                         this.logger.update(_context5.t2);
 
-                                                    case 57:
-                                                        _context5.next = 59;
+                                                    case 59:
+                                                        _context5.next = 61;
                                                         return _page2.default.setReviewed(explorePages[i]);
 
-                                                    case 59:
+                                                    case 61:
+                                                        _context5.next = 63;
+                                                        return this.sleep(5);
+
+                                                    case 63:
                                                         i++;
                                                         _context5.next = 17;
                                                         break;
 
-                                                    case 62:
+                                                    case 66:
                                                         // await pagerepo.insertMany(explorePages)
                                                         this.logger.update('Inserting explore pages');
                                                         return _context5.abrupt('return', resolve());
 
-                                                    case 64:
+                                                    case 68:
                                                     case 'end':
                                                         return _context5.stop();
                                                 }
                                             }
-                                        }, _callee5, this, [[1, 13], [19, 54], [28, 42]]);
+                                        }, _callee5, this, [[1, 13], [19, 56], [28, 42]]);
                                     }));
 
                                     return function (_x3, _x4) {
@@ -392,7 +400,7 @@ var Action = function () {
                                                         pages = void 0, postsReviewed = void 0;
                                                         _context7.prev = 1;
                                                         _context7.next = 4;
-                                                        return _page2.default.private(40);
+                                                        return _page2.default.private(90);
 
                                                     case 4:
                                                         pages = _context7.sent;
@@ -430,7 +438,7 @@ var Action = function () {
 
                                                     case 19:
                                                         if (!(j < pages.length && i < pages.length)) {
-                                                            _context7.next = 39;
+                                                            _context7.next = 41;
                                                             break;
                                                         }
 
@@ -461,17 +469,21 @@ var Action = function () {
 
                                                     case 34:
                                                         _context7.next = 36;
-                                                        return _page2.default.setReviewed(pages[i]);
+                                                        return this.sleep(5);
 
                                                     case 36:
+                                                        _context7.next = 38;
+                                                        return _page2.default.setReviewed(pages[i]);
+
+                                                    case 38:
                                                         i++;
                                                         _context7.next = 19;
                                                         break;
 
-                                                    case 39:
+                                                    case 41:
                                                         return _context7.abrupt('return', resolve());
 
-                                                    case 40:
+                                                    case 42:
                                                     case 'end':
                                                         return _context7.stop();
                                                 }
@@ -516,7 +528,7 @@ var Action = function () {
                                                         posts = void 0, users = void 0;
                                                         _context9.prev = 1;
                                                         _context9.next = 4;
-                                                        return _post2.default.analyze(20);
+                                                        return _post2.default.analyze(80);
 
                                                     case 4:
                                                         posts = _context9.sent;
@@ -562,7 +574,7 @@ var Action = function () {
 
                                                     case 22:
                                                         if (!(j < posts.length && i < posts.length)) {
-                                                            _context9.next = 40;
+                                                            _context9.next = 42;
                                                             break;
                                                         }
 
@@ -589,43 +601,47 @@ var Action = function () {
                                                         return _post2.default.remove(posts[i]);
 
                                                     case 37:
+                                                        _context9.next = 39;
+                                                        return this.sleep(5);
+
+                                                    case 39:
                                                         i++;
                                                         _context9.next = 22;
                                                         break;
 
-                                                    case 40:
+                                                    case 42:
                                                         if (!(newUsers.length > 0)) {
-                                                            _context9.next = 51;
+                                                            _context9.next = 53;
                                                             break;
                                                         }
 
-                                                        _context9.prev = 41;
-                                                        _context9.next = 44;
+                                                        _context9.prev = 43;
+                                                        _context9.next = 46;
                                                         return _user2.default.insertMany(newUsers);
 
-                                                    case 44:
+                                                    case 46:
                                                         // this.logger.update(users.length + ' users found.');
                                                         // this.logger.update('New users to analyze size : ' + (this.counter.users.toAnalyze +=j));
                                                         newUsers.length = 0;
                                                         users.length = 0;
-                                                        _context9.next = 51;
+                                                        _context9.next = 53;
                                                         break;
 
-                                                    case 48:
-                                                        _context9.prev = 48;
-                                                        _context9.t3 = _context9['catch'](41);
+                                                    case 50:
+                                                        _context9.prev = 50;
+                                                        _context9.t3 = _context9['catch'](43);
 
                                                         this.logger.update(_context9.t3);
 
-                                                    case 51:
+                                                    case 53:
                                                         return _context9.abrupt('return', resolve());
 
-                                                    case 52:
+                                                    case 54:
                                                     case 'end':
                                                         return _context9.stop();
                                                 }
                                             }
-                                        }, _callee9, this, [[1, 16], [23, 32], [41, 48]]);
+                                        }, _callee9, this, [[1, 16], [23, 32], [43, 50]]);
                                     }));
 
                                     return function (_x7, _x8) {
@@ -665,7 +681,7 @@ var Action = function () {
                                                         users = void 0;
                                                         _context11.prev = 1;
                                                         _context11.next = 4;
-                                                        return _user2.default.analyze(20);
+                                                        return _user2.default.analyze(70);
 
                                                     case 4:
                                                         _context11.t0 = _context11.sent;
@@ -704,7 +720,7 @@ var Action = function () {
 
                                                     case 18:
                                                         if (!(j < users.length && i < users.length)) {
-                                                            _context11.next = 36;
+                                                            _context11.next = 38;
                                                             break;
                                                         }
 
@@ -731,15 +747,19 @@ var Action = function () {
                                                         return _user2.default.softDelete(users[i]);
 
                                                     case 33:
+                                                        _context11.next = 35;
+                                                        return this.sleep(5);
+
+                                                    case 35:
                                                         i++;
                                                         _context11.next = 18;
                                                         break;
 
-                                                    case 36:
+                                                    case 38:
                                                         this.logger.update('New users to analyze size : ' + (this.counter.users.analyzed += j));
                                                         return _context11.abrupt('return', resolve());
 
-                                                    case 38:
+                                                    case 40:
                                                     case 'end':
                                                         return _context11.stop();
                                                 }
@@ -964,7 +984,7 @@ var Action = function () {
                             case 0:
                                 users = void 0;
                                 _context15.next = 3;
-                                return _user2.default.like();
+                                return _user2.default.like(100);
 
                             case 3:
                                 users = _context15.sent;
@@ -982,7 +1002,7 @@ var Action = function () {
                                 i = 0, j = 0;
 
                             case 10:
-                                if (!(j < users.length && i < users.length)) {
+                                if (!(j < users.length && i < users.length && j < config.batchUserLimitCount)) {
                                     _context15.next = 32;
                                     break;
                                 }

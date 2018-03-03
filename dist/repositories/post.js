@@ -32,7 +32,10 @@ exports.default = {
                                                     _context2.next = 4;
                                                     return _post2.default.findRandom({
                                                         type: 'comment',
-                                                        reviewed: false
+                                                        reviewed: false,
+                                                        date: {
+                                                            $gt: yesterdayInMseconds
+                                                        }
                                                     }, {}, {
                                                         limit: limit || config.batchUserLimitCount,
                                                         sort: {

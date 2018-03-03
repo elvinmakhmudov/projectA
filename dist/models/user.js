@@ -28,6 +28,10 @@ var userSchema = new Schema({
     reviewed: {
         type: Boolean,
         default: false
+    },
+    direct_sent: {
+        type: Boolean,
+        default: false
     }
 });
 

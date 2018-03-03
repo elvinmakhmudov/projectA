@@ -479,7 +479,7 @@ var Automater = function () {
         key: 'triplePageActions',
         value: function () {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
-                var started, errors, liked, followed, commented, unfollowed;
+                var started, errors, liked, followed, unfollowed;
                 return regeneratorRuntime.wrap(function _callee11$(_context11) {
                     while (1) {
                         switch (_context11.prev = _context11.next) {
@@ -493,7 +493,7 @@ var Automater = function () {
 
                             case 4:
                                 if (!true) {
-                                    _context11.next = 73;
+                                    _context11.next = 59;
                                     break;
                                 }
 
@@ -564,10 +564,23 @@ var Automater = function () {
                                 return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToFollowPerDay * 4), true);
 
                             case 38:
-                                commented = this.counter.posts.commented;
+
+                                // let commented = this.counter.posts.commented;
+                                // try {
+                                //     await this.action.commentPosts();
+                                // } catch (e) {
+                                //     this.logger.update(e);
+                                //     errors++;
+                                // }
+                                // if (this.counter.posts.commented > commented) {
+                                //     this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS.');
+                                //     await this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
+                                // }
+
+                                unfollowed = this.counter.users.unfollowed;
                                 _context11.prev = 39;
                                 _context11.next = 42;
-                                return this.action.commentPosts();
+                                return this.action.unfollowUsers();
 
                             case 42:
                                 _context11.next = 48;
@@ -581,65 +594,38 @@ var Automater = function () {
                                 errors++;
 
                             case 48:
-                                if (!(this.counter.posts.commented > commented)) {
+                                if (!(this.counter.users.unfollowed > unfollowed)) {
                                     _context11.next = 52;
                                     break;
                                 }
 
-                                this.logger.update('COMMENTED ' + (this.counter.posts.commented - commented) + ' POSTS.');
-                                _context11.next = 52;
-                                return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.pagesToCommentPerDay * 4), true);
-
-                            case 52:
-                                unfollowed = this.counter.users.unfollowed;
-                                _context11.prev = 53;
-                                _context11.next = 56;
-                                return this.action.unfollowUsers();
-
-                            case 56:
-                                _context11.next = 62;
-                                break;
-
-                            case 58:
-                                _context11.prev = 58;
-                                _context11.t3 = _context11['catch'](53);
-
-                                this.logger.update(_context11.t3);
-                                errors++;
-
-                            case 62:
-                                if (!(this.counter.users.unfollowed > unfollowed)) {
-                                    _context11.next = 66;
-                                    break;
-                                }
-
                                 this.logger.update('UNFOLLOWED ' + (this.counter.users.unfollowed - unfollowed) + ' USERS.');
-                                _context11.next = 66;
+                                _context11.next = 52;
                                 return this.action.sleep(secondsInDay * config.batchUserLimitCount / (config.usersToUnfollowPerDay * 4), true);
 
-                            case 66:
+                            case 52:
                                 if (!(Math.round((Date.now() - started) / (1000 * 60 * 60)) >= config.workingHours)) {
-                                    _context11.next = 71;
+                                    _context11.next = 57;
                                     break;
                                 }
 
                                 this.logger.update('LONG SLEEP');
-                                _context11.next = 70;
+                                _context11.next = 56;
                                 return this.action.sleep((24 - config.workingHours) * 60 * 60);
 
-                            case 70:
+                            case 56:
                                 started = new Date();
 
-                            case 71:
+                            case 57:
                                 _context11.next = 4;
                                 break;
 
-                            case 73:
+                            case 59:
                             case 'end':
                                 return _context11.stop();
                         }
                     }
-                }, _callee11, this, [[11, 16], [25, 30], [39, 44], [53, 58]]);
+                }, _callee11, this, [[11, 16], [25, 30], [39, 44]]);
             }));
 
             function triplePageActions() {
@@ -665,7 +651,7 @@ var Automater = function () {
 
                             case 3:
                                 if (!true) {
-                                    _context12.next = 63;
+                                    _context12.next = 69;
                                     break;
                                 }
 
@@ -774,27 +760,37 @@ var Automater = function () {
 
                             case 56:
                                 if (!(Math.round((Date.now() - started) / (1000 * 60 * 60)) >= config.workingHours)) {
-                                    _context12.next = 61;
+                                    _context12.next = 67;
                                     break;
                                 }
 
+                                _context12.prev = 57;
+
                                 this.logger.update('LONG SLEEP');
-                                _context12.next = 60;
+                                _context12.next = 61;
                                 return this.action.sleep((24 - config.workingHours) * 60 * 60);
 
-                            case 60:
-                                started = new Date();
-
                             case 61:
+                                started = new Date();
+                                _context12.next = 67;
+                                break;
+
+                            case 64:
+                                _context12.prev = 64;
+                                _context12.t4 = _context12['catch'](57);
+
+                                this.logger.update(_context12.t4);
+
+                            case 67:
                                 _context12.next = 3;
                                 break;
 
-                            case 63:
+                            case 69:
                             case 'end':
                                 return _context12.stop();
                         }
                     }
-                }, _callee12, this, [[5, 10], [18, 23], [31, 36], [44, 49]]);
+                }, _callee12, this, [[5, 10], [18, 23], [31, 36], [44, 49], [57, 64]]);
             }));
 
             function tripleAnalyzator() {

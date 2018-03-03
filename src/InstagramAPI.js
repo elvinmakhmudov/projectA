@@ -159,7 +159,7 @@ class InstagramAPI {
             //fetch posts
             // if (await this.driver.findElements(By.className("_kcrwx")) != 0) return reject();
             if (await this.driver.findElements(By.className("_mck9w")) == 0) {
-                return reject();
+                return reject('The page is empty');
             };
             // this.driver.wait(until.elementLocated(By.css('._mck9w a')), config.timeout);
             // if (await this.driver.findElements(By.className("_mck9w a")) == 0) {
@@ -168,18 +168,22 @@ class InstagramAPI {
             let posts = await this.driver.findElements(By.css('._mck9w a'));
             let postsArr = [];
             for (let i = 0; i < posts.length && i < config.postsToReview; i++) {
-                let url = await posts[i].getAttribute('href');
-                if ((postsAnalyze.length > 0) ? !postsAnalyze.some(post => post.url === url) : true) {
-                    await this.driver.actions().mouseMove(posts[i]).perform();
-                    if (await this.driver.findElements(By.css('._3apjk span')) == 0) continue;
-                    let commentSize = await this.driver.findElement(By.css('._3apjk span')).getText();
-                    if (commentSize == 0) continue;
-                    await postsArr.push(new Post({
-                        'url': url,
-                        'username': page.username,
-                        'type': type,
-                        'page': page._id
-                    }));
+                try {
+                    let url = await posts[i].getAttribute('href');
+                    if ((postsAnalyze.length > 0) ? !postsAnalyze.some(post => post.url === url) : true) {
+                        await this.driver.actions().mouseMove(posts[i]).perform();
+                        if (await this.driver.findElements(By.css('._3apjk span')) == 0) continue;
+                        let commentSize = await this.driver.findElement(By.css('._3apjk span')).getText();
+                        if (commentSize == 0) continue;
+                        await postsArr.push(new Post({
+                            'url': url,
+                            'username': page.username,
+                            'type': type,
+                            'page': page._id
+                        }));
+                    }
+                } catch (e) {
+                    continue;
                 }
             }
             return resolve(postsArr);
@@ -195,7 +199,7 @@ class InstagramAPI {
             await this.driver.get(post.url);
             //if page has been removed then break
             if (await this.driver.findElements(By.className("error-container")) != 0 || await this.driver.findElements(By.className("_ezgzd")) == 0) {
-                return reject();
+                return reject('Post contains an error');
             };
             await this.driver.wait(until.elementLocated(By.className("_2g7d5")));
             let comments = await this.driver.findElements(By.className("_ezgzd"));
@@ -244,7 +248,8 @@ class InstagramAPI {
                             if (username.indexOf(config.toExclude[k]) !== -1) throw ('String ' + username + ' was excluded');
                             newUsers.push(await new User({
                                 username,
-                                type: 'analyze'
+                                type: 'analyze',
+                                direct_sent: false
                             }));
                         }
                         this.logger.update('New username is : ' + username);

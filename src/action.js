@@ -46,7 +46,7 @@ export default class Action {
         return new Promise(async function (resolve, reject) {
             let explorePages;
             try {
-                explorePages = await pagerepo.explore(20);
+                explorePages = await pagerepo.explore(80);
                 if ((typeof explorePages === "undefined") || explorePages.length === 0) {
                     // await this.instagram.sleep(config.sleepEveryIteration, true);
                     return reject('ERROR ON GETTINGS POSTS TO COMMENT. EXPLORE PAGES is undefined or explorepages.length is 0');
@@ -73,11 +73,12 @@ export default class Action {
                             posts[j].date = data.date;
                             //if post is old, skip it
                             if (data.date < yesterdayInMseconds) continue;
-                            freshPosts.push(posts[j])
+                            freshPosts.push(posts[j]);
                             l++;
                         } catch (e) {
                             this.logger.update(e);
                         }
+                        await this.sleep(5);
                     }
                     if (freshPosts.length > 0) {
                         await postrepo.insertMany(freshPosts);
@@ -89,6 +90,7 @@ export default class Action {
                     this.logger.update(e);
                 }
                 await pagerepo.setReviewed(explorePages[i]);
+                await this.sleep(5);
             }
             // await pagerepo.insertMany(explorePages)
             this.logger.update('Inserting explore pages');
@@ -99,7 +101,7 @@ export default class Action {
         return new Promise(async function (resolve, reject) {
             let pages, postsReviewed;
             try {
-                pages = await pagerepo.private(40);
+                pages = await pagerepo.private(90);
                 if ((typeof pages === "undefined") || pages.length === 0) {
                     // await this.instagram.sleep(config.sleepEveryIteration, true);
                     return reject(this.instagram.login + ' : ERROR ON SAVING POSTS. POSTS is undefined or posts.length is 0');
@@ -123,6 +125,7 @@ export default class Action {
                 } catch (e) {
                     // await pagerepo.remove(pages[i])
                 }
+                await this.sleep(5);
                 await pagerepo.setReviewed(pages[i])
             }
             return resolve();
@@ -133,7 +136,7 @@ export default class Action {
         return new Promise(async function (resolve, reject) {
             let posts, users;
             try {
-                posts = await postrepo.analyze(20);
+                posts = await postrepo.analyze(80);
                 if ((typeof posts === "undefined") || posts.length === 0) {
                     // await this.instagram.sleep(config.sleepEveryIteration, true);
                     return reject(this.instagram.login + ' : ERROR ON ANALYZING POSTS. POSTS is undefined or posts.length is 0');
@@ -155,6 +158,7 @@ export default class Action {
                     this.logger.update(e);
                     await postrepo.remove(posts[i]);
                 }
+                await this.sleep(5);
             }
             if (newUsers.length > 0) {
                 try {
@@ -174,7 +178,7 @@ export default class Action {
         return new Promise(async function (resolve, reject) {
             let users;
             try {
-                users = await userrepo.analyze(20) || [];
+                users = await userrepo.analyze(70) || [];
                 if ((typeof users === "undefined") || users.length === 0) {
                     // await this.instagram.sleep(config.sleepEveryIteration, true);
                     return reject(this.instagram.login + ' : ERROR ON ANALYZING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0');
@@ -193,6 +197,7 @@ export default class Action {
                     this.logger.update(e);
                     await userrepo.softDelete(users[i]);
                 }
+                await this.sleep(5);
             }
             this.logger.update('New users to analyze size : ' + (this.counter.users.analyzed += j));
             return resolve();
@@ -259,7 +264,7 @@ export default class Action {
 
     async likeUserPosts() {
         let users;
-        users = await userrepo.like();
+        users = await userrepo.like(100);
         if ((typeof users === "undefined") || users.length === 0) {
             throw ('ERROR ON LIKING USERS. USERS IS UNDEFINED OR USERS LENGTH IS 0');
             return;
@@ -267,7 +272,7 @@ export default class Action {
         }
         this.logger.update('Users to like : ' + users.length);
         var errors = 0;
-        for (var i = 0, j = 0; j < users.length && i < users.length; i++) {
+        for (var i = 0, j = 0; j < users.length && i < users.length && j < config.batchUserLimitCount; i++) {
             try {
                 if (errors >= config.maxErrors) {
                     await this.sleep(config.sleepEveryIteration, true);

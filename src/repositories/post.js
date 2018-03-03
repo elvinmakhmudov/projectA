@@ -8,7 +8,10 @@ export default {
             let yesterdayInMseconds = d.setDate(d.getDate() - 1);
             let posts = await Post.findRandom({
                 type: 'comment',
-                reviewed: false
+                reviewed: false,
+                date: {
+                    $gt: yesterdayInMseconds
+                }
             }, {}, {
                 limit: limit || config.batchUserLimitCount,
                 sort: {

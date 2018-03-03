@@ -387,12 +387,12 @@ var InstagramAPI = function () {
         key: 'getNewPosts',
         value: function getNewPosts(page, postsAnalyze, type) {
             return new Promise(function () {
-                var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(resolve, reject) {
+                var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(resolve, reject) {
                     var _this = this;
 
-                    var posts, postsArr, _loop, i, _ret;
+                    var posts, postsArr, i, _ret;
 
-                    return regeneratorRuntime.wrap(function _callee7$(_context8) {
+                    return regeneratorRuntime.wrap(function _callee8$(_context8) {
                         while (1) {
                             switch (_context8.prev = _context8.next) {
                                 case 0:
@@ -407,7 +407,7 @@ var InstagramAPI = function () {
                                         break;
                                     }
 
-                                    return _context8.abrupt('return', reject());
+                                    return _context8.abrupt('return', reject('The page is empty'));
 
                                 case 5:
                                     ;
@@ -421,9 +421,18 @@ var InstagramAPI = function () {
                                 case 8:
                                     posts = _context8.sent;
                                     postsArr = [];
-                                    _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop(i) {
+                                    i = 0;
+
+                                case 11:
+                                    if (!(i < posts.length && i < config.postsToReview)) {
+                                        _context8.next = 25;
+                                        break;
+                                    }
+
+                                    _context8.prev = 12;
+                                    return _context8.delegateYield( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
                                         var url, commentSize;
-                                        return regeneratorRuntime.wrap(function _loop$(_context7) {
+                                        return regeneratorRuntime.wrap(function _callee7$(_context7) {
                                             while (1) {
                                                 switch (_context7.prev = _context7.next) {
                                                     case 0:
@@ -485,17 +494,8 @@ var InstagramAPI = function () {
                                                         return _context7.stop();
                                                 }
                                             }
-                                        }, _loop, _this);
-                                    });
-                                    i = 0;
-
-                                case 12:
-                                    if (!(i < posts.length && i < config.postsToReview)) {
-                                        _context8.next = 20;
-                                        break;
-                                    }
-
-                                    return _context8.delegateYield(_loop(i), 't1', 14);
+                                        }, _callee7, _this);
+                                    })(), 't1', 14);
 
                                 case 14:
                                     _ret = _context8.t1;
@@ -505,22 +505,31 @@ var InstagramAPI = function () {
                                         break;
                                     }
 
-                                    return _context8.abrupt('continue', 17);
+                                    return _context8.abrupt('continue', 22);
 
                                 case 17:
-                                    i++;
-                                    _context8.next = 12;
+                                    _context8.next = 22;
                                     break;
 
-                                case 20:
+                                case 19:
+                                    _context8.prev = 19;
+                                    _context8.t2 = _context8['catch'](12);
+                                    return _context8.abrupt('continue', 22);
+
+                                case 22:
+                                    i++;
+                                    _context8.next = 11;
+                                    break;
+
+                                case 25:
                                     return _context8.abrupt('return', resolve(postsArr));
 
-                                case 21:
+                                case 26:
                                 case 'end':
                                     return _context8.stop();
                             }
                         }
-                    }, _callee7, this);
+                    }, _callee8, this, [[12, 19]]);
                 }));
 
                 return function (_x9, _x10) {
@@ -532,9 +541,9 @@ var InstagramAPI = function () {
         key: 'getRatingAndDate',
         value: function getRatingAndDate(post) {
             return new Promise(function () {
-                var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(resolve, reject) {
+                var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(resolve, reject) {
                     var newUsers, comments, likes, dateattr, datetime, rating;
-                    return regeneratorRuntime.wrap(function _callee8$(_context9) {
+                    return regeneratorRuntime.wrap(function _callee9$(_context9) {
                         while (1) {
                             switch (_context9.prev = _context9.next) {
                                 case 0:
@@ -572,7 +581,7 @@ var InstagramAPI = function () {
                                         break;
                                     }
 
-                                    return _context9.abrupt('return', reject());
+                                    return _context9.abrupt('return', reject('Post contains an error'));
 
                                 case 14:
                                     ;
@@ -647,7 +656,7 @@ var InstagramAPI = function () {
                                     return _context9.stop();
                             }
                         }
-                    }, _callee8, this);
+                    }, _callee9, this);
                 }));
 
                 return function (_x11, _x12) {
@@ -659,12 +668,12 @@ var InstagramAPI = function () {
         key: 'getPostData',
         value: function getPostData(post, users, newUsers) {
             return new Promise(function () {
-                var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(resolve, reject) {
+                var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(resolve, reject) {
                     var _this2 = this;
 
-                    var comments, likes, dateattr, datetime, rating, _loop2, j;
+                    var comments, likes, dateattr, datetime, rating, _loop, j;
 
-                    return regeneratorRuntime.wrap(function _callee9$(_context11) {
+                    return regeneratorRuntime.wrap(function _callee10$(_context11) {
                         while (1) {
                             switch (_context11.prev = _context11.next) {
                                 case 0:
@@ -762,9 +771,9 @@ var InstagramAPI = function () {
                                     dateattr = _context11.t6;
                                     datetime = Math.round((Date.now() - new Date(dateattr).getTime()) / (1000 * 60 * 60));
                                     rating = Math.round(likes / datetime * 100) / 100;
-                                    _loop2 = /*#__PURE__*/regeneratorRuntime.mark(function _loop2(j) {
+                                    _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop(j) {
                                         var username, k;
-                                        return regeneratorRuntime.wrap(function _loop2$(_context10) {
+                                        return regeneratorRuntime.wrap(function _loop$(_context10) {
                                             while (1) {
                                                 switch (_context10.prev = _context10.next) {
                                                     case 0:
@@ -804,7 +813,8 @@ var InstagramAPI = function () {
                                                         _context10.next = 12;
                                                         return new _user2.default({
                                                             username: username,
-                                                            type: 'analyze'
+                                                            type: 'analyze',
+                                                            direct_sent: false
                                                         });
 
                                                     case 12:
@@ -835,7 +845,7 @@ var InstagramAPI = function () {
                                                         return _context10.stop();
                                                 }
                                             }
-                                        }, _loop2, _this2, [[3, 20]]);
+                                        }, _loop, _this2, [[3, 20]]);
                                     });
                                     j = 0;
 
@@ -845,7 +855,7 @@ var InstagramAPI = function () {
                                         break;
                                     }
 
-                                    return _context11.delegateYield(_loop2(j), 't7', 47);
+                                    return _context11.delegateYield(_loop(j), 't7', 47);
 
                                 case 47:
                                     j++;
@@ -864,7 +874,7 @@ var InstagramAPI = function () {
                                     return _context11.stop();
                             }
                         }
-                    }, _callee9, this);
+                    }, _callee10, this);
                 }));
 
                 return function (_x13, _x14) {
@@ -882,14 +892,14 @@ var InstagramAPI = function () {
     }, {
         key: 'getUserType',
         value: function () {
-            var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(user) {
-                return regeneratorRuntime.wrap(function _callee11$(_context13) {
+            var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(user) {
+                return regeneratorRuntime.wrap(function _callee12$(_context13) {
                     while (1) {
                         switch (_context13.prev = _context13.next) {
                             case 0:
                                 return _context13.abrupt('return', new Promise(function () {
-                                    var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(resolve, reject) {
-                                        return regeneratorRuntime.wrap(function _callee10$(_context12) {
+                                    var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(resolve, reject) {
+                                        return regeneratorRuntime.wrap(function _callee11$(_context12) {
                                             while (1) {
                                                 switch (_context12.prev = _context12.next) {
                                                     case 0:
@@ -950,7 +960,7 @@ var InstagramAPI = function () {
                                                         return _context12.stop();
                                                 }
                                             }
-                                        }, _callee10, this);
+                                        }, _callee11, this);
                                     }));
 
                                     return function (_x16, _x17) {
@@ -963,7 +973,7 @@ var InstagramAPI = function () {
                                 return _context13.stop();
                         }
                     }
-                }, _callee11, this);
+                }, _callee12, this);
             }));
 
             function getUserType(_x15) {
@@ -975,14 +985,14 @@ var InstagramAPI = function () {
     }, {
         key: 'followUser',
         value: function () {
-            var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(user) {
-                return regeneratorRuntime.wrap(function _callee13$(_context15) {
+            var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(user) {
+                return regeneratorRuntime.wrap(function _callee14$(_context15) {
                     while (1) {
                         switch (_context15.prev = _context15.next) {
                             case 0:
                                 return _context15.abrupt('return', new Promise(function () {
-                                    var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(resolve, reject) {
-                                        return regeneratorRuntime.wrap(function _callee12$(_context14) {
+                                    var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(resolve, reject) {
+                                        return regeneratorRuntime.wrap(function _callee13$(_context14) {
                                             while (1) {
                                                 switch (_context14.prev = _context14.next) {
                                                     case 0:
@@ -1051,7 +1061,7 @@ var InstagramAPI = function () {
                                                         return _context14.stop();
                                                 }
                                             }
-                                        }, _callee12, this);
+                                        }, _callee13, this);
                                     }));
 
                                     return function (_x19, _x20) {
@@ -1064,7 +1074,7 @@ var InstagramAPI = function () {
                                 return _context15.stop();
                         }
                     }
-                }, _callee13, this);
+                }, _callee14, this);
             }));
 
             function followUser(_x18) {
@@ -1076,14 +1086,14 @@ var InstagramAPI = function () {
     }, {
         key: 'unfollowUser',
         value: function () {
-            var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(user) {
-                return regeneratorRuntime.wrap(function _callee15$(_context17) {
+            var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(user) {
+                return regeneratorRuntime.wrap(function _callee16$(_context17) {
                     while (1) {
                         switch (_context17.prev = _context17.next) {
                             case 0:
                                 return _context17.abrupt('return', new Promise(function () {
-                                    var _ref15 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(resolve, reject) {
-                                        return regeneratorRuntime.wrap(function _callee14$(_context16) {
+                                    var _ref15 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(resolve, reject) {
+                                        return regeneratorRuntime.wrap(function _callee15$(_context16) {
                                             while (1) {
                                                 switch (_context16.prev = _context16.next) {
                                                     case 0:
@@ -1136,7 +1146,7 @@ var InstagramAPI = function () {
                                                         return _context16.stop();
                                                 }
                                             }
-                                        }, _callee14, this);
+                                        }, _callee15, this);
                                     }));
 
                                     return function (_x22, _x23) {
@@ -1149,7 +1159,7 @@ var InstagramAPI = function () {
                                 return _context17.stop();
                         }
                     }
-                }, _callee15, this);
+                }, _callee16, this);
             }));
 
             function unfollowUser(_x21) {
@@ -1161,15 +1171,15 @@ var InstagramAPI = function () {
     }, {
         key: 'likeUserPosts',
         value: function () {
-            var _ref16 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(user) {
-                return regeneratorRuntime.wrap(function _callee17$(_context19) {
+            var _ref16 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18(user) {
+                return regeneratorRuntime.wrap(function _callee18$(_context19) {
                     while (1) {
                         switch (_context19.prev = _context19.next) {
                             case 0:
                                 return _context19.abrupt('return', new Promise(function () {
-                                    var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(resolve, reject) {
+                                    var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(resolve, reject) {
                                         var posts, postsArr, k, href, j;
-                                        return regeneratorRuntime.wrap(function _callee16$(_context18) {
+                                        return regeneratorRuntime.wrap(function _callee17$(_context18) {
                                             while (1) {
                                                 switch (_context18.prev = _context18.next) {
                                                     case 0:
@@ -1300,7 +1310,7 @@ var InstagramAPI = function () {
                                                         return _context18.stop();
                                                 }
                                             }
-                                        }, _callee16, this);
+                                        }, _callee17, this);
                                     }));
 
                                     return function (_x25, _x26) {
@@ -1313,7 +1323,7 @@ var InstagramAPI = function () {
                                 return _context19.stop();
                         }
                     }
-                }, _callee17, this);
+                }, _callee18, this);
             }));
 
             function likeUserPosts(_x24) {
@@ -1325,15 +1335,15 @@ var InstagramAPI = function () {
     }, {
         key: 'commentPosts',
         value: function () {
-            var _ref18 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee19(post) {
-                return regeneratorRuntime.wrap(function _callee19$(_context21) {
+            var _ref18 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee20(post) {
+                return regeneratorRuntime.wrap(function _callee20$(_context21) {
                     while (1) {
                         switch (_context21.prev = _context21.next) {
                             case 0:
                                 return _context21.abrupt('return', new Promise(function () {
-                                    var _ref19 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18(resolve, reject) {
+                                    var _ref19 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee19(resolve, reject) {
                                         var comment;
-                                        return regeneratorRuntime.wrap(function _callee18$(_context20) {
+                                        return regeneratorRuntime.wrap(function _callee19$(_context20) {
                                             while (1) {
                                                 switch (_context20.prev = _context20.next) {
                                                     case 0:
@@ -1399,7 +1409,7 @@ var InstagramAPI = function () {
                                                         return _context20.stop();
                                                 }
                                             }
-                                        }, _callee18, this);
+                                        }, _callee19, this);
                                     }));
 
                                     return function (_x28, _x29) {
@@ -1412,7 +1422,7 @@ var InstagramAPI = function () {
                                 return _context21.stop();
                         }
                     }
-                }, _callee19, this);
+                }, _callee20, this);
             }));
 
             function commentPosts(_x27) {
@@ -1424,18 +1434,18 @@ var InstagramAPI = function () {
     }, {
         key: 'explorePage',
         value: function () {
-            var _ref20 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee21(allPages) {
-                return regeneratorRuntime.wrap(function _callee21$(_context24) {
+            var _ref20 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee22(allPages) {
+                return regeneratorRuntime.wrap(function _callee22$(_context24) {
                     while (1) {
                         switch (_context24.prev = _context24.next) {
                             case 0:
                                 return _context24.abrupt('return', new Promise(function () {
-                                    var _ref21 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee20(resolve, reject) {
+                                    var _ref21 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee21(resolve, reject) {
                                         var _this3 = this;
 
-                                        var tmpPages, next, newPages, _loop3, i, _ret3, pages, j, _username, followers;
+                                        var tmpPages, next, newPages, _loop2, i, _ret3, pages, j, _username, followers;
 
-                                        return regeneratorRuntime.wrap(function _callee20$(_context23) {
+                                        return regeneratorRuntime.wrap(function _callee21$(_context23) {
                                             while (1) {
                                                 switch (_context23.prev = _context23.next) {
                                                     case 0:
@@ -1520,9 +1530,9 @@ var InstagramAPI = function () {
 
                                                     case 29:
                                                         newPages = _context23.sent;
-                                                        _loop3 = /*#__PURE__*/regeneratorRuntime.mark(function _loop3(i) {
+                                                        _loop2 = /*#__PURE__*/regeneratorRuntime.mark(function _loop2(i) {
                                                             var username, newPage;
-                                                            return regeneratorRuntime.wrap(function _loop3$(_context22) {
+                                                            return regeneratorRuntime.wrap(function _loop2$(_context22) {
                                                                 while (1) {
                                                                     switch (_context22.prev = _context22.next) {
                                                                         case 0:
@@ -1578,7 +1588,7 @@ var InstagramAPI = function () {
                                                                             return _context22.stop();
                                                                     }
                                                                 }
-                                                            }, _loop3, _this3, [[7, 14]]);
+                                                            }, _loop2, _this3, [[7, 14]]);
                                                         });
                                                         i = 0;
 
@@ -1588,7 +1598,7 @@ var InstagramAPI = function () {
                                                             break;
                                                         }
 
-                                                        return _context23.delegateYield(_loop3(i), 't3', 34);
+                                                        return _context23.delegateYield(_loop2(i), 't3', 34);
 
                                                     case 34:
                                                         _ret3 = _context23.t3;
@@ -1686,7 +1696,7 @@ var InstagramAPI = function () {
                                                         return _context23.stop();
                                                 }
                                             }
-                                        }, _callee20, this, [[40, 46], [56, 66]]);
+                                        }, _callee21, this, [[40, 46], [56, 66]]);
                                     }));
 
                                     return function (_x31, _x32) {
@@ -1699,7 +1709,7 @@ var InstagramAPI = function () {
                                 return _context24.stop();
                         }
                     }
-                }, _callee21, this);
+                }, _callee22, this);
             }));
 
             function explorePage(_x30) {
@@ -1711,9 +1721,9 @@ var InstagramAPI = function () {
     }, {
         key: 'sleep',
         value: function () {
-            var _ref22 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee22(seconds) {
+            var _ref22 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee23(seconds) {
                 var log = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-                return regeneratorRuntime.wrap(function _callee22$(_context25) {
+                return regeneratorRuntime.wrap(function _callee23$(_context25) {
                     while (1) {
                         switch (_context25.prev = _context25.next) {
                             case 0:
@@ -1738,7 +1748,7 @@ var InstagramAPI = function () {
                                 return _context25.stop();
                         }
                     }
-                }, _callee22, this, [[0, 6]]);
+                }, _callee23, this, [[0, 6]]);
             }));
 
             function sleep(_x34) {
