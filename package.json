@@ -6,7 +6,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "mongodb": "*",
-    "mongoose": "^5.0.1",
+    "mongoose": "^6.0.4",
     "mongoose-random": "^0.1.1",
     "mongoose-simple-random": "^0.4.1",
     "selenium-webdriver": "*"
