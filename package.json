@@ -9,7 +9,7 @@
     "mongoose": "^5.0.1",
     "mongoose-random": "^0.1.1",
     "mongoose-simple-random": "^0.4.1",
-    "selenium-webdriver": "*"
+    "selenium-webdriver": "4.0.0"
   },
   "scripts": {
     "build": "babel ./src -d ./dist",
